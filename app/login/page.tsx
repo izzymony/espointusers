@@ -102,7 +102,7 @@ const Login = () => {
             <div className='text-center mt-4'>
               <Link className=' text-[#ffd700] underline mt-3 text-center ' href={''}>Forgot your password?</Link>
               <div className='flex gap-2 text-center items-center justify-center'>
-                <p>Don't have an account?</p>
+                <p>Don&apos;t have an account?</p>
                 <Link href={'/signup'} className='text-[#ffd700] underline gap-2 '>Sign up</Link>
               </div>
             </div>
