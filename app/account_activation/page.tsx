@@ -36,7 +36,7 @@ const AccountActivation = () => {
           <h1 className="text-[#475569] text-2xl font-bold text-center mb-2">Activate Your Account</h1>
           <p className="text-[#475569] text-[16px] mb-4 text-center">
             We have sent you an account activation link via email. Please check your inbox and follow the instructions to activate your account.<br/>
-            (If you haven't received the email, you can resend the activation link below.)
+            (If you haven&apos;t received the email, you can resend the activation link below.)
           </p>
 
           {success && (<p className="text-green-600 text-center mb-2">{success}</p>)}
