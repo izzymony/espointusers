@@ -1,30 +1,23 @@
 import Image from "next/image";
-
+import Link from "next/link";
+import Nav from "./components/Nav";
 
 
 export default function Home() {
   return (
-    <div className=" bg-white h-[100vh]">
-      <div className="flex min-h-screen justify-center items-center p-4 ">
-      <div className="p-5 w-full bg-[#f5f5f5] py-5 max-w-md shadow-lg rounded-md">
-        <div className="mx-auto">
-          <Image src={"/espointtower.jpg"} alt="" width={150} height={150} className="py-3 mx-auto "/>
-        </div>
-        <h1 className="text-[#475569] text-2xl  font-bold text-center md:text-3xl">Booking System</h1>
-
-        <p className="text-[#475569] font-medium text-[14px] mt-2 text-center">Welcome to our professional booking platform</p>
-        <div className="grid  grid-cols-1 gap-3 mt-5">
-        <button className=" font-bold text-bold text-white bg-[#f5cf00] rounded-lg p-2 w-full">Book Appointment</button>
-       <button className="font-bold border border-gray-300 rounded-lg p-2 w-full text-gray-500 hover:[background-color:#c6a821] active:[background-color:#c6a821] focus:[background-color:#c6a821] hover:text-white active:text-white focus:text-white">
-  Login
-</button>
-
-<button className="font-bold border border-gray-300 rounded-lg p-2 w-full text-gray-500 hover:[background-color:#c6a821] active:[background-color:#c6a821] focus:[background-color:#c6a821] hover:text-white active:text-white focus:text-white">
-  Sign Up
-</button>
-
-        </div>
+    <div  className=" bg-[#ffffff] h-screen mt-18">
+     <Nav/>
+      <div className="px-4 ">
+         <div>
+        <Image src={'/espointtower.jpg'} alt="ESPOINT" width={150} height={150} className="mx-auto rounded-md"/>
       </div>
+        <h1 className="font-bold text-5xl text-center mt-6">Book Your Perfect <span className="text-[#d4731e]">Experience</span></h1>
+        <p className="text-black font-sm text-[20px] text-center mt-5 max-w-lg mx-auto">Discover and book unique accommodations, experiences, and services tailored to your preferences. From luxury retreats to cozy getaways, find exactly what you&apos;re looking for.</p>
+
+        <div className="grid py-7 flex-col-1 gap-3 max-w-md mx-auto lg:flex md:gap-2">
+          <Link href={"/login"} className=""><button className="text-white bg-[#d4731e] p-2 w-full rounded-full"> Login </button></Link>
+          <button className="text-center w-full p-2 bg-white border-2 rounded-full border-black"><Link href={"/signup"}> Signup</Link></button>
+        </div>
       </div>
     </div>
   );

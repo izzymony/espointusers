@@ -94,7 +94,7 @@ const Signup = () => {
 
       if (response.ok) {
         setSuccessMessage("Sign up successful! You may now sign in.");
-        router.push('/bookings')
+        router.push('/account_activation')
         // Optionally, reset the form:
         setFormData({
           firstName: "",
@@ -115,27 +115,21 @@ const Signup = () => {
   };
 
   return (
-    <div className="bg-white h-[100vh]">
-      <div className="flex min-h-screen justify-center items-center p-4">
-        <div className="bg-[#f5f5f5] w-full max-w-md p-5 border border-gray-300 shadow-lg rounded-md">
-          <div className="mx-auto">
-            <Image
-              src={"/espointtower.jpg"}
-              alt=""
-              width={150}
-              height={150}
-              className="py-3 mx-auto rounded-md "
-            />
-          </div>
-          <h1 className="text-[#475569] text-3xl font-bold text-center ">Create Account</h1>
+    <div className=" h-screen mt-18">
+       <div className="">
+                 <Image src={'/espointtower.jpg'} alt="ESPOINT" width={150} height={150} className="mx-auto rounded-md"/>
+                </div>
+                 <h1 className="text-black text-4xl font-bold text-center ">Create Account</h1>
           <p className="text-[#475569] font-medium text-[17px] mt-2 text-center">
             Sign up for a new account
           </p>
-
+      <div className=" mx-auto">
+        <div className="bg-[#fffbed] mt-5 w-full max-w-md mx-auto p-5 border border-gray-300 shadow-lg rounded-md">
           <form onSubmit={handleSubmit} className="py-6">
             <div className="grid grid-cols-1 gap-5 ">
+              <div className="flex gap-3">
               <div>
-                <label htmlFor="firstName" className="text-black font-medium">
+                <label htmlFor="firstName" className="text-[#2e2e2e] font-medium">
                   First Name
                 </label>
                 <input
@@ -145,14 +139,14 @@ const Signup = () => {
                   value={formData.firstName}
                   onChange={handleChange}
                   placeholder="Enter your first name"
-                  className="w-full px-3 border-b-1 rounded-md border-gray-300 placeholder:text-gray-400 p-1 focus:border-[#ffd700] focus:ring-2 focus:ring-[#ffd700] outline-none"
+                  className="w-full px-3 border-b-1 rounded-md border-gray-300 placeholder:text-[#2e2e2e] p-1 focus:border-[#ffd700] focus:ring-2 focus:ring-[#ffd700] outline-none"
                 />
                 {errors.firstName && (
                   <p className="text-red-500 text-sm mt-1">{errors.firstName}</p>
                 )}
               </div>
               <div>
-                <label htmlFor="lastName" className="text-black font-medium">
+                <label htmlFor="lastName" className="text-[#2e2e2e] font-medium">
                   Last Name
                 </label>
                 <input
@@ -162,14 +156,15 @@ const Signup = () => {
                   value={formData.lastName}
                   onChange={handleChange}
                   placeholder="Enter your last name"
-                  className="w-full px-3 border-b-1 rounded-md border-gray-300 placeholder:text-gray-400 p-1 focus:border-[#ffd700] focus:ring-2 focus:ring-[#ffd700] outline-none"
+                  className="w-full px-3 border-b-1 rounded-md border-gray-300 placeholder:text-[#2e2e2e] p-1 focus:border-[#ffd700] focus:ring-2 focus:ring-[#ffd700] outline-none"
                 />
                 {errors.lastName && (
                   <p className="text-red-500 text-sm mt-1">{errors.lastName}</p>
                 )}
               </div>
+              </div>
               <div>
-                <label htmlFor="username" className="text-black font-medium">
+                <label htmlFor="username" className="text-[#2e2e2e]font-medium">
                   Username
                 </label>
                 <input
@@ -179,14 +174,14 @@ const Signup = () => {
                   value={formData.username}
                   onChange={handleChange}
                   placeholder="Choose a username"
-                  className="w-full px-3 border-b-1 rounded-md border-gray-300 placeholder:text-gray-400 p-1 focus:border-[#ffd700] focus:ring-2 focus:ring-[#ffd700] outline-none"
+                  className="w-full px-3 border-b-1 rounded-md border-gray-300 placeholder:text-[#2e2e2e] p-1 focus:border-[#ffd700] focus:ring-2 focus:ring-[#ffd700] outline-none"
                 />
                 {errors.username && (
                   <p className="text-red-500 text-sm mt-1">{errors.username}</p>
                 )}
               </div>
               <div>
-                <label htmlFor="email" className="text-black font-medium">
+                <label htmlFor="email" className="text-[#2e2e2e] font-medium">
                   Email
                 </label>
                 <input
@@ -196,14 +191,14 @@ const Signup = () => {
                   value={formData.email}
                   onChange={handleChange}
                   placeholder="Enter your email"
-                  className="w-full px-3 border-b-1 rounded-md border-gray-300 placeholder:text-gray-400 p-1 focus:border-[#ffd700] focus:ring-2 focus:ring-[#ffd700] outline-none"
+                  className="w-full px-3 border-b-1 rounded-md border-gray-300 placeholder:text-[#2e2e2e] p-1 focus:border-[#D4721E9C] focus:ring-2 focus:ring-[#D4721E9C] outline-none"
                 />
                 {errors.email && (
                   <p className="text-red-500 text-sm mt-1">{errors.email}</p>
                 )}
               </div>
               <div>
-                <label htmlFor="password" className="text-black font-medium">
+                <label htmlFor="password" className="text-[#2e2e2e] font-medium">
                   Password
                 </label>
                 <div className="relative">
@@ -214,12 +209,12 @@ const Signup = () => {
                     value={formData.password}
                     onChange={handleChange}
                     placeholder="Create a password"
-                    className="w-full px-3 border-b-1 rounded-md border-gray-300 placeholder:text-gray-400 p-1 focus:border-[#ffd700] focus:ring-2 focus:ring-[#ffd700] outline-none"
+                    className="w-full px-3 border-b-1 rounded-md border-gray-300 placeholder:text-[#2e2e2e] p-1 focus:border-[#D4721E9C] focus:ring-2 focus:ring-[#D4721E9C] outline-none"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword((v) => !v)}
-                    className="absolute top-1/2 right-3 transform -translate-y-1/2 text-gray-400"
+                    className="absolute top-1/2 right-3 transform -translate-y-1/2 text-[#2e2e2e]"
                     tabIndex={-1}
                   >
                     {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
@@ -230,7 +225,7 @@ const Signup = () => {
                 )}
               </div>
               <div>
-                <label htmlFor="confirmPassword" className="text-black font-medium">
+                <label htmlFor="confirmPassword" className="text-[#2e2e2e] font-medium">
                   Confirm Password
                 </label>
                 <div className="relative">
@@ -241,12 +236,12 @@ const Signup = () => {
                     value={formData.confirmPassword}
                     onChange={handleChange}
                     placeholder="Confirm your password"
-                    className="w-full px-3 border-b-1 rounded-md border-gray-300 placeholder:text-gray-400 p-1 focus:border-[#ffd700] focus:ring-2 focus:ring-[#ffd700] outline-none"
+                    className="w-full px-3 border-b-1 rounded-md border-gray-300 placeholder:text-[#2e2e2e] p-1 focus:border-[#D4721E9C] focus:ring-2 focus:ring-[#D4721E9C] outline-none"
                   />
                   <button
                     type="button"
                     onClick={() => setShowConfirmPassword((v) => !v)}
-                    className="absolute top-1/2 right-3 transform -translate-y-1/2 text-gray-400"
+                    className="absolute top-1/2 right-3 transform -translate-y-1/2 text-[#2e2e2e]"
                     tabIndex={-1}
                   >
                     {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
@@ -258,7 +253,7 @@ const Signup = () => {
               </div>
             </div>
             <button
-              className="bg-[#FFD700] w-full text-black p-2 mt-6 rounded-md font-bold"
+              className="bg-[#d4731e] w-full  text-white p-2 mt-6 rounded-full font-sm"
               type="submit"
             >
               Sign Up
@@ -271,7 +266,7 @@ const Signup = () => {
                 <p>Already have an account?</p>
                 <Link
                   href={"/login"}
-                  className="text-[#ffd700] underline gap-2"
+                  className="text-[#d17160]  gap-2"
                 >
                   Sign in
                 </Link>
