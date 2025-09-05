@@ -6,16 +6,20 @@ import { Eye, EyeOff } from "lucide-react";
 
 const ChangePassword = () => {
   const [formData, setFormData] = useState({
+    oldPassword: "",
     newPassword: "",
     confirmPassword: "",
   });
   const [errors, setErrors] = useState({
+    oldPassword: "",
     newPassword: "",
     confirmPassword: "",
   });
+  const [showOldPassword, setShowOldPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [success, setSuccess] = useState("");
+  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -23,11 +27,16 @@ const ChangePassword = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
     setErrors((prev) => ({ ...prev, [name]: "" }));
     setSuccess("");
+    setError("");
   };
 
   const validate = () => {
     let valid = true;
-    const errs = { newPassword: "", confirmPassword: "" };
+    const errs = { oldPassword: "", newPassword: "", confirmPassword: "" };
+    if (!formData.oldPassword) {
+      errs.oldPassword = "Enter your old password.";
+      valid = false;
+    }
     if (!formData.newPassword) {
       errs.newPassword = "Enter your new password.";
       valid = false;
@@ -51,14 +60,33 @@ const ChangePassword = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setSuccess("");
+    setError("");
     if (!validate()) return;
     setLoading(true);
-    // TODO: Post to endpoint...
-    setTimeout(() => {
-      setSuccess("Your password has been changed successfully!");
-      setFormData({ newPassword: "", confirmPassword: "" });
+    try {
+      const response = await fetch("https://espoint-auth.onrender.com/api/v1.0/change_password", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          old_password: formData.oldPassword,
+          new_password: formData.newPassword,
+          confirm_password: formData.confirmPassword,
+        })
+      });
+      const data = await response.json();
       setLoading(false);
-    }, 1500);
+      if (response.ok) {
+        setSuccess("Your password has been changed successfully!");
+        setFormData({ oldPassword: "", newPassword: "", confirmPassword: "" });
+      } else {
+        setError(data?.message || "Failed to change password. Please try again.");
+      }
+    } catch {
+      setLoading(false);
+      setError("Network error. Try again later.");
+    }
   };
 
   return (
@@ -78,6 +106,33 @@ const ChangePassword = () => {
             Enter your new password below.
           </p>
           <form onSubmit={handleSubmit} className="py-2">
+            <div className="mb-4">
+              <label htmlFor="oldPassword" className="text-black font-medium">
+                Old Password
+              </label>
+              <div className="relative">
+                <input
+                  type={showOldPassword ? "text" : "password"}
+                  id="oldPassword"
+                  name="oldPassword"
+                  value={formData.oldPassword}
+                  onChange={handleChange}
+                  placeholder="Enter old password"
+                  className="w-full px-3 border-b-1 rounded-md border-gray-300 placeholder:text-gray-400 p-1 focus:border-[#ffd700] focus:ring-2 focus:ring-[#ffd700] outline-none"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowOldPassword((v) => !v)}
+                  className="absolute top-1/2 right-3 transform -translate-y-1/2 text-gray-400"
+                  tabIndex={-1}
+                >
+                  {showOldPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
+              </div>
+              {errors.oldPassword && (
+                <p className="text-red-500 text-sm mt-1">{errors.oldPassword}</p>
+              )}
+            </div>
             <div className="mb-4">
               <label htmlFor="newPassword" className="text-black font-medium">
                 New Password
@@ -141,6 +196,9 @@ const ChangePassword = () => {
             </button>
             {success && (
               <p className="text-green-600 text-center mt-4">{success}</p>
+            )}
+            {error && (
+              <p className="text-red-600 text-center mt-2">{error}</p>
             )}
             <div className="text-center mt-5">
               <Link href="/login" className="text-[#ffd700] underline">Back to Sign In</Link>

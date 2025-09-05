@@ -33,27 +33,50 @@ const ForgotPassword = () => {
       );
       setEmail("");
     }, 1500);
-    // For real API:
-    // try {
-    //   await fetch("ENDPOINT_HERE", { method: "POST", ... })
-    //   ...
-    // } catch() { ... }
+   
+
+
+    try{
+      const response = await fetch("https://espoint-auth.onrender.com/api/v1.0/forgot_password" ,{
+        method: "POST",
+        headers:{"Content-Type" : "application/json"},
+        body: JSON.stringify({email})
+      })
+      setLoading(false)
+      const data = await response.json();
+      if(response.ok){
+        setSuccess(data.message || "If an account with that email exists, a password reset link has been sent to it.");
+        setEmail("");
+      } else{
+        setError(data.error || "Failed to send reset link. Please try again.");
+      }
+    }catch(err){
+      setError("Network error. Please check your connection and try again.");
+    }finally{
+      setLoading(false);
+    }
   };
 
   return (
-    <div className="bg-white h-[100vh]">
-      <div className="flex min-h-screen justify-center items-center p-4">
-        <div className="bg-[#f5f5f5] w-full max-w-md p-5 border border-gray-300 shadow-lg rounded-md">
-          <div className="mx-auto mb-4">
-            <Image
+    <div className="bg-white h-screen px-4 mt-18">
+         <Image
               src={"/espointtower.jpg"}
               alt=""
               width={110}
               height={110}
               className="mx-auto rounded-md "/>
+              <div className="bg-[#faf0e8] p-4 rounded-full  w-fit flex mx-auto mb-4 mt-4">
+                            <Image src={'/icons8-mail-50.png'} alt=""height={34} width={34} className=""/>
+                            </div>
+      <h1 className="text-black text-center mt-3 font-bold text-3xl">Forgot Password?</h1>      
+      <p className="text-black text-center text-[18px] font-sm mt-2">No worries we&apos;ll send you reset instructions</p>              
+      <div className="">
+        <div className="bg-[#fffbed] w-full max-w-md p-5 border mt-6 border-gray-300 shadow-lg rounded-md">
+          <div className="mx-auto mb-4 py-2">
+         
           </div>
-          <h1 className="text-[#475569] text-2xl font-bold text-center">Forgot Password?</h1>
-          <p className="text-[#475569] text-[16px] mt-2 text-center mb-4">
+          <h1 className="text-2xl font-bold text-center text-black">Forgot Password?</h1>
+          <p className="text-black text-sm text-[16px] mt-2 text-center mb-4">
             Enter your email to receive password reset instructions.
           </p>
           <form onSubmit={handleSubmit} className="py-2">
@@ -68,7 +91,7 @@ const ForgotPassword = () => {
                 value={email}
                 onChange={(e) => { setEmail(e.target.value); setError(""); setSuccess(""); }}
                 placeholder="Enter your email address"
-                className="w-full px-3 border-b-1 rounded-md border-gray-300 placeholder:text-gray-400 p-1 focus:border-[#ffd700] focus:ring-2 focus:ring-[#ffd700] outline-none"
+                className="w-full px-3 border-b-1 rounded-md border-gray-300 placeholder:text-[#2e2e2e] p-1 focus:border-[#ffd700] focus:ring-2 focus:ring-[#ffd700] outline-none"
               />
               {error && (
                 <p className="text-red-500 text-sm mt-1">{error}</p>
@@ -80,12 +103,12 @@ const ForgotPassword = () => {
             <button
               type="submit"
               disabled={loading}
-              className="bg-[#FFD700] w-full text-black p-2 mt-2 rounded-md font-bold"
+              className="bg-[#d4731e] w-full text-white font-sm p-2 mt-2 rounded-full "
             >
               {loading ? "Sending..." : "Send Reset Link"}
             </button>
             <div className="text-center mt-5">
-              <Link href="/login" className="text-[#ffd700] underline">Back to Sign In</Link>
+              <Link href="/login" className="text-[#d4731e] underline">Back to Sign In</Link>
             </div>
           </form>
         </div>

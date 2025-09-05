@@ -1,5 +1,6 @@
 'use client'
 import React, { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import Image from "next/image"
 import Link from 'next/link'
 import { Eye, EyeOff } from "lucide-react"
@@ -24,6 +25,7 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false)
   const [successMessage, setSuccessMessage] = useState<string>('')
   const [loading, setLoading] = useState(false)
+  const router = useRouter()
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -117,7 +119,7 @@ const Login = () => {
       
       // Optional: Redirect user after successful login
       // router.push('/dashboard');
-      
+      router.push('/bookings')
     } catch (err) {
       setErrors({ password: "Network error. Please try again." });
     } finally {
@@ -126,11 +128,11 @@ const Login = () => {
   };
 
   return (
-    <div className='bg-[#ffffff] h-screen mt-18'>
+    <div className='bg-[#ffffff] h-screen mt-18 px-4 '>
        <div className="">
            <Image src={'/espointtower.jpg'} alt="ESPOINT" width={150} height={150} className="mx-auto rounded-md"/>
           </div>
-          <h1 className="text-black text-4xl mt-4  font-bold text-center ">Welcome <span className='text-[#d4731e]'>Back</span> </h1>
+          <h1 className="text-black text-4xl mt-4  font-bold text-center ">Welcome <span className=''>Back</span> </h1>
           <p className="text-black text-[18px] mt-2 font-sm text-center">Sign in to your account to continue</p>
     <div >
       <div className=' mx-auto'>
@@ -193,7 +195,7 @@ const Login = () => {
             </div>
             {successMessage && <p className="text-green-600 text-center ">{successMessage}</p>}
             <div className='text-center mt-4'>
-             <Link className=' text-[#d17160] mt-4  text-right ' href={''}>Forgot your password?</Link>
+             <Link className=' text-[#d17160] mt-4  text-right ' href={'/forget_password'}>Forgot your password?</Link>
               <div className='flex gap-2 text-center items-center justify-center'>
                 <p className='text-[#2e2e2e] '>Don&apos;t have an account?</p>
                 <Link href={'/signup'} className='text-[#d17160]  gap-2 '>Sign up</Link>
