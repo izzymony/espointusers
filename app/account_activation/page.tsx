@@ -1,5 +1,5 @@
 "use client";
-import React, { useState , useEffect} from "react";
+import React, { useState , useEffect, Suspense } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
@@ -59,52 +59,54 @@ const AccountActivation = () => {
   };
 
   return (
-    <div className="bg-[#ffffff] h-screen mt-18 px-4 ">
+    <Suspense fallback={<div>Loading...</div>}>
+      <div className="bg-[#ffffff] h-screen mt-18 px-4 ">
 
-       <Image
-              src={"/espointtower.jpg"}
-              alt=""
-              width={110}
-              height={110}
-              className="mx-auto rounded-md "/>
-              <div className="bg-[#faf0e8] p-4 rounded-full w-fit flex mx-auto mb-4 mt-4">
-              <Image src={'/icons8-mail-50.png'} alt=""height={34} width={34} className=""/>
-              </div>
-<h1 className="text-black text-center font-bold text-3xl">Activate Your Account</h1>
-<p className="text-black mt-3 font-sm text-[18px] text-center md:text-4xl">Enter the activation code to your email</p>
-      <div className=" ">
-        
-        <div className="bg-[#fffbed] py-3 w-full max-w-md p-5 border border-gray-300 shadow-lg rounded-md mt-5 mx-auto">
-          <div className="py-5">
-          <h1 className="text-black text-2xl font-bold text-center mb-2"> Account Activation</h1>
+         <Image
+                src={"/espointtower.jpg"}
+                alt=""
+                width={110}
+                height={110}
+                className="mx-auto rounded-md "/>
+                <div className="bg-[#faf0e8] p-4 rounded-full w-fit flex mx-auto mb-4 mt-4">
+                <Image src={'/icons8-mail-50.png'} alt=""height={34} width={34} className=""/>
+                </div>
+  <h1 className="text-black text-center font-bold text-3xl">Activate Your Account</h1>
+  <p className="text-black mt-3 font-sm text-[18px] text-center md:text-4xl">Enter the activation code to your email</p>
+        <div className=" ">
           
-            {loading && (<p className="text-blue-600 text-center mb-4">Activating your account...</p>)}
-          {!loading && success && (<p className="text-green-600 text-center mb-2">{success}</p>)}
-          {!loading && error && (<p className="text-red-600 text-center mb-2">{error}</p>)}
-          {!uidb64 || !token ? (
-            <p className="text-black text-[16px] mb-4 text-center">
-              Invalid activation link. Please check your email for the correct activation link or contact support.
-            </p>
-          ) : null}
+          <div className="bg-[#fffbed] py-3 w-full max-w-md p-5 border border-gray-300 shadow-lg rounded-md mt-5 mx-auto">
+            <div className="py-5">
+            <h1 className="text-black text-2xl font-bold text-center mb-2"> Account Activation</h1>
+            
+              {loading && (<p className="text-blue-600 text-center mb-4">Activating your account...</p>)}
+            {!loading && success && (<p className="text-green-600 text-center mb-2">{success}</p>)}
+            {!loading && error && (<p className="text-red-600 text-center mb-2">{error}</p>)}
+            {!uidb64 || !token ? (
+              <p className="text-black text-[16px] mb-4 text-center">
+                Invalid activation link. Please check your email for the correct activation link or contact support.
+              </p>
+            ) : null}
 
-          {success && (<p className="text-green-600 text-center mb-2">{success}</p>)}
-          {error && (<p className="text-red-600 text-center mb-2">{error}</p>)}
+            {success && (<p className="text-green-600 text-center mb-2">{success}</p>)}
+            {error && (<p className="text-red-600 text-center mb-2">{error}</p>)}
 
-          <p className="text-black font-sm "></p>
-          <button
-            onClick={handleResend}
-            disabled={loading}
-            className="bg-[#d4731e] w-full text-white  p-2 mt-2 rounded-md font-sm mb-2"
-          >
-            {loading ? "Resending..." : "Resend Activation Email"}
-          </button>
-          <div className="text-center mt-4">
-            <Link href="/login" className="text-[#d4731e] underline">Back to Sign In</Link>
-          </div>
+            <p className="text-black font-sm "></p>
+            <button
+              onClick={handleResend}
+              disabled={loading}
+              className="bg-[#d4731e] w-full text-white  p-2 mt-2 rounded-md font-sm mb-2"
+            >
+              {loading ? "Resending..." : "Resend Activation Email"}
+            </button>
+            <div className="text-center mt-4">
+              <Link href="/login" className="text-[#d4731e] underline">Back to Sign In</Link>
+            </div>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </Suspense>
   );
 };
 
