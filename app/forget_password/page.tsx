@@ -58,7 +58,7 @@ const ForgotPassword = () => {
   };
 
   return (
-    <div className="bg-white h-screen px-4 mt-18">
+    <div className="bg-white  px-4 mt-18">
          <Image
               src={"/espointtower.jpg"}
               alt=""

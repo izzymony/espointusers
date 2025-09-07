@@ -1,9 +1,9 @@
 "use client";
-import React, { useState , useEffect } from "react";
+import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-
+import { CheckCircle, RefreshCw } from "lucide-react";
 const AccountActivationClient = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -12,39 +12,28 @@ const AccountActivationClient = () => {
   const uidb64 = searchParams.get("uidb64");
   const token = searchParams.get("token");
 
-  useEffect(() => {
-    if(uidb64 && token){
-      setLoading(true);
-      setError("");
-      setSuccess("");
-      fetch(`https://espoint-auth.onrender.com/api/v1.0/auth/activate_account/uidb64/token/${uidb64}/${token}`, {
+  const handleActivate = async () => {
+    if (!uidb64 || !token) return;
+    setLoading(true);
+    setError("");
+    setSuccess("");
+    try {
+      const response = await fetch(`https://espoint-auth.onrender.com/api/v1.0/auth/activate_account/uidb64/token/${uidb64}/${token}`, {
         method: "GET",
         headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({
-          uidb64: uidb64,
-          token: token
-        })
-      })
-      .then((res) => {
-        if(res.ok){
-          setSuccess("Your account has been successfully activated! You can now log in.");
-          setLoading(false);
-        } else{
-          setError("Activation link is invalid or has expired. Please request a new activation email.&apos;");
-          setLoading(false);
-          setSuccess("")
-        }
-      })
-      .catch(() => {
-        setError("Network error. Please try again later.");
-        setLoading(false);
-        setSuccess("")
-      })
-      .finally(()=>{
-        setLoading(false);
-      })
+      });
+      if (response.ok) {
+        setSuccess("Your account has been successfully activated! You can now log in.");
+      } else {
+        const data = await response.json().catch(() => ({}));
+        setError(data?.message || "Activation link is invalid or has expired. Please request a new activation email.");
+      }
+    } catch {
+      setError("Network error. Please try again later.");
+    } finally {
+      setLoading(false);
     }
-  }, [uidb64, token]);
+  };
 
   const handleResend = () => {
     setError("");
@@ -57,7 +46,7 @@ const AccountActivationClient = () => {
   };
 
   return (
-    <div className="bg-[#ffffff] h-screen mt-18 px-4 ">
+    <div className="bg-[#ffffff]  mt-18 px-4 ">
       <Image
         src={"/espointtower.jpg"}
         alt=""
@@ -68,7 +57,7 @@ const AccountActivationClient = () => {
         <Image src={'/icons8-mail-50.png'} alt="" height={34} width={34} className=""/>
       </div>
       <h1 className="text-black text-center font-bold text-3xl">Activate Your Account</h1>
-      <p className="text-black mt-3 font-sm text-[18px] text-center md:text-4xl">Enter the activation code to your email</p>
+      <p className="text-black mt-3 font-sm text-[18px] text-center md:text-4xl">A link will be sent to your provided email for activation </p>
       <div className=" ">
         <div className="bg-[#fffbed] py-3 w-full max-w-md p-5 border border-gray-300 shadow-lg rounded-md mt-5 mx-auto">
           <div className="py-5">
@@ -86,14 +75,34 @@ const AccountActivationClient = () => {
             {success && (<p className="text-green-600 text-center mb-2">{success}</p>)}
             {error && (<p className="text-red-600 text-center mb-2">{error}</p>)}
 
-            <p className="text-black font-sm "></p>
-            <button
-              onClick={handleResend}
-              disabled={loading}
-              className="bg-[#d4731e] w-full text-white  p-2 mt-2 rounded-md font-sm mb-2"
+               <button
+              className="w-full bg-[#d4731e] hover:bg-[#d4731e] text-white font-medium py-2.5 rounded flex items-center justify-center mb-4"
+              onClick={handleActivate}
+              disabled={!uidb64 || !token || loading || !!success}
+              style={{opacity: (!uidb64 || !token || loading || !!success) ? 0.6 : 1, pointerEvents: (!uidb64 || !token || loading || !!success) ? 'none' : 'auto'}}
             >
-              {loading ? "Resending..." : "Resend Activation Email"}
+              {loading ? (
+                <>
+                  <svg className="animate-spin h-5 w-5 mr-2 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg>
+                  Activating...
+                </>
+              ) : (
+                <>
+                  <CheckCircle className="w-4 h-4 mr-2" />
+                  Activate Account
+                </>
+              )}
             </button>
+
+            <p className="text-black font-sm "></p>
+            
+             <div className=" text-center space-y-3">
+              <p className="text-sm text-muted-foreground">Didn't receive the code?</p>
+              <button onClick={handleResend}  className="border-1 p-1 px-2 flex border mx-auto hover:bg-muted bg-transparent outline">
+                <RefreshCw className="w-4 h-4 mr-2 mt-1" />
+                Resend Code
+              </button>
+            </div>
             <div className="text-center mt-4">
               <Link href="/login" className="text-[#d4731e] underline">Back to Sign In</Link>
             </div>

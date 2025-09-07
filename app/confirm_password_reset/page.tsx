@@ -89,7 +89,7 @@ const SetNewPassword = () => {
   };
 
   return (
-    <div className="bg-white h-screen px-4 mt-18">
+    <div className="bg-white px-4 mt-18">
       <Image
                     src={"/espointtower.jpg"}
                     alt=""
@@ -104,7 +104,7 @@ const SetNewPassword = () => {
                      <h1 className="text-black text-3xl mt-4  font-bold text-center ">Reset Password </h1>
           <p className="text-black text-[18px] mt-2 font-sm text-center">Enter your new password below</p>
       <div className="">
-        <div className="bg-[#fffbed] w-full mt-5 max-w-md p-5 border border-gray-300 shadow-lg rounded-md">
+        <div className="c w-full mt-5 max-w-md p-5 border border-gray-300 shadow-lg rounded-md">
           <div className="mx-auto mb-4 py-2">
           </div>
           <h1 className="text-[#475569] text-2xl font-bold text-center text-black">Set New Password</h1>

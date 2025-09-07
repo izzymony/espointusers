@@ -115,7 +115,7 @@ const Signup = () => {
   };
 
   return (
-    <div className=" h-screen mt-18">
+    <div className=" mt-18">
        <div className="">
                  <Image src={'/espointtower.jpg'} alt="ESPOINT" width={150} height={150} className="mx-auto rounded-md"/>
                 </div>

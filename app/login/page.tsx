@@ -128,7 +128,7 @@ const Login = () => {
   };
 
   return (
-    <div className='bg-[#ffffff] h-screen mt-18 px-4 '>
+    <div className='bg-[#ffffff]  mt-18 px-4 '>
        <div className="">
            <Image src={'/espointtower.jpg'} alt="ESPOINT" width={150} height={150} className="mx-auto rounded-md"/>
           </div>
@@ -195,7 +195,7 @@ const Login = () => {
             </div>
             {successMessage && <p className="text-green-600 text-center ">{successMessage}</p>}
             <div className='text-center mt-4'>
-             <Link className=' text-[#d17160] mt-4  text-right ' href={'/forget_password'}>Forgot your password?</Link>
+             <Link className=' text-[#d17160] mt-4  text-center ' href={'/forget_password'}>Forgot your password?</Link>
               <div className='flex gap-2 text-center items-center justify-center'>
                 <p className='text-[#2e2e2e] '>Don&apos;t have an account?</p>
                 <Link href={'/signup'} className='text-[#d17160]  gap-2 '>Sign up</Link>
