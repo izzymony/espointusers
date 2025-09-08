@@ -107,7 +107,7 @@ const Page = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-10">
             {content.map((item) => (
-              <div key={item.id} className='bg-[#fffbed] border border-gray-200 rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-500 transform hover:-translate-y-1'>
+              <div key={item.id} className='bg-[#fffbed] h-[300px] border border-gray-200 rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-500 transform hover:-translate-y-1'>
                 <div className="relative w-full h-72 overflow-hidden">
                   {/* Loading indicator */}
                   {isLoading[item.id] && (
