@@ -97,7 +97,7 @@ const AccountActivationClient = () => {
             <p className="text-black font-sm "></p>
             
              <div className=" text-center space-y-3">
-              <p className="text-sm text-muted-foreground">Didn't receive the code?</p>
+              <p className="text-sm text-muted-foreground">Didn&apos;t receive the code?</p>
               <button onClick={handleResend}  className="border-1 p-1 px-2 flex border mx-auto hover:bg-muted bg-transparent outline">
                 <RefreshCw className="w-4 h-4 mr-2 mt-1" />
                 Resend Code

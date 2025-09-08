@@ -78,53 +78,57 @@ const ContentService = () => {
             return (
               <div
                 key={content.content_id}
-                className="bg-[#fffbed]  pb-4  border border-gray-200 rounded-xl shadow-lg hover:shadow-xl transition-all duration-500 transform hover:-translate-y-1"
+                className="bg-[#fffbed] h-fit pb-6 border border-gray-200 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-1 flex flex-col overflow-hidden"
               >
-
+                <div className="relative w-full">
                   {store.branding.logo_url.length > 0 ? (
-                      <Image
-                        src={store.branding.logo_url[0]}
-                        alt={store.name}
-                        width={400}
-                        height={200}
-                        className="w-full h-48 object-cover"
-                      />
-
-                      
-                    ) : (
-                      <div className="w-full h-48 bg-gray-200 flex items-center justify-center text-gray-500 text-sm">
-                        <Image src={'/camera-431119_1280.jpg'}  alt={store.name}
-                        width={400}
-                        height={200}
-                        className="w-full h-60 object-cover" />
-                      </div>
-
-                    )}
-                  <div className=" relative -top-45  flex justify-between items-center px-4 mt-2">
-  <div className="  text-center py-0.5 px-3 rounded-full bg-primary text-primary-foreground capitalize">
-    {store.category}
-  </div>
-  <button
-    className="  p-2 bg-white/90 hover:bg-white rounded-full transition-colors"
-    onClick={(e) => e.preventDefault()}
-  >
-    <Heart className="w-4 h-4 text-muted-foreground hover:text-red-500 transition-colors" />
-  </button>
-</div>
-                <div className='px-4  py-8' >
-                  <div className='flex justify-between items-center'>
-                  <h1 className='font-semibold text-[26px]'>{store.name}</h1>
-                     <span className={` ${store.status === 'active' ? 'text-green-600' : 'text-gray-600' } font-medium`}>{store.status}</span>
-                     </div>
-                  <div className='flex flex-col-1 py-5 font-medium text-[18px]'>
-                    <div>{store.description}</div>
+                    <Image
+                      src={store.branding.logo_url[0]}
+                      alt={store.name}
+                      width={1200}
+                      height={600}
+                      className="w-full h-[220px] sm:h-[260px] md:h-[320px] lg:h-[380px] object-cover"
+                      priority
+                    />
+                  ) : (
+                    <Image
+                      src={'/camera-431119_1280.jpg'}
+                      alt={store.name}
+                      width={1200}
+                      height={600}
+                      className="w-full h-[220px] sm:h-[260px] md:h-[320px] lg:h-[380px] object-cover"
+                      priority
+                    />
+                  )}
+                  {/* Overlay category and heart button */}
+                  <div className="absolute top-4 left-0 w-full flex justify-between items-center px-6 z-10">
+                    <div className="text-center py-1 px-4 rounded-full bg-primary text-primary-foreground capitalize shadow-lg">
+                      {store.category}
+                    </div>
+                    <button
+                      className="p-2 bg-white/90 hover:bg-white rounded-full transition-colors shadow-lg"
+                      onClick={(e) => e.preventDefault()}
+                    >
+                      <Heart className="w-6 h-6 text-muted-foreground hover:text-red-500 transition-colors" />
+                    </button>
                   </div>
-
-                  <div className='flex justify-between items-center'>
-                    <span className='font-bold  text-[#d4731e] text-[24px]'>&#8358; {store.base_price} </span>
-                    <button onClick={() => router.push(`/services/${service_id}/content/${content.content_id}`)} className="  bg-[#d4731e]  text-white hover:bg-[#d4731e]text-white py-2 px-4 rounded-lg transition-colors duration-300" >
-                    Book Now
-                  </button>
+                </div>
+                <div className="px-6 py-6 flex flex-col gap-4 flex-1">
+                  <div className="flex justify-between items-center">
+                    <h1 className="font-semibold text-xl md:text-2xl lg:text-3xl">{store.name}</h1>
+                    <span className={` ${store.status === 'active' ? 'text-green-600' : 'text-gray-600'} font-medium`}>{store.status}</span>
+                  </div>
+                  <div className="py-2 font-medium text-base md:text-lg text-gray-700">
+                    {store.description}
+                  </div>
+                  <div className="flex justify-between items-center mt-auto">
+                    <span className="font-bold text-[#d4731e] text-lg md:text-xl lg:text-2xl">&#8358; {store.base_price}</span>
+                    <button
+                      onClick={() => router.push(`/services/${service_id}/content/${content.content_id}`)}
+                      className="bg-[#d4731e] text-white hover:bg-[#b85c0f] py-2 px-5 rounded-lg transition-colors duration-300 font-semibold shadow-md"
+                    >
+                      Book Now
+                    </button>
                   </div>
                 </div>
 
