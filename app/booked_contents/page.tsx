@@ -1,59 +1,45 @@
 'use client'
-import React, {useState, useEffect} from 'react'
-import { useParams, useRouter } from 'next/navigation';
-import Loader from '@/app/components/Loading';
-import Nav from '@/app/components/Nav';
-import Image from 'next/image';
-import { Heart } from 'lucide-react';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import React, { useState, useEffect } from 'react'
+import {  useRouter } from 'next/navigation'
+import Nav from '@/app/components/Nav'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 
-interface Booking{
-booking_id: string;
+interface Booking {
+  booking_id: string;
   service: string;
   service_unit: string;
   status: string;
-  created: string;             
+  created: string;
 }
 
-const page = () => {
-const router = useRouter();
-const [loading, setLoading] = useState(false)
-const [error, setError] = useState('')
-const params = useParams();
- const [bookings, setBookings] = useState<Booking[]>([]);
+const Page = () => {
+  const router = useRouter();
+  const [bookings, setBookings] = useState<Booking[]>([]);
 
-useEffect(() => {
+  useEffect(() => {
     const storedUser = JSON.parse(localStorage.getItem("user") || "{}");
-    if (!storedUser?.username) {
-      setError("You must be logged in to view your bookings.");
-      return;
-    }
+    if (!storedUser?.username) return;
 
     const username = storedUser.username;
-    const status = "pending"; // change to "pending" or "confirmed" if you want filtering
+    const status = "pending";
     const url = `https://espoint.onrender.com/espoint/get_user_booking/${username}/${status}`;
 
-    setLoading(true);
     fetch(url)
       .then((res) => {
         if (!res.ok) throw new Error("Failed to fetch bookings");
         return res.json();
       })
       .then((data) => {
-       if (data.msg) {
-          setBookings(data.msg);
-        }
+        if (data.msg) setBookings(data.msg);
       })
-      .catch((err) => setError(err.message))
-      .finally(() => setLoading(false));
+      .catch(() => {});
   }, []);
-              
-  return (
-    <div className="bg-white h-[100vh]">
-      <Nav/>
-      <div className="max-w-7xl mx-auto pt-28 pb-16 px-6">
-        <h1 className="text-5xl font-bold mb-10 text- black  drop-shadow-lg">My Bookings</h1>
 
+  return (
+    <div className="bg-white min-h-screen">
+      <Nav />
+      <div className="max-w-7xl mx-auto pt-28 pb-16 px-6">
+        <h1 className="text-5xl font-bold mb-10 drop-shadow-lg">My Bookings</h1>
         {bookings.length === 0 ? (
           <div className="bg-white rounded-2xl shadow-lg p-12 text-center text-gray-500 text-xl">No bookings yet.</div>
         ) : (
@@ -99,4 +85,4 @@ useEffect(() => {
   )
 }
 
-export default page
+export default Page
