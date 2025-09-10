@@ -6,10 +6,10 @@ export default function Home() {
   return (
     <div className="bg-white min-h-screen">
       <Nav />
-      <div className="flex flex-col h-screen items-center justify-center pt-32 px-4">
+      <div className="flex flex-col h-screen items-center justify-center px-4">
 
         <h1 className="font-bold text-5xl text-center mt-2 mb-4">
-          Book Your Perfect <span className="text-[#d4731e]">Experience</span>
+          ESTrans<span className="text-[#d4731e]">Pro</span>
         </h1>
         <p className="text-black text-lg text-center mt-2 mb-8 max-w-xl mx-auto">
           Your luxury is our concern. Create your account today and access the best services and products that suit your needs. Classy photography, modern outfit alignment, event planning and management, and more.
