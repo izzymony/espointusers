@@ -119,7 +119,7 @@ const Login = () => {
       
       // Optional: Redirect user after successful login
       // router.push('/dashboard');
-      router.push('/bookings')
+      router.push('/services')
     } catch (err) {
       setErrors({ password: "Network error. Please try again." });
     } finally {

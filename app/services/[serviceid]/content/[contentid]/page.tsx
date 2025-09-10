@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import Loader from '@/app/components/Loading';
 import Nav from '@/app/components/Nav';
 import Image from 'next/image';
@@ -40,18 +40,56 @@ interface ServiceContent {
   store: ServiceStore;
 }
 
+interface FormData{
+  client_name: string;
+  client_email: string;
+  client_phone: string;
+  service_date: string;
+  service_time: string;
+  notes: string;
+  preferred_staff_id: string;
+  status: string;
+  username?: string;
+}
+
+
 const ContentDetails = () => {
+  const [showModal, setShowModal] = useState(false);
   const params = useParams();
   const content_id = params?.contentid as string;
 
   const [content, setContent] = useState<ServiceContent | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const router = useRouter()
 
   const [bookingLoading, setBookingLoading] = useState(false);
   const [bookingSuccess, setBookingSuccess] = useState('');
   const [bookingError, setBookingError] = useState('');
+  const [formData, setFormData] = useState<FormData>({
+    client_name: '',
+  client_email: '',
+  client_phone: '',
+  service_date: '',
+  service_time: '',
+  notes: '',
+  preferred_staff_id: '',
+  status: 'pending', 
+  })
 
+
+  useEffect(() => {
+  const storedUser = JSON.parse(localStorage.getItem("user") || "{}");
+  if (storedUser?.username) {
+    setFormData((prev) => ({
+      ...prev,
+      username: storedUser.username,
+    }));
+  }
+}, []);
+
+
+  
   useEffect(() => {
     if (!content_id) return;
 
@@ -75,26 +113,37 @@ const ContentDetails = () => {
       .finally(() => setLoading(false));
   }, [content_id]);
 
-  const handleBooking = async () => {
-    setBookingLoading(true);
-    setBookingError("");
-    setBookingSuccess("");
 
-    try{
-      const res = await fetch(`https://espoint.onrender.com/espoint/create_booking`, {
-        method: "POST",
-        headers:{
-          'Content-Type' : "application/json",
-        },
-        body: JSON.stringify({
-          content_id: content?.content_id,
-        service_id: content?.service,
-        quantity: itemQuantity,
-        total_price: totalPrice,
-        })
-      })
+const handleFormChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+  const { name, value } = e.target;
+setFormData((prev) => ({...prev, [name]: value}))
+}
 
-      const data = await res.json();
+   /* const handleSubmitBooking = async (e) => {
+  e.preventDefault();
+  setBookingLoading(true);
+  setBookingSuccess('');
+  setBookingError('');
+  try {
+    const payload = {
+      service_id: content?.service || '',
+      booking_id: '',
+      username: '',
+      from: 'internal/external',
+      data: {
+        ...formData,
+        amount: totalPrice,
+        currency: 'NGN',
+        status: 'pending',
+        service_package_id: content?.content_id || '',
+      },
+    };
+    const res = await fetch('https://espoint.onrender.com/espoint/create_booking', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+    const data = await res.json();
     if (res.ok && data.success) {
       setBookingSuccess('Booking successful!');
     } else {
@@ -105,7 +154,75 @@ const ContentDetails = () => {
   } finally {
     setBookingLoading(false);
   }
+};
+ */
+
+const handleSubmitBooking = async (e: React.FormEvent<HTMLFormElement | HTMLSelectElement>) => {
+  e.preventDefault();
+  setBookingLoading(true);
+  setBookingSuccess('');
+  setBookingError('');
+
+  try {
+    const storedUser = JSON.parse(localStorage.getItem("user") || "{}");
+
+    if(!storedUser || !storedUser.username){
+      setBookingError('You must be logged in to make a booking')
+      return;
+    }
+
+    const payload = {
+      service: content?.service || "",
+      service_unit: content?.service_unit || "",
+      username:formData.username,
+      from: "internal", // you can set "external" if needed
+      data: {
+        client_email: formData.client_email,
+        preferred_staff_id: formData.preferred_staff_id,
+        notes: formData.notes,
+        service_time: formData.service_time,
+        amount: String(totalPrice), // backend expects string
+        currency: "NGN",
+        service_date: formData.service_date,
+        client_phone: formData.client_phone,
+        client_name: formData.client_name,
+        status: "pending", // default status
+        completed_date: "", // leave empty
+        booking_code: "",   // leave empty, backend may generate this
+      },
+    };
+
+    console.log("Submitting booking payload:", payload);
+
+    const res = await fetch("https://espoint.onrender.com/espoint/create_booking", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+
+    const data = await res.json();
+
+    // Log the response for debugging
+    console.log("Booking response:", data);
+    // Extract booking_id from data.msg (e.g., {msg: "Booking ID <id>"})
+    let bookingId = "";
+    if (data.msg && typeof data.msg === "string" && data.msg.startsWith("Booking ID ")) {
+      bookingId = data.msg.replace("Booking ID ", "");
+    }
+    if (res.ok && bookingId) {
+      setBookingSuccess("Booking successful!");
+      router.push(`/booked_contents`);
+      setShowModal(false);
+    } else {
+      setBookingError(data.message || "Booking failed.");
+    }
+  } catch (err) {
+    console.error("Booking failed:", err);
+    setBookingError("Booking failed.");
+  } finally {
+    setBookingLoading(false);
   }
+};
 
   if (loading) return <div className="mt-20 flex h-[100vh] justify-center items-center"><Loader /></div>;
   if (error) return <div className="text-red-500 mt-20">{error}</div>;
@@ -254,11 +371,66 @@ const ContentDetails = () => {
               <div className='flex justify-center'>
               <button
   className='text-white font-bold rounded-lg bg-[#d4731e] p-2 w-[200px] text-white disabled:opacity-60'
-  onClick={handleBooking}
+  
   disabled={bookingLoading}
+  onClick={() => setShowModal(true)}
 >
   {bookingLoading ? 'Booking...' : 'Book'}
 </button>
+      {/* Popup Modal */}
+     {showModal && (
+  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 bg-opacity-40">
+    <div className="bg-white rounded-xl shadow-lg p-8 w-[500px] text-center relative">
+      <button
+        className="absolute top-2 right-2 text-gray-500 hover:text-red-500 text-xl font-bold"
+        onClick={() => setShowModal(false)}
+      >
+        &times;
+      </button>
+      <h2 className="text-2xl font-bold mb-4">Complete Your Booking</h2>
+      <form onSubmit={handleSubmitBooking} className="flex flex-col gap-4 text-left">
+        <input name="client_name" value={formData.client_name} onChange={handleFormChange} className="border rounded px-3 py-2" placeholder="Full Name" required />
+        <input name="client_email" value={formData.client_email} onChange={handleFormChange} className="border rounded px-3 py-2" placeholder="Email" required type="email" />
+        <input name="client_phone" value={formData.client_phone} onChange={handleFormChange} className="border rounded px-3 py-2" placeholder="Phone" required />
+        <input type='date' name="service_date" value={formData.service_date} onChange={handleFormChange} className="border rounded px-3 py-2" placeholder="Service Date (YYYY-MM-DD)" required />
+        <input type='time' name="service_time" value={formData.service_time} onChange={handleFormChange} className="border rounded px-3 py-2" placeholder="Service Time (e.g. 10:00)" required />
+        <input name="notes" value={formData.notes} onChange={handleFormChange} className="border rounded px-3 py-2" placeholder="Notes (optional)" />
+        <input
+  name="username"
+  value={formData.username}
+  onChange={handleFormChange}
+  className="border rounded px-3 py-2"
+  placeholder="Username"
+  required
+/>
+
+        <select
+  name="status"
+  value={formData.status}
+onChange={handleFormChange
+
+}
+  className="border rounded px-3 py-2"
+>
+  <option value="pending">Pending</option>
+  <option value="confirmed">Confirmed</option>
+  <option value="cancelled">Cancelled</option>
+</select>
+
+        <button
+          type="submit"
+          className="bg-[#d4731e] text-white font-bold rounded-lg py-2 mt-2 disabled:opacity-60"
+          disabled={bookingLoading}
+   
+        >
+          {bookingLoading ? 'Booking...' : 'Submit Booking'}
+        </button>
+      </form>
+      {bookingSuccess && <p className="text-green-600 font-semibold mt-4">{bookingSuccess}</p>}
+      {bookingError && <p className="text-red-600 font-semibold mt-4">{bookingError}</p>}
+    </div>
+  </div>
+)}
               </div>
             </div>
           </div>
