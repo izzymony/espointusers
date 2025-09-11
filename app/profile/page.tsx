@@ -74,8 +74,12 @@ const Page = () => {
       setUserInfo((prev) =>
         prev ? { ...prev, profile_image: data.msg?.profile_image } : prev
       );
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("An unknown error occurred");
+      }
     } finally {
       setUploading(false);
     }
