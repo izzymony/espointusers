@@ -49,15 +49,52 @@ const AccountActivationClient = () => {
     }
   };
 
-  const handleResend = () => {
+const handleResend = async () => {
     setError("");
     setSuccess("");
     setLoading(true);
-    setTimeout(() => {
+
+    // ✅ Get user email from localStorage
+    const email = localStorage.getItem("email");
+
+    if (!email) {
+      setError("No email found. Please log in first.");
       setLoading(false);
-      setSuccess("A new activation link has been sent to your email.");
-    }, 1600);
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        "https://espoint-auth.onrender.com/api/v1.0/auth/resend_activation_link",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ email }), // ✅ send email dynamically
+        }
+      );
+
+      if (response.ok) {
+        const data = await response.json();
+        setSuccess(
+          data?.message ||
+            "A new activation link has been sent to your email."
+        );
+      } else {
+        const data = await response.json().catch(() => ({}));
+        setError(
+          data?.message ||
+            "Failed to resend activation link. Please try again later."
+        );
+      }
+    } catch {
+      setError("Network error. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
+
 
   return (
     <div className="bg-[#ffffff] mt-18 px-4">
@@ -92,7 +129,7 @@ const AccountActivationClient = () => {
 
         {loading && (
           <p className="text-blue-600 text-center mb-2">
-            Activating your account...
+            Processing request...
           </p>
         )}
         {!loading && success && (
@@ -105,7 +142,7 @@ const AccountActivationClient = () => {
         <button
           className="w-full bg-[#d4731e] hover:bg-[#b95f19] text-white font-medium py-2.5 rounded flex items-center justify-center mb-4 transition disabled:opacity-60 disabled:cursor-not-allowed"
           onClick={handleActivate}
-          disabled={loading} // ✅ only disabled when loading
+          disabled={loading}
         >
           {loading ? (
             <>
@@ -129,7 +166,7 @@ const AccountActivationClient = () => {
                   d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
                 ></path>
               </svg>
-              Activating...
+              Processing...
             </>
           ) : (
             <>
@@ -143,7 +180,8 @@ const AccountActivationClient = () => {
           <p className="text-sm text-gray-600">Didn&apos;t receive the link?</p>
           <button
             onClick={handleResend}
-            className="border px-3 py-1 flex items-center justify-center mx-auto hover:bg-gray-100 rounded"
+            className="border px-3 py-1 flex items-center justify-center mx-auto hover:bg-gray-100 rounded disabled:opacity-60"
+            disabled={loading}
           >
             <RefreshCw className="w-4 h-4 mr-2" />
             Resend Link
