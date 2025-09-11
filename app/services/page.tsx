@@ -41,7 +41,7 @@ const ServicePage = () => {
   }, []);
             
   return (
-    <div className="bg-white px-4 mt-18 ">
+    <div className="bg-white mt-18 ">
       <Nav/>
 
               <h1 className="text-4xl font-bold mb-4  mt-8 pt-14 text-center">Empowering your needs with our services</h1>      
@@ -52,6 +52,8 @@ const ServicePage = () => {
               ) : error ? (
                 <p className="text-red-500">{error}</p>
               ) : (
+
+                <div className="px-4">
                 <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
                   {services.length > 0 ? (
                     services.map((service) => (
@@ -76,6 +78,7 @@ const ServicePage = () => {
                   ) : (
                     <p>No services found.</p>
                   )}
+                </div>
                 </div>
               )}
     </div>

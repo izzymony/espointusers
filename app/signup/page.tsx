@@ -94,7 +94,7 @@ const Signup = () => {
 
       if (response.ok) {
         setSuccessMessage("Sign up successful! You may now sign in.");
-        router.push('/account_activation')
+        router.push('/activate')
         // Optionally, reset the form:
         setFormData({
           firstName: "",
