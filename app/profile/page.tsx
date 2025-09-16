@@ -3,7 +3,8 @@
 import React, { useState, useEffect } from "react";
 import Loader from "../components/Loading";
 import Nav from "../components/Nav";
-
+import { Camera} from "lucide-react";
+import Delete from "../components/Delete";
 interface UserInfo {
   username: string;
   email?: string;
@@ -99,24 +100,13 @@ const Page = () => {
     return <div className="mt-20 text-center">No user data found.</div>;
 
   return (
-    <div className="bg-white pt-26 min-h-screen">
+    <div className="bg-white pt-8 min-h-screen">
       <Nav />
-      <div className="max-w-xl mx-auto mt-20 p-6 bg-white shadow-2xl rounded-2xl">
+      <div className=" max-w-xl mx-auto mt-20 p-6 bg-white shadow-2xl rounded-2xl">
         <h1 className="text-2xl font-bold text-[#d4731e] mb-6">User Profile</h1>
 
         {/* Profile Image */}
-        <div className="flex flex-col items-center mb-6">
-          <img
-            src={userInfo.profile_image || "/default-avatar.png"}
-            alt="Profile"
-            className="w-28 h-28 rounded-full object-cover border-4 border-[#d4731e] shadow-md"
-          />
-          <label className="mt-4 cursor-pointer bg-[#d4731e] text-white px-4 py-2 rounded-lg hover:bg-[#b55d15] transition">
-            {uploading ? "Uploading..." : "Upload Image"}
-            <input type="file" className="hidden" onChange={handleFileChange} />
-          </label>
-        </div>
-
+      
         {/* User Info */}
         <div className="space-y-4">
           <Info label="Username" value={userInfo.username} />
@@ -124,8 +114,7 @@ const Page = () => {
             label="Full Name"
             value={`${userInfo.first_name} ${userInfo.last_name}`}
           />
-          <Info label="Email" value={userInfo.email || "-"} />
-          <Info label="Phone" value={userInfo.phone || "-"} />
+         
           <Info label="Status" value={userInfo.status || "active"} />
         </div>
 
@@ -136,8 +125,11 @@ const Page = () => {
               ? new Date(userInfo.date_joined).toLocaleString()
               : "-"}
           </span>
+        
         </div>
+      
       </div>
+
     </div>
   );
 };

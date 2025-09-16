@@ -35,7 +35,7 @@ const ContentService = () => {
   useEffect(() => {
     if (!service_id) return;
 
-    const url = `https://espoint.onrender.com/espoint/get_all_content_based_service_and_status/${service_id}/active`;
+    const url = `https://espoint.onrender.com/espoint/get_all_content_based_service_and_status/${service_id}/approved`;
     console.log("Fetching URL:", url);
 
     setLoading(true);
@@ -72,7 +72,7 @@ const ContentService = () => {
           Explore service contents
         </h1>
 
-        <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-6 grid-cols-1 w-full md:grid-cols-2  lg:grid-cols-3">
           {serviceContent.map((content) => {
             const { store } = content;
             return (
@@ -102,7 +102,7 @@ const ContentService = () => {
                   )}
                   {/* Overlay category and heart button */}
                   <div className="absolute top-4 left-0 w-full flex justify-between items-center px-6 z-10">
-                    <div className="text-center py-1 px-4 rounded-full bg-primary text-primary-foreground capitalize shadow-lg">
+                    <div className="text-center py-1 px-4 rounded-full bg-[#d4731e] text-primary-foreground capitalize shadow-lg">
                       {store.category}
                     </div>
                     <button
@@ -116,11 +116,13 @@ const ContentService = () => {
                 <div className="px-6 py-6 flex flex-col gap-4 flex-1">
                   <div className="flex justify-between items-center">
                     <h1 className="font-semibold text-xl md:text-2xl lg:text-3xl">{store.name}</h1>
-                    <span className={` ${store.status === 'active' ? 'text-green-600' : 'text-gray-600'} font-medium`}>{store.status}</span>
+                    <span className={` ${store.status === 'approved' ? 'text-[#d4731e]' : 'text-gray-600'} font-medium`}>{store.status}</span>
                   </div>
-                  <div className="py-2 font-medium text-base md:text-lg text-gray-700">
-                    {store.description}
-                  </div>
+                  <div className="py-2 font-sx text-[16px] text-base ">
+  {store.description.length > 120
+    ? store.description.slice(0, 120) + '...'
+    : store.description}
+</div>
                   <div className="flex justify-between items-center mt-auto">
                     <span className="font-bold text-[#d4731e] text-lg md:text-xl lg:text-2xl">&#8358; {store.base_price}</span>
                     <button

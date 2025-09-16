@@ -49,7 +49,9 @@ interface FormData{
   notes: string;
   preferred_staff_id: string;
   status: string;
+  booking_code:string
   username?: string;
+
 }
 
 
@@ -73,7 +75,9 @@ const ContentDetails = () => {
   service_date: '',
   service_time: '',
   notes: '',
+  booking_code: '',
   preferred_staff_id: '',
+
   status: 'pending', 
   })
 
@@ -188,7 +192,7 @@ const handleSubmitBooking = async (e: React.FormEvent<HTMLFormElement | HTMLSele
         client_name: formData.client_name,
         status: "pending", // default status
         completed_date: "", // leave empty
-        booking_code: "",   // leave empty, backend may generate this
+        booking_code: formData.booking_code,   // leave empty, backend may generate this
       },
     };
 
@@ -396,6 +400,14 @@ const handleSubmitBooking = async (e: React.FormEvent<HTMLFormElement | HTMLSele
         <input type='time' name="service_time" value={formData.service_time} onChange={handleFormChange} className="border rounded px-3 py-2" placeholder="Service Time (e.g. 10:00)" required />
         <input name="notes" value={formData.notes} onChange={handleFormChange} className="border rounded px-3 py-2" placeholder="Notes (optional)" />
         <input
+  type="text"
+  name="booking_code"
+  value={formData.booking_code}
+  onChange={handleFormChange}
+  className="border rounded px-3 py-2"
+  placeholder="Booking code (optional)"
+/>
+        <input
   name="username"
   value={formData.username}
   onChange={handleFormChange}
@@ -413,8 +425,7 @@ onChange={handleFormChange
   className="border rounded px-3 py-2"
 >
   <option value="pending">Pending</option>
-  <option value="confirmed">Confirmed</option>
-  <option value="cancelled">Cancelled</option>
+  
 </select>
 
         <button

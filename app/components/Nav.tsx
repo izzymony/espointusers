@@ -8,8 +8,6 @@ const menuItems = [
   { href: '/', label: 'Home', icon: <Home className="w-5 h-5" /> },
   { href: '/browse', label: 'Browse', icon: <Search className="w-5 h-5" /> },
   { href: '/booked_contents', label: 'My Bookings', icon: <CalendarDays className="w-5 h-5" /> },
-  { href: '/about', label: 'About', icon: <Info className="w-5 h-5" /> },
-  { href: '/contact', label: 'Contact', icon: <Phone className="w-5 h-5" /> },
   { href: '/profile', label: 'Profile', icon: <User2 className="w-5 h-5" /> },
 ]
 
