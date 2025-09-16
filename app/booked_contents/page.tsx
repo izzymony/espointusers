@@ -4,6 +4,7 @@ import {  useRouter } from 'next/navigation'
 import Nav from '@/app/components/Nav'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 
+type Status = 'pending' | 'paid' | 'confirmed' | 'completed' | 'rejected'
 interface Booking {
   booking_id: string;
   service: string;
@@ -12,16 +13,18 @@ interface Booking {
   created: string;
 }
 
+
+
 const Page = () => {
   const router = useRouter();
   const [bookings, setBookings] = useState<Booking[]>([]);
+  const [status, setStatus] = useState<Status>('pending')
 
   useEffect(() => {
     const storedUser = JSON.parse(localStorage.getItem("user") || "{}");
     if (!storedUser?.username) return;
 
     const username = storedUser.username;
-    const status = "pending";
     const url = `https://espoint.onrender.com/espoint/get_user_booking/${username}/${status}`;
 
     fetch(url)
@@ -33,13 +36,26 @@ const Page = () => {
         if (data.msg) setBookings(data.msg);
       })
       .catch(() => {});
-  }, []);
+  }, [status]);
 
   return (
     <div className="bg-white min-h-screen">
       <Nav />
       <div className="max-w-7xl mx-auto pt-28 pb-16 px-6">
         <h1 className="text-5xl font-bold mb-10 drop-shadow-lg">My Bookings</h1>
+         <div className='flex flex-wrap gap-4 items-center mb-6'>
+          <select
+            value={status}
+            onChange={(e) => setStatus(e.target.value as Status)}
+            className='border px-3 py-2 rounded'
+          >
+            <option value="pending">Pending</option>
+            <option value="paid">Paid</option>
+            <option value="confirmed">Confirmed</option>
+            <option value="completed">Completed</option>
+          </select>
+        </div>
+
         {bookings.length === 0 ? (
           <div className="bg-white rounded-2xl shadow-lg p-12 text-center text-gray-500 text-xl">No bookings yet.</div>
         ) : (

@@ -1,8 +1,8 @@
-'use client'
-import React, { useEffect, useState } from 'react';
-import { useParams } from 'next/navigation';
-import Loader from '@/app/components/Loading';
-import Nav from '@/app/components/Nav';
+"use client";
+import React, { useEffect, useState } from "react";
+import { useParams } from "next/navigation";
+import Loader from "@/app/components/Loading";
+import Nav from "@/app/components/Nav";
 
 interface Booking {
   booking_id: string;
@@ -66,7 +66,7 @@ const Page = () => {
   const [booking, setBooking] = useState<Booking | null>(null);
   const [serviceContent, setServiceContent] = useState<ServiceContent | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
 
   useEffect(() => {
     if (!bookingId) return;
@@ -74,7 +74,7 @@ const Page = () => {
 
     fetch(`https://espoint.onrender.com/espoint/get_booking/${bookingId}`)
       .then((res) => {
-        if (!res.ok) throw new Error('Failed to fetch booking');
+        if (!res.ok) throw new Error("Failed to fetch booking");
         return res.json();
       })
       .then((data) => {
@@ -84,10 +84,10 @@ const Page = () => {
           const unit = data.msg.service_unit;
           if (unit) {
             fetch(
-              `https://espoint.onrender.com/espoint/get_all_content_based_service_and_status/${unit}/active`
+              `https://espoint.onrender.com/espoint/get_all_content_based_service_and_status/${unit}/approved`
             )
               .then((res) => {
-                if (!res.ok) throw new Error('Failed to fetch service content');
+                if (!res.ok) throw new Error("Failed to fetch service content");
                 return res.json();
               })
               .then((contentData) => {
@@ -95,11 +95,15 @@ const Page = () => {
                   setServiceContent(contentData.msg[0]);
                 }
               })
-              .catch((err) => setError(err.message));
+              .catch((err: unknown) => {
+                if (err instanceof Error) setError(err.message);
+              });
           }
         }
       })
-      .catch((err) => setError(err.message))
+      .catch((err: unknown) => {
+        if (err instanceof Error) setError(err.message);
+      })
       .finally(() => setLoading(false));
   }, [bookingId]);
 
@@ -114,68 +118,89 @@ const Page = () => {
   if (!booking) return <div className="mt-20">No booking found.</div>;
 
   const statusColor =
-    booking.status === 'pending'
-      ? 'bg-yellow-100 text-yellow-800'
-      : booking.status === 'confirmed'
-      ? 'bg-green-100 text-green-800'
-      : 'bg-red-100 text-red-800';
+    booking.status === "pending"
+      ? "bg-yellow-100 text-yellow-800"
+      : booking.status === "confirmed"
+      ? "bg-green-100 text-green-800"
+      : "bg-red-100 text-red-800";
 
   return (
     <div className="bg-white min-h-screen">
       <Nav />
-      <div className="mt-26 p-6 px-4">
-        <div className="flex items-center justify-between mb-8">
-          <h1 className="text-3xl font-bold text-[#d4731e]">Booking Details</h1>
-          <span className={`px-5 py-2 rounded-full font-semibold text-base ${statusColor}`}>
+      <div className="pt-28 px-4 md:px-8 lg:px-16 max-w-screen-xl mx-auto">
+        {/* Header */}
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-10 gap-4">
+          <h1 className="text-3xl font-extrabold text-gray-900">
+            Booking Details
+          </h1>
+          <span
+            className={`px-5 py-2 rounded-full font-semibold text-base w-fit capitalize ${statusColor}`}
+          >
             {booking.status}
           </span>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-          <Info label="Booking ID" value={booking.booking_id} />
-          <Info label="Client Name" value={booking.store.client_name} />
-          <Info label="Email" value={booking.store.client_email} />
-          <Info label="Phone" value={booking.store.client_phone} />
-          <Info label="Service Date" value={booking.store.service_date} />
-          <Info label="Service Time" value={booking.store.service_time} />
-          <Info label="Amount" value={`₦${booking.store.amount} ${booking.store.currency}`} />
-          <Info label="Notes" value={booking.store.notes || '-'} />
+
+        {/* Booking Info Card */}
+        <div className="bg-white rounded-2xl shadow-md p-8 mb-10">
+          <h2 className="text-xl font-semibold text-gray-800 mb-6">
+            Client & Booking Info
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <Info label="Booking ID" value={booking.booking_id} />
+            <Info label="Client Name" value={booking.store.client_name} />
+            <Info label="Email" value={booking.store.client_email} />
+            <Info label="Phone" value={booking.store.client_phone} />
+            <Info label="Service Date" value={booking.store.service_date} />
+            <Info label="Service Time" value={booking.store.service_time} />
+            <Info
+              label="Amount"
+              value={`₦${booking.store.amount} ${booking.store.currency}`}
+            />
+            <Info label="Notes" value={booking.store.notes || "-"} />
+            <Info
+              label="Booking Code"
+              value={booking.store.booking_code || "Not assigned"}
+            />
+          </div>
         </div>
-        <div className="mt-8">
-          {serviceContent ? (
-            <div className="bg-[#fffbed] rounded-xl p-8 shadow flex flex-col md:flex-row gap-8 items-center">
-              {serviceContent.store.branding.logo_url?.[0] && (
-                <img
-                  src={serviceContent.store.branding.logo_url[0]}
-                  alt={serviceContent.store.name}
-                  className="w-40 h-40 object-cover rounded-xl border"
-                />
-              )}
-              <div className="flex-1">
-                <h2 className="text-2xl font-bold text-[#d4731e] mb-2">
-                  {serviceContent.store.name}
-                </h2>
-                <p className="text-gray-700 mb-2">{serviceContent.store.description}</p>
-                <div className="flex flex-wrap gap-4 mt-2">
-                  <span className="bg-gray-100 px-3 py-1 rounded text-sm text-gray-600">
-                    Category: {serviceContent.store.category}
-                  </span>
-                  <span className="bg-gray-100 px-3 py-1 rounded text-sm text-gray-600">
-                    Base Price: ₦{serviceContent.store.base_price}
-                  </span>
-                  <span className="bg-gray-100 px-3 py-1 rounded text-sm text-gray-600">
-                    Discount: {serviceContent.store.discount_percent}%
-                  </span>
-                </div>
-              </div>
-            </div>
-          ) : (
-            <div className="text-gray-400 text-center mt-6">
-              No service details found.
-            </div>
-          )}
+
+        {/* Service Info Card */}
+<div className="bg-[#d4731e] rounded-2xl shadow-md w-full mb-10 p-6 md:p-8">
+  <h2 className="text-xl font-semibold text-white mb-6">
+    Service Information
+  </h2>
+  {serviceContent ? (
+    <div className="flex flex-col lg:flex-row gap-6 items-center lg:items-start">
+      {serviceContent.store.branding.logo_url?.[0] && (
+        <img
+          src={serviceContent.store.branding.logo_url[0]}
+          alt={serviceContent.store.name}
+          className="w-28 h-28 md:w-40 md:h-40 lg:w-56 lg:h-56 object-cover rounded-xl border flex-shrink-0"
+        />
+      )}
+      <div className="flex-1 w-full">
+        <h3 className="text-xl md:text-2xl font-bold text-white mb-2 break-words">
+          {serviceContent.store.name}
+        </h3>
+        <p className="text-white mb-4 text-sm md:text-base leading-relaxed break-words">
+          {serviceContent.store.description}
+        </p>
+        <div className="flex flex-wrap gap-2 md:gap-3">
+          <Tag label={`Category: ${serviceContent.store.category}`} />
+          <Tag label={`Base Price: ₦${serviceContent.store.base_price}`} />
+          <Tag label={`Discount: ${serviceContent.store.discount_percent}%`} />
         </div>
-        <div className="mt-10 text-center">
-          <span className="text-xs text-gray-400">
+      </div>
+    </div>
+  ) : (
+    <div className="text-gray-400 text-center">No service details found.</div>
+  )}
+</div>
+
+
+        {/* Footer */}
+        <div className="mt-8 text-center">
+          <span className="text-sm text-gray-500">
             Created: {new Date(booking.created).toLocaleString()}
           </span>
         </div>
@@ -186,10 +211,20 @@ const Page = () => {
 
 function Info({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex flex-col mb-2">
-      <span className="font-semibold text-gray-600 text-sm">{label}</span>
-      <span className="text-gray-900 break-all text-base">{value}</span>
+    <div>
+      <span className="block text-sm font-medium text-gray-500">{label}</span>
+      <span className="block text-gray-900 font-semibold break-words">
+        {value}
+      </span>
     </div>
+  );
+}
+
+function Tag({ label }: { label: string }) {
+  return (
+    <span className="bg-gray-100 px-3 py-1 rounded-lg text-sm text-gray-700 shadow-sm">
+      {label}
+    </span>
   );
 }
 
