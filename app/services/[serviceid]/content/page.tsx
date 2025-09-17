@@ -105,12 +105,7 @@ const ContentService = () => {
                     <div className="text-center py-1 px-4 rounded-full bg-[#d4731e] text-primary-foreground capitalize shadow-lg">
                       {store.category}
                     </div>
-                    <button
-                      className="p-2 bg-white/90 hover:bg-white rounded-full transition-colors shadow-lg"
-                      onClick={(e) => e.preventDefault()}
-                    >
-                      <Heart className="w-6 h-6 text-muted-foreground hover:text-red-500 transition-colors" />
-                    </button>
+                    
                   </div>
                 </div>
                 <div className="px-6 py-6 flex flex-col gap-4 flex-1">
