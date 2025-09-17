@@ -20,10 +20,15 @@ const Page = () => {
   const router = useRouter();
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [status, setStatus] = useState<Status>('pending')
+  const [loading, setLoading] = useState (false);
+  const [error, setError] =useState('')
 
   useEffect(() => {
     const storedUser = JSON.parse(localStorage.getItem("user") || "{}");
     if (!storedUser?.username) return;
+
+    setError('');
+    setLoading(true);
 
     const username = storedUser.username;
     const url = `https://espoint.onrender.com/espoint/get_user_booking/${username}/${status}`;
@@ -36,7 +41,8 @@ const Page = () => {
       .then((data) => {
         if (data.msg) setBookings(data.msg);
       })
-      .catch(() => {});
+      .catch((err) => setError(err.message))
+      .finally(() => setLoading(false))
   }, [status]);
 
   return (
@@ -55,9 +61,12 @@ const Page = () => {
             <option value="paid">Paid</option>
             <option value="confirmed">Confirmed</option>
             <option value="completed">Completed</option>
+            <option value="rejected">Rejected</option>
+          
           </select>
         </div>
-
+{loading && <div className="text-black text-lg">Loading {status} bookings...</div>}
+        {error && <div className="text-red-500 text-lg">{error}</div>}
         {bookings.length === 0 ? (
           <div className="bg-white rounded-2xl shadow-lg p-12 text-center text-gray-500 text-xl">No bookings yet.</div>
         ) : (
@@ -83,11 +92,17 @@ const Page = () => {
                       <TableCell className="font-semibold text-[#d4731e] py-6 px-6 text-base">{booking.service}</TableCell>
                       <TableCell className="py-6 px-6">
                         <span className={`px-4 py-2 rounded-full font-semibold text-base shadow ${
-                          booking.status === 'pending'
+                         booking.status === 'pending'
                             ? 'bg-yellow-100 text-yellow-800'
                             : booking.status === 'confirmed'
                             ? 'bg-green-100 text-green-800'
-                            : 'bg-red-100 text-red-800'
+                            : booking.status === 'paid'
+                            ? 'bg-blue-100 text-blue-800'
+                            : booking.status === 'rejected'
+                            ? 'bg-red-700 text-white'
+                            :booking.status == 'completed'
+                            ?'bg-green-100 text-green-800'
+                            :'bg-gray-500 text-white'
                         }`}>{booking.status}</span>
                       </TableCell>
                       <TableCell className="text-gray-700 py-6 px-6 text-base">{new Date(booking.created).toLocaleString()}</TableCell>
