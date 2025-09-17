@@ -17,11 +17,7 @@ interface ServiceStore {
   eligible_roles: string;
   duration_minutes: string;
   rental_items: {
-    1: {
-      item: string;
-      quantity: number;
-      duration_hours: number;
-    };
+    1: { item: string; quantity: number; duration_hours: number };
   };
   discount_percent: number;
   service_hours: { start: string; end: string };
@@ -75,29 +71,22 @@ const ContentDetails = () => {
   useEffect(() => {
     const storedUser = JSON.parse(localStorage.getItem('user') || '{}');
     if (storedUser?.username) {
-      setFormData((prev) => ({
-        ...prev,
-        username: storedUser.username,
-      }));
+      setFormData((prev) => ({ ...prev, username: storedUser.username }));
     }
   }, []);
 
   useEffect(() => {
     if (!content_id) return;
-
-    const url = `https://espoint.onrender.com/espoint/get_content/${content_id}`;
     setLoading(true);
     setError('');
 
-    fetch(url)
+    fetch(`https://espoint.onrender.com/espoint/get_content/${content_id}`)
       .then((res) => {
         if (!res.ok) throw new Error('Failed to fetch content details');
         return res.json();
       })
       .then((data) => {
-        if (data.msg) {
-          setContent(data.msg);
-        }
+        if (data.msg) setContent(data.msg);
       })
       .catch((err) => setError(err.message))
       .finally(() => setLoading(false));
@@ -110,6 +99,72 @@ const ContentDetails = () => {
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmitBooking = async (
+    e: React.FormEvent<HTMLFormElement | HTMLSelectElement>
+  ) => {
+    e.preventDefault();
+    setBookingLoading(true);
+    setBookingSuccess('');
+    setBookingError('');
+
+    try {
+      const storedUser = JSON.parse(localStorage.getItem('user') || '{}');
+      if (!storedUser || !storedUser.username) {
+        setBookingError('You must be logged in to make a booking');
+        return;
+      }
+
+      const payload = {
+        service: content?.service || '',
+        service_unit: content?.service_unit || '',
+        username: formData.username,
+        from: 'internal',
+        data: {
+          client_email: formData.client_email,
+          preferred_staff_id: formData.preferred_staff_id,
+          notes: formData.notes,
+          service_time: formData.service_time,
+          amount: String(totalPrice),
+          currency: 'NGN',
+          service_date: formData.service_date,
+          client_phone: formData.client_phone,
+          client_name: formData.client_name,
+          status: 'pending',
+          completed_date: '',
+          booking_code: formData.booking_code,
+        },
+      };
+
+      const res = await fetch(
+        'https://espoint.onrender.com/espoint/create_booking',
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        }
+      );
+      const data = await res.json();
+
+      let bookingId = '';
+      if (data.msg && typeof data.msg === 'string' && data.msg.startsWith('Booking ID ')) {
+        bookingId = data.msg.replace('Booking ID ', '');
+      }
+
+      if (res.ok && bookingId) {
+        setBookingSuccess('Booking successful!');
+        router.push(`/booked_contents`);
+        setShowModal(false);
+      } else {
+        setBookingError(data.message || 'Booking failed.');
+      }
+    } catch (err) {
+      console.error('Booking failed:', err);
+      setBookingError('Booking failed.');
+    } finally {
+      setBookingLoading(false);
+    }
   };
 
   if (loading)
@@ -129,140 +184,157 @@ const ContentDetails = () => {
   return (
     <div className="bg-white min-h-screen">
       <Nav />
-
-      <div className='px-4'>
-
-      {/* Hero Section */}
-      <div className="relative w-full mt-20">
-        <Image
-          src={
-            store.branding.logo_url.length > 0
-              ? store.branding.logo_url[0]
-              : '/camera-431119_1280.jpg'
-          }
-          alt={store.name}
-          width={1200}
-          height={600}
-          className="w-full h-[40vh] sm:h-[50vh] md:h-[60vh] lg:h-[70vh] object-cover rounded-xl"
-          priority
-        />
-        <div className="absolute top-4 left-0 w-full flex justify-between items-center px-6 z-10">
-          <div className="text-center py-1 px-4 rounded-full bg-primary text-primary-foreground capitalize shadow-lg">
-            {store.category}
+      <div className="container mx-auto px-4 mt-24">
+        <main className="space-y-10">
+          {/* Hero Section */}
+          <div className="relative w-full">
+            <Image
+              src={store.branding.logo_url[0] || '/camera-431119_1280.jpg'}
+              alt={store.name}
+              width={1200}
+              height={600}
+              className="w-full h-[40vh] sm:h-[50vh] md:h-[60vh] lg:h-[70vh] object-cover rounded-xl shadow-md"
+              priority
+            />
+            <div className="absolute top-4 left-4 px-4 py-1 rounded-full bg-primary text-white shadow-lg text-sm sm:text-base capitalize">
+              {store.category}
+            </div>
           </div>
-        </div>
+
+          {/* Service Info */}
+          <div className="space-y-6">
+            <h1 className="font-bold text-3xl text-black">{store.name}</h1>
+            <section>
+              <h2 className="text-lg font-semibold text-gray-800">Description</h2>
+              <p className="text-gray-600 mt-2">{store.description}</p>
+            </section>
+
+            <section>
+              <h2 className="text-lg font-semibold text-gray-800">Rental Items</h2>
+              <div className="grid gap-3 mt-3 text-gray-700">
+                <p><span className="font-semibold text-[#d4731e]">Item:</span> {store.rental_items[1].item}</p>
+                <p><span className="font-semibold text-[#d4731e]">Quantity:</span> {store.rental_items[1].quantity}</p>
+                <p><span className="font-semibold text-[#d4731e]">Duration:</span> {store.rental_items[1].duration_hours} hrs</p>
+              </div>
+            </section>
+
+            <section>
+              <h2 className="text-lg font-semibold text-gray-800">Check-in Details</h2>
+              <div className="grid sm:grid-cols-2 gap-6 mt-3">
+                <div>
+                  <p className="font-medium">Start</p>
+                  <div className="flex gap-2 items-center mt-1">
+                    <Clock2 className="text-[#d4731e]" />
+                    <span>{store.service_hours.start} AM</span>
+                  </div>
+                </div>
+                <div>
+                  <p className="font-medium">End</p>
+                  <div className="flex gap-2 items-center mt-1">
+                    <Clock2 className="text-[#d4731e]" />
+                    <span>{store.service_hours.end} PM</span>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            {/* Pricing */}
+            <div className="bg-[#fffbed] border rounded-xl shadow-md p-6 space-y-6">
+              <p className="font-bold text-2xl text-[#d4731e]">
+                ₦{store.base_price}{' '}
+                <span className="text-base text-gray-500 font-normal">
+                  (per item)
+                </span>
+              </p>
+              <div className="space-y-2">
+                <p className="text-lg">Total Items: <span className="text-[#d4731e] font-semibold">{itemQuantity}</span></p>
+                <p className="text-lg">Total Price: <span className="text-[#d4731e] font-semibold">₦{totalPrice}</span></p>
+              </div>
+
+              {/* Table */}
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm border border-gray-200 rounded-lg">
+                  <thead className="bg-gray-50 text-gray-600">
+                    <tr>
+                      <th className="py-2 px-3">Item</th>
+                      <th className="py-2 px-3">Unit Price</th>
+                      <th className="py-2 px-3">Quantity</th>
+                      <th className="py-2 px-3">Total</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td className="py-2 px-3">{store.rental_items[1].item}</td>
+                      <td className="py-2 px-3">₦{store.base_price}</td>
+                      <td className="py-2 px-3">{store.rental_items[1].quantity}</td>
+                      <td className="py-2 px-3 font-bold text-[#d4731e]">
+                        ₦{store.base_price * store.rental_items[1].quantity}
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              {/* Book Button */}
+              <div className="flex justify-center">
+                <button
+                  className="bg-[#d4731e] text-white font-semibold rounded-lg px-6 py-3 w-full sm:w-auto disabled:opacity-60"
+                  disabled={bookingLoading}
+                  onClick={() => setShowModal(true)}
+                >
+                  {bookingLoading ? 'Booking...' : 'Book Now'}
+                </button>
+              </div>
+            </div>
+          </div>
+        </main>
       </div>
 
-      {/* Main Content */}
-      <div className="max-w-6xl mx-auto px-4 py-10 grid grid-cols-1 lg:grid-cols-3 gap-10">
-        {/* Left Content */}
-        <div className="lg:col-span-2 space-y-8">
-          <h1 className="font-bold text-3xl text-black">{store.name}</h1>
-          <div>
-            <h2 className="text-xl font-bold text-black">Description</h2>
-            <p className="text-[17px] text-gray-700 mt-2">{store.description}</p>
-          </div>
-
-          <hr className='p-4 mt-15' />
-
-          {/* Rental Items */}
-          <div>
-            <h2 className="text-xl font-bold text-black">Rental Items</h2>
-            <div className="grid sm:grid-cols-2 gap-4 mt-4">
-              <p>
-                <span className="text-[#d4731e] font-bold">Item:</span>{' '}
-                {store.rental_items[1].item}
-              </p>
-              <p>
-                <span className="text-[#d4731e] font-bold">Quantity:</span>{' '}
-                {store.rental_items[1].quantity}
-              </p>
-              <p>
-                <span className="text-[#d4731e] font-bold">Duration:</span>{' '}
-                {store.rental_items[1].duration_hours} hrs
-              </p>
-            </div>
-          </div>
-          <hr className='p-4 mt-15'  />
-          {/* Check-in Details */}
-          <div>
-            <h2 className="text-xl font-bold text-black">Check-in Details</h2>
-            <div className="mt-3 flex flex-col gap-3 sm:flex-row sm:gap-10">
-              <div>
-                <p className="font-medium">Start</p>
-                <div className="flex items-center gap-2">
-                  <Clock2 className="text-[#d4731e]" />
-                  <span>{store.service_hours.start} AM</span>
-                </div>
-              </div>
-              <div>
-                <p className="font-medium">End</p>
-                <div className="flex items-center gap-2">
-                  <Clock2 className="text-[#d4731e]" />
-                  <span>{store.service_hours.end} PM</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Booking Section (Right Column) */}
-        <div className="bg-[#fffbed] border border-gray-200 h-fit rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-1 p-6 flex flex-col">
-          <p className="font-bold text-2xl text-[#d4731e]">
-            ₦{store.base_price}{' '}
-            <span className="text-base text-gray-500 font-normal">
-              (per item)
-            </span>
-          </p>
-
-          <div className="py-4 space-y-2">
-            <p className="text-lg text-black font-semibold">
-              Total Items:{' '}
-              <span className="text-[#d4731e]">{itemQuantity}</span>
-            </p>
-            <p className="text-lg text-black font-semibold">
-              Total Price:{' '}
-              <span className="text-[#d4731e]">₦{totalPrice}</span>
-            </p>
-          </div>
-
-          {/* Table */}
-          <div className="overflow-x-auto mt-4">
-            <table className="w-full rounded-lg text-sm text-gray-800 border border-gray-200 rounded-full">
-              <thead className="bg-[#d4731e] rounded-lg ">
-                <tr className='rounded-lg'>
-                  <th className="py-2 px-3 text-white">Item</th>
-                  <th className="py-2 px-3 text-white">Unit Price</th>
-                  <th className="py-2 px-3 text-white">Quantity</th>
-                  <th className="py-2 px-3 text-white">Total</th>
-                </tr>
-              </thead>
-              <tbody className='rounded-lg'>
-                <tr>
-                  <td className="py-2 px-3">{store.rental_items[1].item}</td>
-                  <td className="py-2 px-3">₦{store.base_price}</td>
-                  <td className="py-2 px-3">{store.rental_items[1].quantity}</td>
-                  <td className="py-2 px-3 font-bold text-[#d4731e]">
-                    ₦{store.base_price * store.rental_items[1].quantity}
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-
-          {/* Book Button */}
-          <div className="mt-6 flex justify-center">
+      {/* Booking Modal */}
+      {showModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+          <div className="bg-white rounded-xl shadow-xl p-8 w-[95%] max-w-lg relative">
             <button
-              className="bg-[#d4731e] hover:bg-[#b95f19] text-white font-bold rounded-lg p-3 w-full sm:w-[200px] transition disabled:opacity-60"
-              disabled={bookingLoading}
-              onClick={() => setShowModal(true)}
+              className="absolute top-3 right-3 text-gray-500 hover:text-red-500 text-2xl font-bold"
+              onClick={() => setShowModal(false)}
             >
-              {bookingLoading ? 'Booking...' : 'Book'}
+              &times;
             </button>
+            <h2 className="text-2xl font-bold mb-6 text-center">Complete Your Booking</h2>
+            <form
+              onSubmit={handleSubmitBooking}
+              className="flex flex-col gap-4 text-gray-700"
+            >
+              <input name="client_name" value={formData.client_name} onChange={handleFormChange} className="border rounded px-3 py-2" placeholder="Full Name" required />
+              <input type="email" name="client_email" value={formData.client_email} onChange={handleFormChange} className="border rounded px-3 py-2" placeholder="Email" required />
+              <input name="client_phone" value={formData.client_phone} onChange={handleFormChange} className="border rounded px-3 py-2" placeholder="Phone" required />
+              <input type="date" name="service_date" value={formData.service_date} onChange={handleFormChange} className="border rounded px-3 py-2" required />
+              <input type="time" name="service_time" value={formData.service_time} onChange={handleFormChange} className="border rounded px-3 py-2" required />
+              <textarea name="notes" value={formData.notes} onChange={handleFormChange} className="border rounded px-3 py-2" placeholder="Notes (optional)" />
+              <input type="text" name="booking_code" value={formData.booking_code} onChange={handleFormChange} className="border rounded px-3 py-2" placeholder="Booking code (optional)" />
+              <input name="username" value={formData.username} onChange={handleFormChange} className="border rounded px-3 py-2" placeholder="Username" required />
+
+              <select name="status" value={formData.status} onChange={handleFormChange} className="border rounded px-3 py-2">
+                <option value="pending">Pending</option>
+              </select>
+
+              <button
+                type="submit"
+                className="bg-[#d4731e] text-white font-bold rounded-lg py-2 mt-2 disabled:opacity-60"
+                disabled={bookingLoading}
+              >
+                {bookingLoading ? 'Booking...' : 'Submit Booking'}
+              </button>
+            </form>
+            {bookingSuccess && (
+              <p className="text-green-600 font-semibold mt-4 text-center">{bookingSuccess}</p>
+            )}
+            {bookingError && (
+              <p className="text-red-600 font-semibold mt-4 text-center">{bookingError}</p>
+            )}
           </div>
         </div>
-      </div>
-    </div>
+      )}
     </div>
   );
 };
