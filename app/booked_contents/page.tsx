@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react'
 import {  useRouter } from 'next/navigation'
 import Nav from '@/app/components/Nav'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import RequireAuth from '../components/RequireAuth'
 
 type Status = 'pending' | 'paid' | 'confirmed' | 'completed' | 'rejected'
 interface Booking {
@@ -39,6 +40,7 @@ const Page = () => {
   }, [status]);
 
   return (
+    <RequireAuth>
     <div className="bg-white min-h-screen">
       <Nav />
       <div className="max-w-7xl mx-auto pt-28 pb-16 px-6">
@@ -98,6 +100,7 @@ const Page = () => {
         )}
       </div>
     </div>
+    </RequireAuth>
   )
 }
 

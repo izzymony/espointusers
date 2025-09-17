@@ -1,9 +1,10 @@
-'use client'
-import React, { useState } from 'react'
-import { useRouter } from 'next/navigation'
-import Image from "next/image"
-import Link from 'next/link'
-import { Eye, EyeOff } from "lucide-react"
+"use client";
+
+import React, { useState } from "react";
+import { useRouter } from "next/navigation";
+import Image from "next/image";
+import Link from "next/link";
+import { Eye, EyeOff } from "lucide-react";
 
 interface FormData {
   usernameOrEmail: string;
@@ -16,110 +17,93 @@ interface FormErrors {
 }
 
 const Login = () => {
-  const [formData, setFormData] = useState<FormData>({
-    usernameOrEmail: '',
-    password: '',
-  })
-
-  const [errors, setErrors] = useState<FormErrors>({})
-  const [showPassword, setShowPassword] = useState(false)
-  const [successMessage, setSuccessMessage] = useState<string>('')
-  const [loading, setLoading] = useState(false)
-  const router = useRouter()
+  const [formData, setFormData] = useState<FormData>({ usernameOrEmail: "", password: "" });
+  const [errors, setErrors] = useState<FormErrors>({});
+  const [showPassword, setShowPassword] = useState(false);
+  const [successMessage, setSuccessMessage] = useState<string>("");
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData((prevFormData) => ({ ...prevFormData, [name]: value }))
-    setErrors((prevErrors) => ({ ...prevErrors, [name]: undefined }))
-  }
+    setFormData((prev) => ({ ...prev, [name]: value }));
+    setErrors((prev) => ({ ...prev, [name]: undefined }));
+  };
 
   const validateForm = (): FormErrors => {
     const newError: FormErrors = {};
     if (!formData.usernameOrEmail) newError.usernameOrEmail = "Please enter your username or email.";
     if (!formData.password) newError.password = "Please enter your password.";
-    return newError
-  }
+    return newError;
+  };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
     setErrors({});
-    setSuccessMessage('');
+    setSuccessMessage("");
 
-    const validateErrors = validateForm();
-    if (Object.keys(validateErrors).length > 0) {
-      setErrors(validateErrors);
+    const validationErrors = validateForm();
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
       setLoading(false);
       return;
     }
 
     let usernameToUse = formData.usernameOrEmail;
 
-    // If input looks like an email, fetch username
+    // ✅ If input is an email, resolve username first
     if (usernameToUse.includes("@")) {
       try {
         const emailRes = await fetch(
-          `https://espoint-auth.onrender.com/api/v1.0/accounts_by_email/${encodeURIComponent(usernameToUse)}`,
-          { 
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-            }
-          }
+          `https://espoint-auth.onrender.com/api/v1.0/accounts_by_email/${encodeURIComponent(usernameToUse)}`
         );
-
-        if (!emailRes.ok) {
-          if (emailRes.status === 404) {
-            setErrors({ usernameOrEmail: "No account found with this email address" });
-          } else {
-            setErrors({ usernameOrEmail: "Failed to verify email. Please try again." });
-          }
-          setLoading(false);
-          return;
-        }
+        if (!emailRes.ok) throw new Error("Failed to verify email");
 
         const data = await emailRes.json();
         usernameToUse = data.username || "";
-        
-        if (!usernameToUse) {
-          setErrors({ usernameOrEmail: "No username associated with this email" });
-          setLoading(false);
-          return;
-        }
+        if (!usernameToUse) throw new Error("No username associated with this email");
       } catch (err) {
-        setErrors({ usernameOrEmail: "Network error. Please check your connection and try again." });
+        setErrors({ usernameOrEmail: "Could not resolve username from email" });
         setLoading(false);
         return;
       }
     }
 
-    // Now login with username + password
     try {
+      // ✅ Login with username + password
       const loginRes = await fetch("https://espoint-auth.onrender.com/api/v1.0/auth/token", {
         method: "POST",
-        headers: { 
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ 
-          username: usernameToUse, 
-          password: formData.password 
-        }),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username: usernameToUse, password: formData.password }),
       });
 
       const loginData = await loginRes.json();
-
       if (!loginRes.ok) {
         setErrors({ password: loginData.detail || "Invalid username or password" });
         setLoading(false);
         return;
       }
 
-      localStorage.setItem("authToken", loginData.access_token);
+      // ✅ Save tokens
+      localStorage.setItem("authToken", loginData.access);
+      localStorage.setItem("refreshToken", loginData.refresh);
+
+      // ✅ Fetch user info
+      const userRes = await fetch(
+        `https://espoint-auth.onrender.com/api/v1.0/get_user_info/${usernameToUse}`,
+        { headers: { Authorization: `Bearer ${loginData.access}` } }
+      );
+
+      if (userRes.ok) {
+        const userData = await userRes.json();
+        if (userData.msg) {
+          localStorage.setItem("user", JSON.stringify(userData.msg));
+        }
+      }
+
       setSuccessMessage("Login successful!");
-      
-      // Optional: Redirect user after successful login
-      // router.push('/dashboard');
-      router.push('/services')
+      router.push("/services");
     } catch (err) {
       setErrors({ password: "Network error. Please try again." });
     } finally {
@@ -206,7 +190,7 @@ const Login = () => {
       </div>
     </div>
     </div>
-  )
-}
+  );
+};
 
-export default Login
+export default Login;

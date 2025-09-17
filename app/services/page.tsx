@@ -7,6 +7,7 @@ import Nav from "../components/Nav";
 import {useRouter} from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
+import RequireAuth from "../components/RequireAuth";
 
 interface Service {
 service_id: string;
@@ -41,6 +42,7 @@ const ServicePage = () => {
   }, []);
             
   return (
+    <RequireAuth>
     <div className="bg-white mt-18 ">
       <Nav/>
 
@@ -82,6 +84,7 @@ const ServicePage = () => {
                 </div>
               )}
     </div>
+    </RequireAuth>
   )
 }
 

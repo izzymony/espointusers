@@ -8,23 +8,28 @@ import { CheckCircle, RefreshCw } from "lucide-react";
 
 const AccountActivationClient = () => {
   const [loading, setLoading] = useState(false);
+  const [resending, setResending] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const searchParams = useSearchParams();
+
   const uidb64 = searchParams.get("uidb64");
   const token = searchParams.get("token");
 
+  /** 🔑 Handle Account Activation */
   const handleActivate = async () => {
     if (!uidb64 || !token) {
       setError("Invalid activation link. Please check your email again.");
       return;
     }
+
     setLoading(true);
     setError("");
     setSuccess("");
+
     try {
       const response = await fetch(
-        `https://espoint-auth.onrender.com/api/v1.0/auth/activate_account/uidb64/token/${uidb64}/${token}`,
+        `https://espoint-auth.onrender.com/api/v1.0/auth/activate_account/${uidb64}/${token}/`,
         {
           method: "GET",
           headers: { "Content-Type": "application/json" },
@@ -32,14 +37,15 @@ const AccountActivationClient = () => {
       );
 
       if (response.ok) {
-        setSuccess(
-          "Your account has been successfully activated! You can now log in."
-        );
+        setSuccess("Your account has been activated! Redirecting to login...");
+        setTimeout(() => {
+          window.location.href = "/login";
+        }, 2000);
       } else {
         const data = await response.json().catch(() => ({}));
         setError(
           data?.message ||
-            "Activation link is invalid or has expired. Please request a new one."
+            "Activation link is invalid or expired. Please request a new one."
         );
       }
     } catch {
@@ -49,17 +55,17 @@ const AccountActivationClient = () => {
     }
   };
 
-const handleResend = async () => {
+  /** 🔄 Handle Resend Activation Link */
+  const handleResend = async () => {
     setError("");
     setSuccess("");
-    setLoading(true);
+    setResending(true);
 
-    // ✅ Get user email from localStorage
     const email = localStorage.getItem("email");
 
     if (!email) {
       setError("No email found. Please log in first.");
-      setLoading(false);
+      setResending(false);
       return;
     }
 
@@ -68,18 +74,15 @@ const handleResend = async () => {
         "https://espoint-auth.onrender.com/api/v1.0/auth/resend_activation_link",
         {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ email }), // ✅ send email dynamically
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email }),
         }
       );
 
       if (response.ok) {
         const data = await response.json();
         setSuccess(
-          data?.message ||
-            "A new activation link has been sent to your email."
+          data?.message || "A new activation link has been sent to your email."
         );
       } else {
         const data = await response.json().catch(() => ({}));
@@ -91,54 +94,55 @@ const handleResend = async () => {
     } catch {
       setError("Network error. Please try again.");
     } finally {
-      setLoading(false);
+      setResending(false);
     }
   };
 
-
   return (
-    <div className="bg-[#ffffff] mt-18 px-4">
+    <div className="bg-white mt-18 px-4">
+      {/* Logo */}
       <Image
         src={"/espointtower.jpg"}
-        alt=""
+        alt="EsPoint Tower"
         width={110}
         height={110}
         className="mx-auto rounded-md"
       />
+
+      {/* Mail Icon */}
       <div className="bg-[#faf0e8] p-4 rounded-full w-fit flex mx-auto mb-4 mt-4">
         <Image
           src={"/icons8-mail-50.png"}
-          alt=""
+          alt="Mail Icon"
           height={34}
           width={34}
-          className=""
         />
       </div>
 
+      {/* Page Title */}
       <h1 className="text-black text-center font-bold text-3xl">
         Activate Your Account
       </h1>
       <p className="text-black mt-3 text-[18px] text-center md:text-2xl">
-        Please click the button below to activate your account.
+        Click the button below to activate your account.
       </p>
 
+      {/* Activation Box */}
       <div className="bg-[#fffbed] py-3 w-full max-w-md p-5 border border-gray-300 shadow-lg rounded-md mt-5 mx-auto">
-        <h1 className="text-black text-2xl font-bold text-center mb-4">
+        <h2 className="text-black text-2xl font-bold text-center mb-4">
           Account Activation
-        </h1>
+        </h2>
 
+        {/* Status Messages */}
+        <StatusMessage type="success" message={success} />
+        <StatusMessage type="error" message={error} />
         {loading && (
           <p className="text-blue-600 text-center mb-2">
-            Processing request...
+            Processing your activation...
           </p>
         )}
-        {!loading && success && (
-          <p className="text-green-600 text-center mb-2">{success}</p>
-        )}
-        {!loading && error && (
-          <p className="text-red-600 text-center mb-2">{error}</p>
-        )}
 
+        {/* Activate Button */}
         <button
           className="w-full bg-[#d4731e] hover:bg-[#b95f19] text-white font-medium py-2.5 rounded flex items-center justify-center mb-4 transition disabled:opacity-60 disabled:cursor-not-allowed"
           onClick={handleActivate}
@@ -146,26 +150,7 @@ const handleResend = async () => {
         >
           {loading ? (
             <>
-              <svg
-                className="animate-spin h-5 w-5 mr-2 text-white"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-              >
-                <circle
-                  className="opacity-25"
-                  cx="12"
-                  cy="12"
-                  r="10"
-                  stroke="currentColor"
-                  strokeWidth="4"
-                ></circle>
-                <path
-                  className="opacity-75"
-                  fill="currentColor"
-                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
-                ></path>
-              </svg>
+              <Spinner />
               Processing...
             </>
           ) : (
@@ -176,18 +161,29 @@ const handleResend = async () => {
           )}
         </button>
 
+        {/* Resend Link */}
         <div className="text-center space-y-3">
           <p className="text-sm text-gray-600">Didn&apos;t receive the link?</p>
           <button
             onClick={handleResend}
             className="border px-3 py-1 flex items-center justify-center mx-auto hover:bg-gray-100 rounded disabled:opacity-60"
-            disabled={loading}
+            disabled={resending}
           >
-            <RefreshCw className="w-4 h-4 mr-2" />
-            Resend Link
+            {resending ? (
+              <>
+                <Spinner />
+                Sending...
+              </>
+            ) : (
+              <>
+                <RefreshCw className="w-4 h-4 mr-2" />
+                Resend Link
+              </>
+            )}
           </button>
         </div>
 
+        {/* Back to Login */}
         <div className="text-center mt-4">
           <Link href="/login" className="text-[#d4731e] underline">
             Back to Sign In
@@ -197,5 +193,43 @@ const handleResend = async () => {
     </div>
   );
 };
+
+/** 🔹 Small Components */
+function StatusMessage({
+  type,
+  message,
+}: {
+  type: "success" | "error";
+  message: string;
+}) {
+  if (!message) return null;
+  const color = type === "success" ? "text-green-600" : "text-red-600";
+  return <p className={`${color} text-center mb-2`}>{message}</p>;
+}
+
+function Spinner() {
+  return (
+    <svg
+      className="animate-spin h-5 w-5 mr-2 text-white"
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 24 24"
+    >
+      <circle
+        className="opacity-25"
+        cx="12"
+        cy="12"
+        r="10"
+        stroke="currentColor"
+        strokeWidth="4"
+      ></circle>
+      <path
+        className="opacity-75"
+        fill="currentColor"
+        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+      ></path>
+    </svg>
+  );
+}
 
 export default AccountActivationClient;
