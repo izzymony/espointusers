@@ -67,8 +67,8 @@ const ProfilePage = () => {
           setUserInfo(data.msg);
           localStorage.setItem("user", JSON.stringify(data.msg));
         }
-      } catch (err: any) {
-        setError(err.message || "Error fetching profile");
+      } catch (err: unknown) {
+        if(err instanceof Error) setError(err.message)
       } finally {
         setLoading(false);
       }
