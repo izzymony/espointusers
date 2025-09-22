@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState , useEffect} from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
@@ -17,12 +17,24 @@ interface FormErrors {
 }
 
 const Login = () => {
-  const [formData, setFormData] = useState<FormData>({ usernameOrEmail: "", password: "" });
+  const [formData, setFormData] = useState<FormData>({
+    usernameOrEmail: "",
+    password: "",
+  });
   const [errors, setErrors] = useState<FormErrors>({});
   const [showPassword, setShowPassword] = useState(false);
   const [successMessage, setSuccessMessage] = useState<string>("");
+  const [errorMessage, setErrorMessage] = useState<string>("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const loadingMessages = [
+      "Signing up...",
+      "Please wait...",
+      "Checking...",
+      "Done!",
+    ];
+    const [loadingMessage, setLoadingMessage] = useState(loadingMessages[0]);
+  
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -32,16 +44,29 @@ const Login = () => {
 
   const validateForm = (): FormErrors => {
     const newError: FormErrors = {};
-    if (!formData.usernameOrEmail) newError.usernameOrEmail = "Please enter your username or email.";
+    if (!formData.usernameOrEmail)
+      newError.usernameOrEmail = "Please enter your username or email.";
     if (!formData.password) newError.password = "Please enter your password.";
     return newError;
   };
+
+  useEffect(() => {
+      if (loading) {
+        let index = 0;
+        const interval = setInterval(() => {
+          index = (index + 1) % loadingMessages.length;
+          setLoadingMessage(loadingMessages[index]);
+        }, 1500);
+        return () => clearInterval(interval);
+      }
+    }, [loading]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
     setErrors({});
     setSuccessMessage("");
+    setErrorMessage("");
 
     const validationErrors = validateForm();
     if (Object.keys(validationErrors).length > 0) {
@@ -52,17 +77,19 @@ const Login = () => {
 
     let usernameToUse = formData.usernameOrEmail;
 
-    // ✅ If input is an email, resolve username first
     if (usernameToUse.includes("@")) {
       try {
         const emailRes = await fetch(
-          `https://espoint-auth.onrender.com/api/v1.0/accounts_by_email/${encodeURIComponent(usernameToUse)}`
+          `https://espoint-auth.onrender.com/api/v1.0/accounts_by_email/${encodeURIComponent(
+            usernameToUse
+          )}`
         );
         if (!emailRes.ok) throw new Error("Failed to verify email");
 
         const data = await emailRes.json();
         usernameToUse = data.username || "";
-        if (!usernameToUse) throw new Error("No username associated with this email");
+        if (!usernameToUse)
+          throw new Error("No username associated with this email");
       } catch (err) {
         setErrors({ usernameOrEmail: "Could not resolve username from email" });
         setLoading(false);
@@ -71,25 +98,30 @@ const Login = () => {
     }
 
     try {
-      // ✅ Login with username + password
-      const loginRes = await fetch("https://espoint-auth.onrender.com/api/v1.0/auth/token", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username: usernameToUse, password: formData.password }),
-      });
+      const loginRes = await fetch(
+        "https://espoint-auth.onrender.com/api/v1.0/auth/token",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            username: usernameToUse,
+            password: formData.password,
+          }),
+        }
+      );
 
       const loginData = await loginRes.json();
       if (!loginRes.ok) {
-        setErrors({ password: loginData.detail || "Invalid username or password" });
+        setErrors({
+          password: loginData.detail || "Invalid username or password",
+        });
         setLoading(false);
         return;
       }
 
-      // ✅ Save tokens
       localStorage.setItem("authToken", loginData.access);
       localStorage.setItem("refreshToken", loginData.refresh);
 
-      // ✅ Fetch user info
       const userRes = await fetch(
         `https://espoint-auth.onrender.com/api/v1.0/get_user_info/${usernameToUse}`,
         { headers: { Authorization: `Bearer ${loginData.access}` } }
@@ -105,90 +137,158 @@ const Login = () => {
       setSuccessMessage("Login successful!");
       router.push("/services");
     } catch (err) {
-      setErrors({ password: "Network error. Please try again." });
+      setErrorMessage("Network error. Please try again.");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className='bg-[#ffffff]  mt-18 px-4 '>
-       <div className="">
-           <Image src={'/espointtower.jpg'} alt="ESPOINT" width={150} height={150} className="mx-auto rounded-md"/>
-          </div>
-          <h1 className="text-black text-4xl mt-4  font-bold text-center ">Welcome <span className=''>Back</span> </h1>
-          <p className="text-black text-[18px] mt-2 font-sm text-center">Sign in to your account to continue</p>
-    <div >
-      <div className=' mx-auto'>
-        <div className='bg-[#fffbed] mt-5 w-full max-w-md mx-auto p-5 border border-gray-300 shadow-lg rounded-md'>
-         <h1 className='font-bold text-black text-3xl text-center'>Sign in</h1>
-         <p className='py-3 text-center'>Enter your credentials to sign into </p>
+    <div className="min-h-screen bg-[#7464fa] flex items-center justify-center px-6 py-12">
+      <div className="flex flex-col lg:flex-row items-center justify-center w-full max-w-6xl gap-10">
+        {/* Left side illustration */}
+        <div className="hidden lg:flex lg:w-1/2 items-center justify-center">
+          <Image
+            src="/undraw_sign-in_uva0.svg"
+            alt="Login Illustration"
+            width={600}
+            height={600}
+            className="object-contain drop-shadow-2xl"
+            priority
+          />
+        </div>
 
-          <form onSubmit={handleSubmit} className='py-6'>
-            <div className='grid grid-cols-1 gap-6 '>
-              <div>
-                <label htmlFor="usernameOrEmail" className='text-[#2e2e2e] font-medium py-2'>Username or Email</label>
-                <input
-                  type="text"
-                  placeholder='Enter your  username or email'
-                  className='w-full px-3 border-b-1  rounded-md border-gray-300 placeholder:text-[#2e2e2e] p-1 focus:border-[#D4721E9C] focus:ring-2 focus:ring-[#D4721E9C] outline-none'
-                  name='usernameOrEmail'
-                  id='usernameOrEmail'
-                  onChange={handleChange}
-                  value={formData.usernameOrEmail}
-                />
-                {errors.usernameOrEmail && (<p className='text-red-500 text-sm mt-1'>{errors.usernameOrEmail}</p>)}
-              </div>
-               
-              <div>
-                <label htmlFor="password" className='text-[#2e2e2e] font-medium py-2'>Password</label>
-                <div className="relative">
-                  <input
-                    type={showPassword ? 'text' : 'password'}
-                    placeholder='Enter your password'
-                    className='w-full px-3  border-b-1 rounded-md border-gray-300 placeholder:text-[#2e2e2e] p-1 focus:border-[#D4721E9C] focus:ring-2 focus:bg-none focus:ring-[#D4721E9C] outline-none bg-transparent'
-                    id='password'
-                    onChange={handleChange}
-                    value={formData.password}
-                    name='password'
-                  />
-                  <button
-                    type='button'
-                    onClick={() => setShowPassword(v => !v)}
-                    className='absolute top-1/2 right-3 transform -translate-y-1/2 text-gray-400'
-                    tabIndex={-1}
-                  >
-                    {showPassword ? <EyeOff size={18}  className='text-[#2e2e2e]'/> : <Eye size={18}  className='text-[#2e2e2e]'/>}
-                  </button>
-                </div>
-                {errors.password && (<p className="text-red-500 text-sm mt-1 ">{errors.password}</p>)}
-              </div>
-            </div>
-            <div className='py-6'>
-              <button 
-                className='bg-[#d4731e] w-full text-white p-2 mt-6 rounded-full font-sm flex items-center justify-center' 
-                type='submit'
-                disabled={loading}
+        {/* Right side form */}
+        <div className="w-full max-w-md bg-white rounded-2xl shadow-xl p-8">
+          {/* Header */}
+          <div className="text-center mb-6">
+            <h1 className="text-3xl md:text-4xl font-bold text-[#7464fa]">
+              Welcome Back
+            </h1>
+            <p className="text-gray-600 mt-2">
+              Sign in to your account to continue
+            </p>
+          </div>
+
+          {/* Logo */}
+          <div className="text-center mb-6">
+            <Image
+              src={"/espointtower.jpg"}
+              alt="ESPOINT"
+              width={100}
+              height={120}
+              className="mx-auto rounded-md shadow-md"
+            />
+          </div>
+
+          <h2 className="text-[#7464fa] text-2xl font-extrabold text-center">
+            Sign in
+          </h2>
+          <p className="text-gray-600 font-medium text-base mt-2 text-center">
+            Enter your credentials below
+          </p>
+
+          {/* Form */}
+          <form onSubmit={handleSubmit} className="space-y-5 mt-6">
+            {/* Username or Email */}
+            <div>
+              <label
+                htmlFor="usernameOrEmail"
+                className="text-gray-700 font-medium"
               >
-                {loading ? (
-                  <span>Signing in...</span>
-                ) : (
-                  <span>Sign in</span>
-                )}
-              </button>
+                Username or Email
+              </label>
+              <input
+                type="text"
+                placeholder="Enter your username or email"
+                className="w-full px-3 py-2 border rounded-md border-gray-300 placeholder:text-gray-400 focus:border-[#7464fa] focus:ring-2 focus:ring-[#7464fa] outline-none"
+                name="usernameOrEmail"
+                id="usernameOrEmail"
+                onChange={handleChange}
+                value={formData.usernameOrEmail}
+              />
+              {errors.usernameOrEmail && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.usernameOrEmail}
+                </p>
+              )}
             </div>
-            {successMessage && <p className="text-green-600 text-center ">{successMessage}</p>}
-            <div className='text-center mt-4'>
-             <Link className=' text-[#d17160] mt-4  text-center ' href={'/forget_password'}>Forgot your password?</Link>
-              <div className='flex gap-2 text-center items-center justify-center'>
-                <p className='text-[#2e2e2e] '>Don&apos;t have an account?</p>
-                <Link href={'/signup'} className='text-[#d17160]  gap-2 '>Sign up</Link>
+
+            {/* Password */}
+            <div>
+              <label htmlFor="password" className="text-gray-700 font-medium">
+                Password
+              </label>
+              <div className="relative">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  placeholder="Enter your password"
+                  className="w-full px-3 py-2 border rounded-md border-gray-300 placeholder:text-gray-400 focus:border-[#7464fa] focus:ring-2 focus:ring-[#7464fa] outline-none"
+                  id="password"
+                  onChange={handleChange}
+                  value={formData.password}
+                  name="password"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((v) => !v)}
+                  className="absolute top-1/2 right-3 transform -translate-y-1/2 text-gray-500"
+                  tabIndex={-1}
+                >
+                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
               </div>
+              {errors.password && (
+                <p className="text-red-500 text-sm mt-1">{errors.password}</p>
+              )}
+            </div>
+
+            {/* Submit */}
+            <button
+              className="bg-[#7464fa] w-full text-white py-2 mt-4 rounded-md font-medium hover:bg-[#5c4ed6] transition-colors"
+              type="submit"
+              disabled={loading}
+            >
+              {loading ? (
+                <span className="flex items-center justify-center gap-2">
+                  <span className="animate-spin rounded-full h-4 w-4 border-t-2 border-white"></span>
+                  {loadingMessage}
+                </span>
+              ) : (
+                "Sign in"
+              )}
+            </button>
+
+            {successMessage && (
+              <p className="text-green-600 text-center mt-3">
+                {successMessage}
+              </p>
+            )}
+            {errorMessage && (
+              <p className="text-red-600 text-center mt-3">{errorMessage}</p>
+            )}
+
+            {/* Links */}
+            <div className="text-center mt-4 space-y-3">
+              <Link
+                className="text-black font-medium cursor-pointer underline"
+                href={"/forget_password"}
+              >
+                Forgot your password?
+              </Link>
+              <p className="text-gray-600">
+                Don’t have an account?{" "}
+                <Link
+                  href="/signup"
+                  className="text-[#7464fa] font-medium hover:underline"
+                >
+                  Sign up
+                </Link>
+              </p>
             </div>
           </form>
         </div>
       </div>
-    </div>
     </div>
   );
 };

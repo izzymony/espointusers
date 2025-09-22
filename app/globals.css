@@ -205,4 +205,17 @@ input:-webkit-autofill:active {
   -webkit-text-fill-color: #2e2e2e !important;
 
 }
+@keyframes bounce-slow {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-16px);
+  }
+}
+
+.animate-bounce-slow {
+  animation: bounce-slow 3s infinite ease-in-out;
+}
+
 }
