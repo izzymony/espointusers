@@ -9,7 +9,7 @@ const Loader = () => (
       height={48}
       viewBox="0 0 24 24"
       fill="none"
-      style={{ color: "#d4731e" }}
+      style={{ color: "#7464fa" }}
     >
       <circle
         className="opacity-20"

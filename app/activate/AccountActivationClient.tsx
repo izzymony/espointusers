@@ -1,9 +1,9 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import { CheckCircle, RefreshCw } from "lucide-react";
 
 const AccountActivationClient = () => {
@@ -12,6 +12,7 @@ const AccountActivationClient = () => {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const searchParams = useSearchParams();
+  const router = useRouter();
 
   const uidb64 = searchParams.get("uidb64");
   const token = searchParams.get("token");
@@ -39,12 +40,13 @@ const AccountActivationClient = () => {
       if (response.ok) {
         setSuccess("Your account has been activated! Redirecting to login...");
         setTimeout(() => {
-          window.location.href = "/login";
+          router.push("/login"); // ✅ client-side redirect
         }, 2000);
       } else {
         const data = await response.json().catch(() => ({}));
         setError(
           data?.message ||
+            data?.detail ||
             "Activation link is invalid or expired. Please request a new one."
         );
       }
@@ -61,10 +63,10 @@ const AccountActivationClient = () => {
     setSuccess("");
     setResending(true);
 
-    const email = localStorage.getItem("email");
+    const email = sessionStorage.getItem("email"); // ✅ safer than localStorage
 
     if (!email) {
-      setError("No email found. Please log in first.");
+      setError("No email found. Please sign in first.");
       setResending(false);
       return;
     }
@@ -88,6 +90,7 @@ const AccountActivationClient = () => {
         const data = await response.json().catch(() => ({}));
         setError(
           data?.message ||
+            data?.detail ||
             "Failed to resend activation link. Please try again later."
         );
       }
@@ -98,8 +101,15 @@ const AccountActivationClient = () => {
     }
   };
 
+  /** 🚀 Auto-trigger activation on page load if token exists */
+  useEffect(() => {
+    if (uidb64 && token) {
+      handleActivate();
+    }
+  }, [uidb64, token]);
+
   return (
-    <div className="bg-white mt-18 px-4">
+    <div className="bg-white mt-20 px-4">
       {/* Logo */}
       <Image
         src={"/espointtower.jpg"}
@@ -110,7 +120,7 @@ const AccountActivationClient = () => {
       />
 
       {/* Mail Icon */}
-      <div className="bg-[#faf0e8] p-4 rounded-full w-fit flex mx-auto mb-4 mt-4">
+      <div className="bg-[#f2f0fd] p-4 rounded-full w-fit flex mx-auto mb-4 mt-4">
         <Image
           src={"/icons8-mail-50.png"}
           alt="Mail Icon"
@@ -123,12 +133,12 @@ const AccountActivationClient = () => {
       <h1 className="text-black text-center font-bold text-3xl">
         Activate Your Account
       </h1>
-      <p className="text-black mt-3 text-[18px] text-center md:text-2xl">
-        Click the button below to activate your account.
+      <p className="text-gray-700 mt-3 text-lg text-center md:text-2xl">
+        We’re verifying your account. If nothing happens, click below.
       </p>
 
       {/* Activation Box */}
-      <div className="bg-[#fffbed] py-3 w-full max-w-md p-5 border border-gray-300 shadow-lg rounded-md mt-5 mx-auto">
+      <div className="bg-[#f9f8ff] py-3 w-full max-w-md p-5 border border-gray-300 shadow-lg rounded-md mt-5 mx-auto">
         <h2 className="text-black text-2xl font-bold text-center mb-4">
           Account Activation
         </h2>
@@ -137,14 +147,14 @@ const AccountActivationClient = () => {
         <StatusMessage type="success" message={success} />
         <StatusMessage type="error" message={error} />
         {loading && (
-          <p className="text-blue-600 text-center mb-2">
+          <p className="text-[#7464fa] text-center mb-2">
             Processing your activation...
           </p>
         )}
 
         {/* Activate Button */}
         <button
-          className="w-full bg-[#d4731e] hover:bg-[#b95f19] text-white font-medium py-2.5 rounded flex items-center justify-center mb-4 transition disabled:opacity-60 disabled:cursor-not-allowed"
+          className="w-full bg-[#7464fa] hover:bg-[#5e4fd1] text-white font-medium py-2.5 rounded flex items-center justify-center mb-4 transition disabled:opacity-60 disabled:cursor-not-allowed"
           onClick={handleActivate}
           disabled={loading}
         >
@@ -166,7 +176,7 @@ const AccountActivationClient = () => {
           <p className="text-sm text-gray-600">Didn&apos;t receive the link?</p>
           <button
             onClick={handleResend}
-            className="border px-3 py-1 flex items-center justify-center mx-auto hover:bg-gray-100 rounded disabled:opacity-60"
+            className="border border-[#7464fa] text-[#7464fa] px-3 py-1 flex items-center justify-center mx-auto hover:bg-[#f2f0fd] rounded disabled:opacity-60"
             disabled={resending}
           >
             {resending ? (
@@ -185,7 +195,7 @@ const AccountActivationClient = () => {
 
         {/* Back to Login */}
         <div className="text-center mt-4">
-          <Link href="/login" className="text-[#d4731e] underline">
+          <Link href="/login" className="text-[#7464fa] underline">
             Back to Sign In
           </Link>
         </div>

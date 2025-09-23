@@ -187,16 +187,16 @@ const ContentDetails = () => {
       <div className="container mx-auto px-4 mt-24">
         <main className="space-y-10">
           {/* Hero Section */}
-          <div className="relative w-full">
+          <div className="relative w-full rounded-xl overflow-hidden shadow-md">
             <Image
               src={store.branding.logo_url[0] || '/camera-431119_1280.jpg'}
               alt={store.name}
               width={1200}
               height={600}
-              className="w-full h-[40vh] sm:h-[50vh] md:h-[60vh] lg:h-[70vh] object-cover rounded-xl shadow-md"
+              className="w-full h-[40vh] sm:h-[50vh] md:h-[60vh] lg:h-[70vh] object-cover"
               priority
             />
-            <div className="absolute top-4 left-4 px-4 py-1 rounded-full bg-primary text-white shadow-lg text-sm sm:text-base capitalize">
+            <div className="absolute top-4 left-4 px-4 py-1 rounded-full bg-[#7464fa] text-white shadow-lg text-sm sm:text-base capitalize">
               {store.category}
             </div>
           </div>
@@ -205,33 +205,33 @@ const ContentDetails = () => {
           <div className="space-y-6">
             <h1 className="font-bold text-3xl text-black">{store.name}</h1>
             <section>
-              <h2 className="text-lg font-semibold text-gray-800">Description</h2>
-              <p className="text-gray-600 mt-2">{store.description}</p>
+              <h2 className="text-lg font-semibold text-gray-800 border-b pb-2 mb-2">Description</h2>
+              <p className="text-gray-600">{store.description}</p>
             </section>
 
             <section>
-              <h2 className="text-lg font-semibold text-gray-800">Rental Items</h2>
+              <h2 className="text-lg font-semibold text-gray-800 border-b pb-2 mb-2">Rental Items</h2>
               <div className="grid gap-3 mt-3 text-gray-700">
-                <p><span className="font-semibold text-[#d4731e]">Item:</span> {store.rental_items[1].item}</p>
-                <p><span className="font-semibold text-[#d4731e]">Quantity:</span> {store.rental_items[1].quantity}</p>
-                <p><span className="font-semibold text-[#d4731e]">Duration:</span> {store.rental_items[1].duration_hours} hrs</p>
+                <p><span className="font-semibold text-[#7464fa]">Item:</span> {store.rental_items[1].item}</p>
+                <p><span className="font-semibold text-[#7464fa]">Quantity:</span> {store.rental_items[1].quantity}</p>
+                <p><span className="font-semibold text-[#7464fa]">Duration:</span> {store.rental_items[1].duration_hours} hrs</p>
               </div>
             </section>
 
             <section>
-              <h2 className="text-lg font-semibold text-gray-800">Check-in Details</h2>
+              <h2 className="text-lg font-semibold text-gray-800 border-b pb-2 mb-2">Check-in Details</h2>
               <div className="grid sm:grid-cols-2 gap-6 mt-3">
                 <div>
                   <p className="font-medium">Start</p>
                   <div className="flex gap-2 items-center mt-1">
-                    <Clock2 className="text-[#d4731e]" />
+                    <Clock2 className="text-[#7464fa]" />
                     <span>{store.service_hours.start} AM</span>
                   </div>
                 </div>
                 <div>
                   <p className="font-medium">End</p>
                   <div className="flex gap-2 items-center mt-1">
-                    <Clock2 className="text-[#d4731e]" />
+                    <Clock2 className="text-[#7464fa]" />
                     <span>{store.service_hours.end} PM</span>
                   </div>
                 </div>
@@ -239,27 +239,24 @@ const ContentDetails = () => {
             </section>
 
             {/* Pricing */}
-            <div className="bg-[#fffbed] border rounded-xl shadow-md p-6 space-y-6">
-              <p className="font-bold text-2xl text-[#d4731e]">
+            <div className="bg-[#f5f3ff] border rounded-xl shadow-md p-6 space-y-6">
+              <p className="font-bold text-2xl text-[#7464fa]">
                 ₦{store.base_price}{' '}
-                <span className="text-base text-gray-500 font-normal">
-                  (per item)
-                </span>
+                <span className="text-base text-gray-500 font-normal">(per item)</span>
               </p>
               <div className="space-y-2">
-                <p className="text-lg">Total Items: <span className="text-[#d4731e] font-semibold">{itemQuantity}</span></p>
-                <p className="text-lg">Total Price: <span className="text-[#d4731e] font-semibold">₦{totalPrice}</span></p>
+                <p className="text-lg">Total Items: <span className="text-[#7464fa] font-semibold">{itemQuantity}</span></p>
+                <p className="text-lg">Total Price: <span className="text-[#7464fa] font-semibold">₦{totalPrice}</span></p>
               </div>
 
-              {/* Table */}
               <div className="overflow-x-auto">
                 <table className="w-full text-sm border border-gray-200 rounded-lg">
                   <thead className="bg-gray-50 text-gray-600">
                     <tr>
-                      <th className="py-2 px-3">Item</th>
-                      <th className="py-2 px-3">Unit Price</th>
-                      <th className="py-2 px-3">Quantity</th>
-                      <th className="py-2 px-3">Total</th>
+                      <th className="py-2 px-3 text-left">Item</th>
+                      <th className="py-2 px-3 text-left">Unit Price</th>
+                      <th className="py-2 px-3 text-left">Quantity</th>
+                      <th className="py-2 px-3 text-left">Total</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -267,18 +264,15 @@ const ContentDetails = () => {
                       <td className="py-2 px-3">{store.rental_items[1].item}</td>
                       <td className="py-2 px-3">₦{store.base_price}</td>
                       <td className="py-2 px-3">{store.rental_items[1].quantity}</td>
-                      <td className="py-2 px-3 font-bold text-[#d4731e]">
-                        ₦{store.base_price * store.rental_items[1].quantity}
-                      </td>
+                      <td className="py-2 px-3 font-bold text-[#7464fa]">₦{store.base_price * store.rental_items[1].quantity}</td>
                     </tr>
                   </tbody>
                 </table>
               </div>
 
-              {/* Book Button */}
               <div className="flex justify-center">
                 <button
-                  className="bg-[#d4731e] text-white font-semibold rounded-lg px-6 py-3 w-full sm:w-auto disabled:opacity-60"
+                  className="bg-[#7464fa] text-white font-semibold rounded-lg px-6 py-3 w-full sm:w-auto disabled:opacity-60 hover:bg-[#5c4ddf] transition-colors"
                   disabled={bookingLoading}
                   onClick={() => setShowModal(true)}
                 >
@@ -292,49 +286,47 @@ const ContentDetails = () => {
 
       {/* Booking Modal */}
       {showModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-          <div className="bg-white rounded-xl shadow-xl p-8 w-[95%] max-w-lg relative">
-            <button
-              className="absolute top-3 right-3 text-gray-500 hover:text-red-500 text-2xl font-bold"
-              onClick={() => setShowModal(false)}
-            >
-              &times;
-            </button>
-            <h2 className="text-2xl font-bold mb-6 text-center">Complete Your Booking</h2>
-            <form
-              onSubmit={handleSubmitBooking}
-              className="flex flex-col gap-4 text-gray-700"
-            >
-              <input name="client_name" value={formData.client_name} onChange={handleFormChange} className="border rounded px-3 py-2" placeholder="Full Name" required />
-              <input type="email" name="client_email" value={formData.client_email} onChange={handleFormChange} className="border rounded px-3 py-2" placeholder="Email" required />
-              <input name="client_phone" value={formData.client_phone} onChange={handleFormChange} className="border rounded px-3 py-2" placeholder="Phone" required />
-              <input type="date" name="service_date" value={formData.service_date} onChange={handleFormChange} className="border rounded px-3 py-2" required />
-              <input type="time" name="service_time" value={formData.service_time} onChange={handleFormChange} className="border rounded px-3 py-2" required />
-              <textarea name="notes" value={formData.notes} onChange={handleFormChange} className="border rounded px-3 py-2" placeholder="Notes (optional)" />
-              <input type="text" name="booking_code" value={formData.booking_code} onChange={handleFormChange} className="border rounded px-3 py-2" placeholder="Booking code (optional)" />
-              <input name="username" value={formData.username} onChange={handleFormChange} className="border rounded px-3 py-2" placeholder="Username" required />
+  <div className="fixed inset-0 z-50 flex items-center justify-center pt-20 pb-20 bg-black/50 overflow-auto">
+    <div className="bg-white rounded-xl shadow-xl p-6 sm:p-8 w-[95%] max-w-lg max-h-[90vh] overflow-y-auto relative">
+      <button
+        className="absolute top-3 right-3 text-gray-500 hover:text-red-500 text-2xl font-bold"
+        onClick={() => setShowModal(false)}
+      >
+        &times;
+      </button>
+      <h2 className="text-2xl font-bold mb-6 text-center">Complete Your Booking</h2>
+      <form onSubmit={handleSubmitBooking} className="flex flex-col gap-4 text-gray-700">
+        <input name="client_name" value={formData.client_name} onChange={handleFormChange} className="border rounded px-3 py-2 w-full" placeholder="Full Name" required />
+        <input type="email" name="client_email" value={formData.client_email} onChange={handleFormChange} className="border rounded px-3 py-2 w-full" placeholder="Email" required />
+        <input name="client_phone" value={formData.client_phone} onChange={handleFormChange} className="border rounded px-3 py-2 w-full" placeholder="Phone" required />
+        <input type="date" name="service_date" value={formData.service_date} onChange={handleFormChange} className="border rounded px-3 py-2 w-full" required />
+        <input type="time" name="service_time" value={formData.service_time} onChange={handleFormChange} className="border rounded px-3 py-2 w-full" required />
+        <textarea name="notes" value={formData.notes} onChange={handleFormChange} className="border rounded px-3 py-2 w-full" placeholder="Notes (optional)" />
+        <input type="text" name="booking_code" value={formData.booking_code} onChange={handleFormChange} className="border rounded px-3 py-2 w-full" placeholder="Booking code (optional)" />
+        <input name="username" value={formData.username} onChange={handleFormChange} className="border rounded px-3 py-2 w-full" placeholder="Username" required />
 
-              <select name="status" value={formData.status} onChange={handleFormChange} className="border rounded px-3 py-2">
-                <option value="pending">Pending</option>
-              </select>
+        <select name="status" value={formData.status} onChange={handleFormChange} className="border rounded px-3 py-2 w-full">
+          <option value="pending">Pending</option>
+        </select>
 
-              <button
-                type="submit"
-                className="bg-[#d4731e] text-white font-bold rounded-lg py-2 mt-2 disabled:opacity-60"
-                disabled={bookingLoading}
-              >
-                {bookingLoading ? 'Booking...' : 'Submit Booking'}
-              </button>
-            </form>
-            {bookingSuccess && (
-              <p className="text-green-600 font-semibold mt-4 text-center">{bookingSuccess}</p>
-            )}
-            {bookingError && (
-              <p className="text-red-600 font-semibold mt-4 text-center">{bookingError}</p>
-            )}
-          </div>
-        </div>
+        <button
+          type="submit"
+          className="bg-[#7464fa] text-white font-bold rounded-lg py-2 mt-2 w-full disabled:opacity-60 hover:bg-[#5c4ddf] transition-colors"
+          disabled={bookingLoading}
+        >
+          {bookingLoading ? 'Booking...' : 'Submit Booking'}
+        </button>
+      </form>
+      {bookingSuccess && (
+        <p className="text-green-600 font-semibold mt-4 text-center">{bookingSuccess}</p>
       )}
+      {bookingError && (
+        <p className="text-red-600 font-semibold mt-4 text-center">{bookingError}</p>
+      )}
+    </div>
+  </div>
+)}
+
     </div>
   );
 };
