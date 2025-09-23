@@ -16,6 +16,7 @@ const ForgotPassword = () => {
     e.preventDefault();
     setError("");
     setSuccess("");
+    
     if (!email) {
       setError("Email is required.");
       return;
@@ -24,95 +25,132 @@ const ForgotPassword = () => {
       setError("Enter a valid email address.");
       return;
     }
+
     setLoading(true);
-    // Mock success
-    setTimeout(() => {
-      setLoading(false);
-      setSuccess(
-        "If an account with that email exists, a password reset link has been sent to it."
-      );
-      setEmail("");
-    }, 1500);
-   
 
-
-    try{
-      const response = await fetch("https://espoint-auth.onrender.com/api/v1.0/forgot_password" ,{
+    try {
+      const response = await fetch("https://espoint-auth.onrender.com/api/v1.0/forgot_password", {
         method: "POST",
-        headers:{"Content-Type" : "application/json"},
-        body: JSON.stringify({email})
-      })
-      setLoading(false)
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email })
+      });
+
       const data = await response.json();
-      if(response.ok){
+
+      if (response.ok) {
         setSuccess(data.message || "If an account with that email exists, a password reset link has been sent to it.");
         setEmail("");
-      } else{
+      } else {
         setError(data.error || "Failed to send reset link. Please try again.");
       }
-    }catch(err){
+    } catch (err) {
       setError("Network error. Please check your connection and try again.");
-    }finally{
+    } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="bg-white  px-4 mt-18">
-         <Image
-              src={"/espointtower.jpg"}
-              alt=""
-              width={110}
-              height={110}
-              className="mx-auto rounded-md "/>
-              <div className="bg-[#faf0e8] p-4 rounded-full  w-fit flex mx-auto mb-4 mt-4">
-                            <Image src={'/icons8-mail-50.png'} alt=""height={34} width={34} className=""/>
-                            </div>
-      <h1 className="text-black text-center mt-3 font-bold text-3xl">Forgot Password?</h1>      
-      <p className="text-black text-center text-[18px] font-sm mt-2">No worries we&apos;ll send you reset instructions</p>              
-      <div className="">
-        <div className="bg-[#fffbed] w-full max-w-md p-5 border mt-6 border-gray-300 shadow-lg rounded-md">
-          <div className="mx-auto mb-4 py-2">
-         
-          </div>
-          <h1 className="text-2xl font-bold text-center text-black">Forgot Password?</h1>
-          <p className="text-black text-sm text-[16px] mt-2 text-center mb-4">
-            Enter your email to receive password reset instructions.
-          </p>
-          <form onSubmit={handleSubmit} className="py-2">
-            <div className="mb-4">
-              <label htmlFor="email" className="text-black font-medium">
-                Email
-              </label>
-              <input
-                type="email"
-                id="email"
-                name="email"
-                value={email}
-                onChange={(e) => { setEmail(e.target.value); setError(""); setSuccess(""); }}
-                placeholder="Enter your email address"
-                className="w-full px-3 border-b-1 rounded-md border-gray-300 placeholder:text-[#2e2e2e] p-1 focus:border-[#ffd700] focus:ring-2 focus:ring-[#ffd700] outline-none"
-              />
-              {error && (
-                <p className="text-red-500 text-sm mt-1">{error}</p>
-              )}
-              {success && (
-                <p className="text-green-600 text-sm mt-1">{success}</p>
-              )}
-            </div>
-            <button
-              type="submit"
-              disabled={loading}
-              className="bg-[#d4731e] w-full text-white font-sm p-2 mt-2 rounded-full "
-            >
-              {loading ? "Sending..." : "Send Reset Link"}
-            </button>
-            <div className="text-center mt-5">
-              <Link href="/login" className="text-[#d4731e] underline">Back to Sign In</Link>
-            </div>
-          </form>
-        </div>
+    <div className="min-h-screen bg-gradient-to-br from-white via-gray-50 to-blue-50 flex flex-col items-center justify-center px-4 py-8">
+      {/* Logo */}
+      <div className="mb-6">
+        <Image
+          src="/espointtower.jpg"
+          alt="Espoint Logo"
+          width={110}
+          height={110}
+          className="mx-auto rounded-md shadow-lg"
+          priority
+        />
       </div>
+
+      {/* Icon */}
+      <div className="bg-white p-4 rounded-full w-fit mx-auto mb-6 shadow-md">
+        <Image
+          src="/icons8-mail-50.png"
+          alt="Mail Icon"
+          height={34}
+          width={34}
+          className="mx-auto"
+        />
+      </div>
+
+      {/* Title and Description */}
+      <div className="text-center mb-8 max-w-md mx-auto">
+        <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-3">
+          Forgot Password?
+        </h1>
+        <p className="text-gray-600 text-lg leading-relaxed">
+          No worries, we&apos;ll send you reset instructions to your email.
+        </p>
+      </div>
+
+      {/* Form Card */}
+      <div className="w-full max-w-md bg-white rounded-2xl shadow-xl border border-gray-200 p-6 sm:p-8">
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div>
+            <label htmlFor="email" className="block text-sm font-semibold text-gray-700 mb-2">
+              Email Address
+            </label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              value={email}
+              onChange={(e) => { 
+                setEmail(e.target.value); 
+                setError(""); 
+                setSuccess(""); 
+              }}
+              placeholder="Enter your email address"
+              disabled={loading}
+              className="w-full px-4 py-3 border border-gray-300 rounded-xl placeholder:text-gray-400 text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#7464fa] focus:border-transparent transition-all duration-200"
+            />
+            {error && (
+              <p className="text-red-500 text-sm mt-2 flex items-center">
+                <span className="mr-1">⚠️</span> {error}
+              </p>
+            )}
+            {success && (
+              <p className="text-green-600 text-sm mt-2 flex items-center">
+                <span className="mr-1">✅</span> {success}
+              </p>
+            )}
+          </div>
+
+          <button
+            type="submit"
+            disabled={loading || !email}
+            className="w-full bg-[#7464fa] hover:bg-[#5a4fd0] disabled:bg-gray-400 disabled:cursor-not-allowed text-white font-semibold py-3 px-4 rounded-xl transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] shadow-lg"
+          >
+            {loading ? (
+              <span className="flex items-center justify-center">
+                <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                Sending...
+              </span>
+            ) : (
+              "Send Reset Link"
+            )}
+          </button>
+
+          <div className="text-center">
+            <Link 
+              href="/login" 
+              className="text-[#7464fa] hover:text-[#5a4fd0] underline font-medium transition-colors duration-200"
+            >
+              ← Back to Sign In
+            </Link>
+          </div>
+        </form>
+      </div>
+
+      {/* Footer Note (Optional) */}
+      <p className="mt-8 text-xs text-gray-500 text-center">
+        Need help? Contact support at support@espoint.com
+      </p>
     </div>
   );
 };
