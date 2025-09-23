@@ -15,11 +15,14 @@ async function refreshAccessToken(): Promise<string> {
   const refreshToken = localStorage.getItem("refreshToken");
   if (!refreshToken) throw new Error("No refresh token found");
 
-  const res = await fetch("https://espoint-auth.onrender.com/api/v1.0/auth/token/refresh", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ refresh: refreshToken }),
-  });
+  const res = await fetch(
+    "https://espoint-auth.onrender.com/api/v1.0/auth/token/refresh",
+    {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ refresh: refreshToken }),
+    }
+  );
 
   if (!res.ok) throw new Error("Failed to refresh token");
 
@@ -51,7 +54,6 @@ const ProfilePage = () => {
           { headers: { Authorization: token ? `Bearer ${token}` : "" } }
         );
 
-        // if expired, refresh token
         if (res.status === 401) {
           token = await refreshAccessToken();
           res = await fetch(
@@ -68,7 +70,7 @@ const ProfilePage = () => {
           localStorage.setItem("user", JSON.stringify(data.msg));
         }
       } catch (err: unknown) {
-        if(err instanceof Error) setError(err.message)
+        if (err instanceof Error) setError(err.message);
       } finally {
         setLoading(false);
       }
@@ -77,35 +79,57 @@ const ProfilePage = () => {
     fetchData();
   }, []);
 
-  if (loading) return <div className="flex h-screen items-center justify-center"><Loader /></div>;
-  if (error) return <div className="text-red-500 text-center mt-20">{error}</div>;
+  if (loading)
+    return (
+      <div className="flex h-screen items-center justify-center">
+        <Loader />
+      </div>
+    );
+  if (error)
+    return <div className="text-red-500 text-center mt-20">{error}</div>;
   if (!userInfo) return <div className="text-center mt-20">No user data found</div>;
 
   return (
     <RequireAuth>
-    <div className="bg-white min-h-screen pt-8">
-      <Nav />
-      <div className="mt-22">
-      <div className="max-w-xl mx-auto mt-20 p-6 bg-white shadow-2xl rounded-2xl">
-        <h1 className="text-2xl font-bold text-[#d4731e] mb-6">User Profile</h1>
-        <div className="space-y-4">
-          <Info label="Username" value={userInfo.username} />
-          <Info label="Full Name" value={`${userInfo.first_name} ${userInfo.last_name}`} />
+      <div className="bg-gray-50 min-h-screen">
+        <Nav />
+        <div className="flex justify-center px-4 sm:px-6 lg:px-8 pt-24">
+          <div className="w-full max-w-lg bg-white shadow-2xl rounded-2xl p-8">
+            {/* Header */}
+            <div className="text-center mb-8">
+              <div className="w-20 h-20 mx-auto flex items-center justify-center rounded-full bg-[#7464fa]/10 text-[#7464fa] text-3xl font-bold shadow-inner">
+                {userInfo.first_name?.[0] || userInfo.username?.[0]}
+              </div>
+              <h1 className="text-2xl font-bold text-gray-900 mt-4">
+                {userInfo.first_name} {userInfo.last_name}
+              </h1>
+              <p className="text-sm text-gray-500">@{userInfo.username}</p>
+            </div>
+
+            {/* Info Section */}
+            <div className="space-y-4">
+              <Info label="Username" value={userInfo.username} />
+              <Info
+                label="Full Name"
+                value={`${userInfo.first_name} ${userInfo.last_name}`}
+              />
+            </div>
+
+            {/* Actions */}
+           
+          </div>
         </div>
       </div>
-      </div>
-    </div>
     </RequireAuth>
   );
 };
 
 function Info({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex items-center gap-3">
-      <span className="font-bold text-gray-700 w-32">{label}:</span>
-      <span className="text-gray-900 break-all">{value}</span>
+    <div className="flex justify-between items-center border-b border-gray-200 pb-3">
+      <span className="font-medium text-gray-600">{label}</span>
+      <span className="text-gray-900">{value}</span>
     </div>
-    
   );
 }
 

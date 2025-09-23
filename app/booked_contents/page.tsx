@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation'
 import Nav from '@/app/components/Nav'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import RequireAuth from '../components/RequireAuth'
+import Image from 'next/image'
 
 type Status = 'pending' | 'paid' | 'confirmed' | 'completed' | 'rejected'
 interface Booking {
@@ -22,13 +23,13 @@ const Page = () => {
   const [error, setError] = useState('')
 
   useEffect(() => {
-    const storedUser = JSON.parse(localStorage.getItem("user") || "{}");
-    if (!storedUser?.username) return;
+    const storedUser  = JSON.parse(localStorage.getItem("user") || "{}");
+    if (!storedUser ?.username) return;
 
     setError('');
     setLoading(true);
 
-    const username = storedUser.username;
+    const username = storedUser .username;
     const url = `https://espoint.onrender.com/espoint/get_user_booking/${username}/${status}`;
 
     fetch(url)
@@ -43,18 +44,60 @@ const Page = () => {
       .finally(() => setLoading(false))
   }, [status]);
 
+  // Helper function to get status badge classes
+  const getStatusBadgeClasses = (status: string) => {
+    const baseClasses = 'px-2 py-1 rounded-full font-medium text-xs sm:text-sm shadow inline-block';
+    if (status === 'pending') return `${baseClasses} bg-yellow-100 text-yellow-800`;
+    if (status === 'confirmed' || status === 'completed') return `${baseClasses} bg-green-100 text-green-800`;
+    if (status === 'paid') return `${baseClasses} bg-blue-100 text-blue-800`;
+    if (status === 'rejected') return `${baseClasses} bg-red-600 text-white`;
+    return `${baseClasses} bg-gray-500 text-white`;
+  };
+
   return (
     <RequireAuth>
-      <div className="bg-white min-h-screen">
+      <div className="bg-white min-h-screen flex flex-col">
         <Nav />
-        <div className="max-w-7xl mx-auto pt-28 pb-16 px-6">
-          <h1 className="text-5xl font-bold mb-10   text-black">My <span className='text-[#7464fa]'>Bookings</span></h1>
 
-          <div className='flex flex-wrap gap-4 items-center mb-6'>
+        {/* Hero Section */}
+        <header className="px-4 sm:px-6 md:px-12 lg:px-20 py-16 sm:py-20 mt-12 bg-gradient-to-b from-white to-gray-50">
+          <div className="flex flex-col md:flex-row items-center gap-8 sm:gap-12 max-w-7xl mx-auto">
+            {/* Text */}
+            <div className="md:w-1/2 text-center md:text-left">
+              <h1 className="font-bold text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-gray-900 leading-tight">
+                Manage Your <span className="text-[#7464fa]">Bookings</span>
+              </h1>
+              <p className="mt-4 sm:mt-6 text-base sm:text-lg md:text-xl text-gray-600 max-w-lg mx-auto md:mx-0">
+                Track, review, and manage all your service bookings in one place.
+                Stay updated with real-time statuses, revisit past appointments,
+                and enjoy a smoother service experience every time.
+              </p>
+            </div>
+
+            {/* Illustration */}
+            <div className="md:w-1/2">
+              <Image
+                src="/undraw_date-picker_8qys (1).svg"
+                alt="Booking illustration"
+                width={450}
+                height={450}
+                className="rounded-2xl shadow-xl object-contain mx-auto w-full max-w-xs sm:max-w-md"
+                priority
+              />
+            </div>
+          </div>
+        </header>
+
+        {/* Main Content */}
+        <main className="px-4 pt-10">
+          {/* Filter */}
+          <div className='flex flex-col sm:flex-row flex-wrap gap-4 items-start sm:items-center mb-8'>
+            <label htmlFor="status" className="text-gray-700 font-medium text-sm sm:text-base">Filter by status:</label>
             <select
+              id="status"
               value={status}
               onChange={(e) => setStatus(e.target.value as Status)}
-              className='border border-gray-300 px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-[#7464fa]'
+              className='border border-gray-300 px-3 sm:px-4 py-2 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#7464fa] flex-1 sm:flex-none min-w-[200px]'
             >
               <option value="pending">Pending</option>
               <option value="paid">Paid</option>
@@ -64,58 +107,66 @@ const Page = () => {
             </select>
           </div>
 
-          {loading && <div className="text-[#7464fa] text-lg">Loading {status} bookings...</div>}
-          {error && <div className="text-red-500 text-lg">{error}</div>}
+          {/* Loading & Error States */}
+          {loading && <div className="text-[#7464fa] text-base sm:text-lg">Loading {status} bookings...</div>}
+          {error && <div className="text-red-500 text-base sm:text-lg">{error}</div>}
 
+          {/* Bookings Table */}
           {bookings.length === 0 ? (
-            <div className="bg-white rounded-2xl shadow-lg p-12 text-center text-gray-500 text-xl">
-              No bookings yet.
+            <div className="bg-white rounded-2xl shadow-lg p-8 sm:p-12 text-center text-gray-500 text-lg sm:text-xl">
+              No bookings found.
             </div>
           ) : (
-            <div className="w-full overflow-x-auto rounded-lg shadow-md border border-gray-200">
-              <div className="min-w-[1100px]">
-                <Table className="w-full text-lg">
-                  <TableHeader className='rounded-md bg-[#7464fa]/10'>
-                    <TableRow className="bg-[#7464fa] text-white shadow-md text-white">
-                      <TableHead className="py-4 px-6 text-left text-lg text-white">Booking ID</TableHead>
-                      <TableHead className="py-4 px-6 text-left text-lg text-white">Service</TableHead>
-                      <TableHead className="py-4 px-6 text-left text-lg text-white">Status</TableHead>
-                      <TableHead className="py-4 px-6 text-left text-lg text-white">Created</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {bookings.map((booking) => (
-                      <TableRow
-                        key={booking.booking_id}
-                        className="hover:bg-[#7464fa]/10 cursor-pointer transition-all duration-200"
-                        onClick={() => router.push(`/bookings/${booking.booking_id}`)}
-                      >
-                        <TableCell className="break-all font-mono py-4 px-6 text-base">{booking.booking_id}</TableCell>
-                        <TableCell className="font-semibold text-[#7464fa] py-4 px-6 text-base">{booking.service}</TableCell>
-                        <TableCell className="py-4 px-6">
-                          <span className={`px-4 py-2 rounded-full font-semibold text-base shadow ${
-                            booking.status === 'pending'
-                              ? 'bg-yellow-100 text-yellow-800'
-                              : booking.status === 'confirmed'
-                              ? 'bg-green-100 text-green-800'
-                              : booking.status === 'paid'
-                              ? 'bg-blue-100 text-blue-800'
-                              : booking.status === 'rejected'
-                              ? 'bg-red-700 text-white'
-                              : booking.status === 'completed'
-                              ? 'bg-green-100 text-green-800'
-                              : 'bg-gray-500 text-white'
-                          }`}>{booking.status}</span>
-                        </TableCell>
-                        <TableCell className="text-gray-700 py-4 px-6 text-base">{new Date(booking.created).toLocaleString()}</TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </div>
-            </div>
-          )}
-        </div>
+          <div className=" overflow-x-auto rounded-2xl shadow-md border border-gray-200">
+    <Table className="">
+      <TableHeader>
+        <TableRow className="bg-[#7464fa] sticky top-0 z-10">
+          <TableHead className="py-3 px-3 sm:px-6 text-left text-white font-medium min-w-[100px] sm:min-w-[180px]">
+            Booking ID
+          </TableHead>
+          <TableHead className="py-3 px-3 sm:px-6 text-left text-white font-medium min-w-[120px] sm:min-w-[180px]">
+            Service
+          </TableHead>
+          <TableHead className="py-3 px-3 sm:px-6 text-left text-white font-medium min-w-[90px] sm:min-w-[120px]">
+            Status
+          </TableHead>
+          <TableHead className="py-3 px-3 sm:px-6 text-left text-white font-medium min-w-[120px] sm:min-w-[160px]">
+            Created
+          </TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        {bookings.map((booking) => (
+          <TableRow
+            key={booking.booking_id}
+            className="hover:bg-[#7464fa]/10 cursor-pointer transition-all duration-200 border-b last:border-b-0"
+            onClick={() => router.push(`/bookings/${booking.booking_id}`)}
+          >
+            <TableCell className="font-sm line-clamp-2 text-sm clamp-1 py-3 px-3 sm:px-6 break-words whitespace-normal max-w-[100px] sm:max-w-[180px]">
+              {booking.booking_id}
+            </TableCell>
+            <TableCell className="font-semibold text-[#7464fa] py-3 px-3 sm:px-6 break-words whitespace-normal max-w-[120px] sm:max-w-[180px]">
+              {booking.service}
+            </TableCell>
+            <TableCell className="py-3 px-3 sm:px-6">
+              <span className={getStatusBadgeClasses(booking.status)}>
+                {booking.status}
+              </span>
+            </TableCell>
+            <TableCell className="text-gray-700 py-3 px-3 sm:px-6 whitespace-nowrap">
+              {new Date(booking.created).toLocaleString()}
+            </TableCell>
+          </TableRow>
+        ))}
+      </TableBody>
+    </Table>
+  </div>          )}
+
+          {/* Optional: Mobile hint for scrolling */}
+          <div className="mt-4 text-center text-xs text-gray-500 sm:hidden">
+            Swipe left/right to view all columns
+          </div>
+        </main>
       </div>
     </RequireAuth>
   )

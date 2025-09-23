@@ -118,7 +118,7 @@ const Signup = () => {
 
       if (response.ok) {
         setSuccessMessage("Sign up successful! You may now sign in.");
-        router.push("/activate");
+        router.push('/message')
         setFormData({
           firstName: "",
           lastName: "",
@@ -127,11 +127,24 @@ const Signup = () => {
           password: "",
           confirmPassword: "",
         });
-      } else {
-        setErrorMessage(
-          data?.detail || data?.error || data?.message || "Registration failed."
-        );
-      }
+      }else {
+
+  let error = "Registration failed.";
+  if (data?.detail) {
+    error = data.detail;
+  } else if (data?.error) {
+    error = data.error;
+  } else if (data?.msg) {
+    error = data.msg;
+  } else if (data?.errors && typeof data.errors === "object") {
+   
+    error = Object.values(data.errors).flat().join(" ");
+  } else if (Array.isArray(data)) {
+    
+    error = data.join(" ");
+  }
+  setErrorMessage(error);
+}
     } catch (error) {
       setErrorMessage("An error occurred while registering.");
     } finally {

@@ -119,6 +119,28 @@ const Login = () => {
         return;
       }
 
+      else{
+        let error = "Login failed."
+         if (loginData?.detail) {
+    error = loginData.detail;
+
+  }else if(loginData?.error){
+    error = loginData.error
+  }
+  else if(loginData?.msg){
+    error = loginData.msg
+  }else if (loginData?.errors && typeof loginData.errors === "object") {
+   
+    error = Object.values(loginData.errors).flat().join(" ");
+  } else if (Array.isArray(loginData)) {
+    
+    error = loginData.join(" ");
+  }
+
+  setErrorMessage(error)
+        
+      }
+
       localStorage.setItem("authToken", loginData.access);
       localStorage.setItem("refreshToken", loginData.refresh);
 
@@ -133,6 +155,8 @@ const Login = () => {
           localStorage.setItem("user", JSON.stringify(userData.msg));
         }
       }
+
+      
 
       setSuccessMessage("Login successful!");
       router.push("/services");

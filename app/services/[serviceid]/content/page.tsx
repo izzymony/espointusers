@@ -151,11 +151,7 @@ const ContentService = () => {
       </div>
 
       {/* Browse All CTA */}
-      <div className="flex justify-center items-center my-12">
-        <button className="bg-[#7464fa] text-white py-3 px-8 text-lg font-semibold rounded-lg shadow-md hover:bg-[#5a4ad8] transition">
-          Browse All Properties
-        </button>
-      </div>
+      
     </div>
   );
 };

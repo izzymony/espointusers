@@ -6,7 +6,7 @@ import { Menu, X, Home, Search, Info, Phone, CalendarDays, User2 } from 'lucide-
 
 const menuItems = [
   { href: '/services', label: 'Home', icon: <Home className="w-5 h-5" /> },
-  /* { href: '/services', label: 'Browse', icon: <Search className="w-5 h-5" /> }, */
+   { href: '/all_services', label: 'Browse', icon: <Search className="w-5 h-5" /> },
   { href: '/booked_contents', label: 'My Bookings', icon: <CalendarDays className="w-5 h-5" /> },
   { href: '/profile', label: 'Profile', icon: <User2 className="w-5 h-5" /> },
   
