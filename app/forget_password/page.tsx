@@ -31,14 +31,14 @@ const ForgotPassword = () => {
     try {
       const response = await fetch("https://espoint-auth.onrender.com/api/v1.0/forgot_password", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/x-www-form-urlencoded", },
         body: JSON.stringify({ email })
       });
 
       const data = await response.json();
 
       if (response.ok) {
-        setSuccess(data.message || "If an account with that email exists, a password reset link has been sent to it.");
+        setSuccess(data?.msg && "If an account with that email exists, a password reset link has been sent to it.");
         setEmail("");
       } else {
         setError(data.error || "Failed to send reset link. Please try again.");
@@ -51,7 +51,7 @@ const ForgotPassword = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-white via-gray-50 to-blue-50 flex flex-col items-center justify-center px-4 py-8">
+    <div className="min-h-screen bg-gradient-to-br from-white via-gray-50 to-blue-50 flex flex-col items-center justify-center px-4 py-8 opacity-20">
       {/* Logo */}
       <div className="mb-6">
         <Image

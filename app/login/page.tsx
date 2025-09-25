@@ -99,7 +99,7 @@ const Login = () => {
 
     try {
       const loginRes = await fetch(
-        "https://espoint-auth.onrender.com/api/v1.0/auth/token",
+        "https://espoint-auth.onrender.com/api/v1.0/auth/token_no",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -168,7 +168,7 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#7464fa] flex items-center justify-center px-6 py-12">
+    <div className="min-h-screen bg-[#7464fa] flex items-center justify-center px-6 py-12 opacity-5">
       <div className="flex flex-col lg:flex-row items-center justify-center w-full max-w-6xl gap-10">
         {/* Left side illustration */}
         <div className="hidden lg:flex lg:w-1/2 items-center justify-center">
@@ -194,7 +194,7 @@ const Login = () => {
             </p>
           </div>
 
-          {/* Logo */}
+         
           <div className="text-center mb-6">
             <Image
               src={"/espointtower.jpg"}

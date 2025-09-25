@@ -22,7 +22,7 @@ const testimonials = [
 
 export default function Home() {
   return (
-    <div className="bg-white w-full min-h-screen flex flex-col">
+    <div className="bg-white w-full min-h-screen flex flex-col opacity-5">
       <Header />
 
       {/* Hero Section */}
