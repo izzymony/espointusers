@@ -168,7 +168,7 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#7464fa] flex items-center justify-center px-6 py-12 opacity-5">
+    <div className="min-h-screen bg-[#7464fa] flex items-center justify-center px-6 py-12 opacity-3">
       <div className="flex flex-col lg:flex-row items-center justify-center w-full max-w-6xl gap-10">
         {/* Left side illustration */}
         <div className="hidden lg:flex lg:w-1/2 items-center justify-center">

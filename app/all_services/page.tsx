@@ -40,7 +40,7 @@ const Page = () => {
   }, []);
 
   return (
-    <div className="bg-white min-h-screen flex flex-col">
+    <div className="bg-white min-h-screen flex flex-col-1 opacity-3">
       <Nav />
 
       {/* Hero Section */}
@@ -87,7 +87,7 @@ const Page = () => {
                       services.map((service) => (
                         <article
                           key={service.service_id}
-                          className="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-500"
+                          className="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-500 opacity-3"
                           tabIndex={0}
                           aria-label={`Service: ${service.service_name}, status: ${service.status}`}
                           onClick={() =>
