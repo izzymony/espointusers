@@ -98,7 +98,7 @@ const Page = () => {
 
   if (loading)
     return (
-      <div className="mt-20 flex justify-center items-center h-[100vh]">
+      <div className="mt-20 flex justify-center items-center h-[100vh] opacity-3">
         <Loader />
       </div>
     );
@@ -116,7 +116,7 @@ const Page = () => {
       : "bg-green-100 text-green-800";
 
   return (
-    <div className="bg-gray-50 min-h-screen">
+    <div className="bg-gray-50 min-h-screen opacity-3">
       <Nav />
       <div className="pt-28 px-4 md:px-8 lg:px-16 max-w-screen-xl mx-auto opacity-3">
         {/* Header */}

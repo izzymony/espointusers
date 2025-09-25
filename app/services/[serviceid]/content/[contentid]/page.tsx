@@ -1,4 +1,4 @@
-/* 'use client';
+'use client';
 
 import React, { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
@@ -202,7 +202,7 @@ const ContentDetails = () => {
   const totalPrice = itemQuantity * itemPrice;
 
   return (
-    <div className="bg-white min-h-screen">
+    <div className="bg-white min-h-screen opacity-5">
       <Nav />
       <div className="container mx-auto px-4 mt-24">
         <main className="space-y-10">
@@ -350,4 +350,3 @@ const ContentDetails = () => {
 };
 
 export default ContentDetails;
- */

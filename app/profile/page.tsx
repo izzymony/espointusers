@@ -50,14 +50,14 @@ const ProfilePage = () => {
       setLoading(true);
       try {
         let res = await fetch(
-          `https://espoint-auth.onrender.com/api/v1.0/get_user_info/${username}`,
+          `https://espoint-auth.onrender.com/api/v1.0/get_user_info/${username}_no`,
           { headers: { Authorization: token ? `Bearer ${token}` : "" } }
         );
 
         if (res.status === 401) {
           token = await refreshAccessToken();
           res = await fetch(
-            `https://espoint-auth.onrender.com/api/v1.0/get_user_info/${username}`,
+            `https://espoint-auth.onrender.com/api/v1.0/get_user_info/${username}_no`,
             { headers: { Authorization: `Bearer ${token}` } }
           );
         }
@@ -91,7 +91,7 @@ const ProfilePage = () => {
 
   return (
     <RequireAuth>
-      <div className="bg-gray-50 min-h-screen opacity-0">
+      <div className="bg-gray-50 min-h-screen opacity-3">
         <Nav />
         <div className="flex justify-center px-4 sm:px-6 lg:px-8 pt-24">
           <div className="w-full max-w-lg bg-white shadow-2xl rounded-2xl p-8">
