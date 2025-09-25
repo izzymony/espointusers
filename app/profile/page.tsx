@@ -91,7 +91,7 @@ const ProfilePage = () => {
 
   return (
     <RequireAuth>
-      <div className="bg-gray-50 min-h-screen opacity-3">
+      <div className="bg-gray-50 min-h-screen ">
         <Nav />
         <div className="flex justify-center px-4 sm:px-6 lg:px-8 pt-24">
           <div className="w-full max-w-lg bg-white shadow-2xl rounded-2xl p-8">

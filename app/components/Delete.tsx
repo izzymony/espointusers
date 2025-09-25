@@ -1,6 +1,7 @@
 import React,{useState, useEffect} from 'react'
 import Link from 'next/link'
 import {useRouter} from "next/navigation"
+import Image from 'next/image'
 
 
 const Delete = () => {
@@ -8,6 +9,7 @@ const Delete = () => {
 const [error, setError] = useState('') 
 const [success, setSuccess] = useState('');
 const router = useRouter();
+
 
 const handleDelete = async () =>{
 setError("")

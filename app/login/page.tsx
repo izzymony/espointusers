@@ -99,7 +99,7 @@ const Login = () => {
 
     try {
       const loginRes = await fetch(
-        "https://espoint-auth.onrender.com/api/v1.0/auth/token_no",
+        "https://espoint-auth.onrender.com/api/v1.0/auth/token",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -168,7 +168,7 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#7464fa] flex items-center justify-center px-6 py-12 opacity-3">
+    <div className="min-h-screen bg-[#7464fa] flex items-center justify-center px-6 py-12 ">
       <div className="flex flex-col lg:flex-row items-center justify-center w-full max-w-6xl gap-10">
         {/* Left side illustration */}
         <div className="hidden lg:flex lg:w-1/2 items-center justify-center">
@@ -181,7 +181,6 @@ const Login = () => {
             priority
           />
         </div>
-
         {/* Right side form */}
         <div className="w-full max-w-md bg-white rounded-2xl shadow-xl p-8">
           {/* Header */}

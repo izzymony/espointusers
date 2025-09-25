@@ -51,7 +51,7 @@ const ForgotPassword = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-white via-gray-50 to-blue-50 flex flex-col items-center justify-center px-4 py-8 opacity-3g">
+    <div className="min-h-screen bg-gradient-to-br from-white via-gray-50 to-blue-50 flex flex-col items-center justify-center px-4 py-8 ">
       {/* Logo */}
       <div className="mb-6">
         <Image
