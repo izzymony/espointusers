@@ -56,7 +56,7 @@ const Page = () => {
 
   return (
     <RequireAuth>
-      <div className="bg-white min-h-screen flex flex-col">
+      <div className="bg-white min-h-screen flex flex-col  opacity-3">
         <Nav />
 
         {/* Hero Section */}

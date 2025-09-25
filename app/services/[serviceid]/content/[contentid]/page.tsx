@@ -1,4 +1,4 @@
-'use client';
+/* 'use client';
 
 import React, { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
@@ -101,8 +101,9 @@ const ContentDetails = () => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  // ✅ booking handler
   const handleSubmitBooking = async (
-    e: React.FormEvent<HTMLFormElement | HTMLSelectElement>
+    e: React.FormEvent<HTMLFormElement>
   ) => {
     e.preventDefault();
     setBookingLoading(true);
@@ -111,10 +112,15 @@ const ContentDetails = () => {
 
     try {
       const storedUser = JSON.parse(localStorage.getItem('user') || '{}');
-      if (!storedUser || !storedUser.username) {
+      if (!storedUser?.username) {
         setBookingError('You must be logged in to make a booking');
         return;
       }
+
+      // ✅ calculate price here before sending
+      const itemQuantity = content?.store?.rental_items[1]?.quantity || 0;
+      const itemPrice = content?.store?.base_price || 0;
+      const totalPrice = itemQuantity * itemPrice;
 
       const payload = {
         service: content?.service || '',
@@ -138,30 +144,44 @@ const ContentDetails = () => {
       };
 
       const res = await fetch(
-        'https://espoint.onrender.com/espoint/create_booking',
+        'https://espoint.onrender.com/espoint/create_booking_no',
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload),
         }
       );
+
       const data = await res.json();
+      console.log("Create Booking API Response:", data);
 
+      let message = '';
       let bookingId = '';
-      if (data.msg && typeof data.msg === 'string' && data.msg.startsWith('Booking ID ')) {
-        bookingId = data.msg.replace('Booking ID ', '');
+
+      if (typeof data.msg === 'string') {
+        message = data.msg;
+        if (message.includes('Booking ID')) {
+          bookingId = message.replace('Booking ID ', '');
+        }
+      } else if (data.msg && typeof data.msg === 'object') {
+        message = data.msg.message || '';
+        bookingId = data.msg.booking_id || '';
       }
 
-      if (res.ok && bookingId) {
-        setBookingSuccess('Booking successful!');
-        router.push(`/booked_contents`);
+      // ✅ Success check
+      if (message.toLowerCase().includes('success') || bookingId) {
+        setBookingSuccess(message || 'Booking successful!');
         setShowModal(false);
+
+        setTimeout(() => {
+          router.push('/booked_contents');
+        }, 1200);
       } else {
-        setBookingError(data.message || 'Booking failed.');
+        setBookingError(message || 'Booking failed.');
       }
-    } catch (err) {
-      console.error('Booking failed:', err);
-      setBookingError('Booking failed.');
+    } catch (err: any) {
+      console.error("Booking Error:", err);
+      setBookingError(err.message || 'Booking failed. Please try again.');
     } finally {
       setBookingLoading(false);
     }
@@ -169,7 +189,7 @@ const ContentDetails = () => {
 
   if (loading)
     return (
-      <div className="mt-20 flex h-[100vh] justify-center items-center">
+      <div className="mt-20 flex h-[100vh] justify-center items-center opacity-5">
         <Loader />
       </div>
     );
@@ -186,7 +206,7 @@ const ContentDetails = () => {
       <Nav />
       <div className="container mx-auto px-4 mt-24">
         <main className="space-y-10">
-          {/* Hero Section */}
+     
           <div className="relative w-full rounded-xl overflow-hidden shadow-md">
             <Image
               src={store.branding.logo_url[0] || '/camera-431119_1280.jpg'}
@@ -201,7 +221,7 @@ const ContentDetails = () => {
             </div>
           </div>
 
-          {/* Service Info */}
+        
           <div className="space-y-6">
             <h1 className="font-bold text-3xl text-black">{store.name}</h1>
             <section>
@@ -238,7 +258,7 @@ const ContentDetails = () => {
               </div>
             </section>
 
-            {/* Pricing */}
+            
             <div className="bg-[#f5f3ff] border rounded-xl shadow-md p-6 space-y-6">
               <p className="font-bold text-2xl text-[#7464fa]">
                 ₦{store.base_price}{' '}
@@ -273,10 +293,9 @@ const ContentDetails = () => {
               <div className="flex justify-center">
                 <button
                   className="bg-[#7464fa] text-white font-semibold rounded-lg px-6 py-3 w-full sm:w-auto disabled:opacity-60 hover:bg-[#5c4ddf] transition-colors"
-                  disabled={bookingLoading}
                   onClick={() => setShowModal(true)}
                 >
-                  {bookingLoading ? 'Booking...' : 'Book Now'}
+                  Book Now
                 </button>
               </div>
             </div>
@@ -284,51 +303,51 @@ const ContentDetails = () => {
         </main>
       </div>
 
-      {/* Booking Modal */}
+      
       {showModal && (
-  <div className="fixed inset-0 z-50 flex items-center justify-center pt-20 pb-20 bg-black/50 overflow-auto">
-    <div className="bg-white rounded-xl shadow-xl p-6 sm:p-8 w-[95%] max-w-lg max-h-[90vh] overflow-y-auto relative">
-      <button
-        className="absolute top-3 right-3 text-gray-500 hover:text-red-500 text-2xl font-bold"
-        onClick={() => setShowModal(false)}
-      >
-        &times;
-      </button>
-      <h2 className="text-2xl font-bold mb-6 text-center">Complete Your Booking</h2>
-      <form onSubmit={handleSubmitBooking} className="flex flex-col gap-4 text-gray-700">
-        <input name="client_name" value={formData.client_name} onChange={handleFormChange} className="border rounded px-3 py-2 w-full" placeholder="Full Name" required />
-        <input type="email" name="client_email" value={formData.client_email} onChange={handleFormChange} className="border rounded px-3 py-2 w-full" placeholder="Email" required />
-        <input name="client_phone" value={formData.client_phone} onChange={handleFormChange} className="border rounded px-3 py-2 w-full" placeholder="Phone" required />
-        <input type="date" name="service_date" value={formData.service_date} onChange={handleFormChange} className="border rounded px-3 py-2 w-full" required />
-        <input type="time" name="service_time" value={formData.service_time} onChange={handleFormChange} className="border rounded px-3 py-2 w-full" required />
-        <textarea name="notes" value={formData.notes} onChange={handleFormChange} className="border rounded px-3 py-2 w-full" placeholder="Notes (optional)" />
-        <input type="text" name="booking_code" value={formData.booking_code} onChange={handleFormChange} className="border rounded px-3 py-2 w-full" placeholder="Booking code (optional)" />
-        <input name="username" value={formData.username} onChange={handleFormChange} className="border rounded px-3 py-2 w-full" placeholder="Username" required />
+        <div className="fixed inset-0 z-50 flex items-center justify-center pt-20 pb-20 bg-black/50 overflow-auto">
+          <div className="bg-white rounded-xl shadow-xl p-6 sm:p-8 w-[95%] max-w-lg max-h-[90vh] overflow-y-auto relative">
+            <button
+              className="absolute top-3 right-3 text-gray-500 hover:text-red-500 text-2xl font-bold"
+              onClick={() => setShowModal(false)}
+            >
+              &times;
+            </button>
+            <h2 className="text-2xl font-bold mb-6 text-center">Complete Your Booking</h2>
+            <form onSubmit={handleSubmitBooking} className="flex flex-col gap-4 text-gray-700">
+              <input name="client_name" value={formData.client_name} onChange={handleFormChange} className="border rounded px-3 py-2 w-full" placeholder="Full Name" required />
+              <input type="email" name="client_email" value={formData.client_email} onChange={handleFormChange} className="border rounded px-3 py-2 w-full" placeholder="Email" required />
+              <input name="client_phone" value={formData.client_phone} onChange={handleFormChange} className="border rounded px-3 py-2 w-full" placeholder="Phone" required />
+              <input type="date" name="service_date" value={formData.service_date} onChange={handleFormChange} className="border rounded px-3 py-2 w-full" required />
+              <input type="time" name="service_time" value={formData.service_time} onChange={handleFormChange} className="border rounded px-3 py-2 w-full" required />
+              <input type="text" name="booking_code" value={formData.booking_code} onChange={handleFormChange} className="border rounded px-3 py-2 w-full" placeholder="Booking code (optional)" />
+              <input name="username" value={formData.username} onChange={handleFormChange} className="border rounded px-3 py-2 w-full" placeholder="Username" required />
 
-        <select name="status" value={formData.status} onChange={handleFormChange} className="border rounded px-3 py-2 w-full">
-          <option value="pending">Pending</option>
-        </select>
+              <select name="status" value={formData.status} onChange={handleFormChange} className="border rounded px-3 py-2 w-full">
+                <option value="pending">Pending</option>
+              </select>
 
-        <button
-          type="submit"
-          className="bg-[#7464fa] text-white font-bold rounded-lg py-2 mt-2 w-full disabled:opacity-60 hover:bg-[#5c4ddf] transition-colors"
-          disabled={bookingLoading}
-        >
-          {bookingLoading ? 'Booking...' : 'Submit Booking'}
-        </button>
-      </form>
-      {bookingSuccess && (
-        <p className="text-green-600 font-semibold mt-4 text-center">{bookingSuccess}</p>
+              <button
+                type="submit"
+                className="bg-[#7464fa] text-white font-bold rounded-lg py-2 mt-2 w-full disabled:opacity-60 hover:bg-[#5c4ddf] transition-colors"
+                disabled={bookingLoading}
+              >
+                {bookingLoading ? 'Booking...' : 'Submit Booking'}
+              </button>
+            </form>
+            {bookingSuccess && (
+              <p className="text-green-600 font-semibold mt-4 text-center">{bookingSuccess}</p>
+            )}
+            {bookingError && (
+              <p className="text-red-600 font-semibold mt-4 text-center">{bookingError}</p>
+            )}
+          </div>
+        </div>
       )}
-      {bookingError && (
-        <p className="text-red-600 font-semibold mt-4 text-center">{bookingError}</p>
-      )}
-    </div>
-  </div>
-)}
 
     </div>
   );
 };
 
 export default ContentDetails;
+ */

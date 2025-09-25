@@ -68,12 +68,12 @@ const ContentService = () => {
     return <div className="mt-20 text-gray-600">No content found for this service.</div>;
 
   return (
-    <div className="bg-white min-h-screen">
+    <div className="bg-white min-h-screen opacity-5">
       {/* Navbar */}
       <Nav />
 
       {/* Header */}
-      <div className="px-4 mt-25 text-center lg:text-left">
+      <div className="px-4 mt-25 text-center lg:text-left opacity-5">
         <h1 className="text-black text-4xl font-bold text-3xl md:text-4xl mb-6">
           Explore Service <span className='text-[#7464fa]'>Contents</span>
         </h1>
