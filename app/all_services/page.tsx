@@ -40,7 +40,7 @@ const Page = () => {
   }, []);
 
   return (
-    <div className="bg-white min-h-screen flex flex-col-1 opacity-3">
+    <div className="bg-white min-h-screen flex flex-col-1 ">
       <Nav />
 
       {/* Hero Section */}

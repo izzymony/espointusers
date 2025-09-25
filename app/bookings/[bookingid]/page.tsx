@@ -98,7 +98,7 @@ const Page = () => {
 
   if (loading)
     return (
-      <div className="mt-20 flex justify-center items-center h-[100vh] opacity-3">
+      <div className="mt-20 flex justify-center items-center h-[100vh] ">
         <Loader />
       </div>
     );
@@ -116,9 +116,9 @@ const Page = () => {
       : "bg-green-100 text-green-800";
 
   return (
-    <div className="bg-gray-50 min-h-screen opacity-3">
+    <div className="bg-gray-50 min-h-screen ">
       <Nav />
-      <div className="pt-28 px-4 md:px-8 lg:px-16 max-w-screen-xl mx-auto opacity-3">
+      <div className="pt-28 px-4 md:px-8 lg:px-16 max-w-screen-xl mx-auto ">
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-10 gap-4">
             <h1 className="text-5xl font-bold mb-10   text-black">Booking <span className='text-[#7464fa]'>Details</span></h1>

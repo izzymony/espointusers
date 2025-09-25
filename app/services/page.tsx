@@ -80,7 +80,7 @@ const ServicePage = () => {
 
   return (
     <RequireAuth>
-      <div className="bg-white text-gray-800 mt-14 opacity-5">
+      <div className="bg-white text-gray-800 mt-14 ">
         {/* Navbar */}
         <Nav />
 

@@ -206,7 +206,7 @@ const ContentDetails = () => {
 
   if (loading)
     return (
-      <div className="mt-20 flex h-[100vh] justify-center items-center opacity-3">
+      <div className="mt-20 flex h-[100vh] justify-center items-center">
         <Loader />
       </div>
     );
@@ -219,7 +219,7 @@ const ContentDetails = () => {
   const totalPrice = itemQuantity * itemPrice;
 
   return (
-    <div className="bg-white min-h-screen opacity-5">
+    <div className="bg-white min-h-screen ">
       <Nav />
       <div className="container mx-auto px-4 mt-24">
         <main className="space-y-10">

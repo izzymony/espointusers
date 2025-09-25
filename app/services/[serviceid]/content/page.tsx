@@ -68,7 +68,7 @@ const ContentService = () => {
     return <div className="mt-20 text-gray-600">No content found for this service.</div>;
 
   return (
-    <div className="bg-white min-h-screen opacity-5">
+    <div className="bg-white min-h-screen ">
       {/* Navbar */}
       <Nav />
 

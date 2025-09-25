@@ -22,13 +22,13 @@ const testimonials = [
 
 export default function Home() {
   return (
-    <div className="bg-white w-full min-h-screen flex flex-col opacity-5">
+    <div className="bg-white w-full min-h-screen flex flex-col ">
       <Header />
 
       {/* Hero Section */}
       <section className="relative w-full py-20 sm:py-24 lg:py-32 overflow-hidden">
         {/* Background Gradient */}
-        <div className="absolute inset-0 bg-gradient-to-br from-[#7464fa] via-[#a59df7] to-white opacity-90 -z-10"></div>
+        <div className="absolute inset-0 bg-gradient-to-br from-[#7464fa] via-[#a59df7] to-white  -z-10"></div>
 
         {/* Content Wrapper */}
         <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-center justify-between px-6 sm:px-10 lg:px-20 gap-12 lg:gap-24">
