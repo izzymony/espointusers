@@ -1,96 +1,84 @@
 import React from 'react'
 import { useRouter } from 'next/navigation'
-
+import Link from 'next/link'
+import { Facebook, Twitter, Linkedin, Instagram } from 'lucide-react'
 const Foot = () => {
               const router = useRouter() 
   return (
     <div>
-      <div>
-      <footer className="bg-[#7464fa] text-white py-16 px-6">
-          <div className="max-w-6xl mx-auto grid gap-10 md:grid-cols-3 md:mx-auto">
-            <div>
-              <h3 className="text-lg font-bold mb-3">ESTransPro</h3>
-              <p className="text-sm text-gray-100">
-                Delivering quality services with a modern and user-friendly
-                experience. Your satisfaction is our priority.
+      <footer className="bg-black text-gray-300 py-20">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
+            <div className="space-y-6">
+              <div className="text-white font-bold text-2xl flex items-center gap-2">
+                <div className="bg-primary w-10 h-10 rounded-lg"></div>
+                ESPOINT
+              </div>
+              <p className="text-gray-400 max-w-xs">
+                Empowering businesses through comprehensive solutions across multiple industries.
               </p>
             </div>
-            <nav aria-label="Quick links">
-              <h3 className="text-lg font-bold mb-3">Quick Links</h3>
-              <ul className="space-y-2 text-sm">
-              <li>
-                  <button
-                    onClick={() => router.push("/")}
-                    className="hover:underline"
-                  >
-                    Home
-                  </button>
-              </li>
-                <li>
-                  <button
-                    onClick={() => router.push("/services")}
-                    className="hover:underline"
-                  >
-                    Services
-                  </button>
-                </li>
 
-                <li>
-                   <button
-                    onClick={() => router.push("/Services")}
-                    className="hover:underline"
-                  >Browse
-                  </button>          
-                </li>
-                
-               
-              </ul>
-            </nav>
             <div>
-              <h3 className="text-lg font-bold mb-3">Stay Connected</h3>
-              <p className="text-sm">Follow us on social media</p>
-              <div className="flex gap-4 mt-3">
-                <a
-                  href="https://facebook.com"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label="Facebook"
-                  className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center hover:bg-white hover:text-[#7464fa] transition"
-                >
-                  F
-                </a>
-                <a
-                  href="https://twitter.com"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label="Twitter"
-                  className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center hover:bg-white hover:text-[#7464fa] transition"
-                >
-                  T
-                </a>
-                <a
-                  href="https://instagram.com"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label="Instagram"
-                  className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center hover:bg-white hover:text-[#7464fa] transition"
-                >
-                  I
-                </a>
+              <h4 className="text-white font-bold mb-6">Services</h4>
+              <ul className="space-y-4">
+                <li><Link href="#" className="hover:text-primary transition-colors">Multimedia Services</Link></li>
+                <li><Link href="#" className="hover:text-primary transition-colors">Local Product Promotion</Link></li>
+                <li><Link href="#" className="hover:text-primary transition-colors">General Merchandise</Link></li>
+                <li><Link href="#" className="hover:text-primary transition-colors">International Sourcing</Link></li>
+                <li><Link href="#" className="hover:text-primary transition-colors">Event Planning</Link></li>
+                <li><Link href="#" className="hover:text-primary transition-colors">Development Consulting</Link></li>
+              </ul>
+            </div>
+
+            <div>
+              <h4 className="text-white font-bold mb-6">Contact</h4>
+              <ul className="space-y-4">
+                <li className="flex flex-col">
+                  <span className="text-primary text-xs uppercase tracking-wider font-bold mb-1">Email</span>
+                  info@espointintl.com
+                </li>
+                <li className="flex flex-col">
+                  <span className="text-primary text-xs uppercase tracking-wider font-bold mb-1">Phone</span>
+                  +232 79 570723
+                </li>
+                <li className="flex flex-col">
+                  <span className="text-primary text-xs uppercase tracking-wider font-bold mb-1">Address</span>
+                  1 Lano Avenue, Mambo <br /> Freetown, Sierra Leone
+                </li>
+              </ul>
+            </div>
+
+            <div>
+              <h4 className="text-white font-bold mb-6">Follow Us</h4>
+              <div className="flex gap-4">
+                <div className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-primary hover:text-black transition-all cursor-pointer">
+                  <Facebook className="w-5 h-5" />
+                </div>
+                <div className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-primary hover:text-black transition-all cursor-pointer">
+                  <Twitter className="w-5 h-5" />
+                </div>
+                <div className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-primary hover:text-black transition-all cursor-pointer">
+                  <Linkedin className="w-5 h-5" />
+                </div>
+                <div className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-primary hover:text-black transition-all cursor-pointer">
+                  <Instagram className="w-5 h-5" />
+                </div>
               </div>
             </div>
-            <div>
-              
-             
-             
+          </div>
+
+          <div className="pt-8 border-t border-gray-800 flex flex-col md:row justify-between items-center gap-4 text-sm text-gray-500">
+            <p>© {new Date().getFullYear()} ESPoint. All rights reserved.</p>
+            <div className="flex gap-8">
+              <Link href="#" className="hover:text-primary transition-colors">Privacy Policy</Link>
+              <Link href="#" className="hover:text-primary transition-colors">Terms of Service</Link>
             </div>
           </div>
-          <p className="text-center text-xs text-gray-200 mt-12">
-            © {new Date().getFullYear()} ESTransPro. All rights reserved.
-          </p>
-        </footer>
+        </div>
+      </footer>
     </div>
-    </div>
+    
   )
 }
 

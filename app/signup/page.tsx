@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, ArrowRight } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 interface FormData {
@@ -127,24 +127,24 @@ const Signup = () => {
           password: "",
           confirmPassword: "",
         });
-      }else {
+      } else {
 
-  let error = "Registration failed.";
-  if (data?.detail) {
-    error = data.detail;
-  } else if (data?.error) {
-    error = data.error;
-  } else if (data?.msg) {
-    error = data.msg;
-  } else if (data?.errors && typeof data.errors === "object") {
-   
-    error = Object.values(data.errors).flat().join(" ");
-  } else if (Array.isArray(data)) {
-    
-    error = data.join(" ");
-  }
-  setErrorMessage(error);
-}
+        let error = "Registration failed.";
+        if (data?.detail) {
+          error = data.detail;
+        } else if (data?.error) {
+          error = data.error;
+        } else if (data?.msg) {
+          error = data.msg;
+        } else if (data?.errors && typeof data.errors === "object") {
+
+          error = Object.values(data.errors).flat().join(" ");
+        } else if (Array.isArray(data)) {
+
+          error = data.join(" ");
+        }
+        setErrorMessage(error);
+      }
     } catch (error) {
       setErrorMessage("An error occurred while registering.");
     } finally {
@@ -153,7 +153,7 @@ const Signup = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#7464fa] flex items-center justify-center px-6 py-12 ">
+    <div className="min-h-screen bg-white flex items-center justify-center px-6 py-12 ">
       <div className="flex flex-col lg:flex-row items-center justify-center w-full max-w-6xl gap-10">
         {/* Left side image */}
         <div className="hidden lg:flex lg:w-1/2 items-center justify-center">
@@ -168,13 +168,13 @@ const Signup = () => {
         </div>
 
         {/* Right side form */}
-        <div className="w-full max-w-md bg-white rounded-2xl shadow-xl p-8">
+        <div className="w-full max-w-md bg-white rounded-2xl shadow-2xl border border-gray-100 p-8">
           {/* Header */}
           <div className="text-center mb-6">
-            <h1 className="text-3xl md:text-4xl font-bold text-[#7464fa]">
-              Welcome
+            <h1 className="text-3xl md:text-4xl font-extrabold text-black">
+              Welcome to <span className="text-primary">ESPOINT</span>
             </h1>
-            <p className="text-gray-600 mt-2">
+            <p className="text-gray-500 mt-2 font-medium">
               Let’s get you started with your new account
             </p>
           </div>
@@ -184,25 +184,25 @@ const Signup = () => {
             <Image
               src={"/espointtower.jpg"}
               alt="ESPOINT"
-              width={120}
-              height={150}
+              width={100}
+              height={120}
               className="mx-auto rounded-md shadow-md"
             />
           </div>
 
-          <h2 className="text-[#7464fa] text-2xl font-extrabold text-center">
+          <h2 className="text-black text-2xl font-extrabold text-center">
             Create Account
           </h2>
-          <p className="text-gray-600 font-medium text-base mt-2 text-center">
+          <p className="text-gray-500 font-medium text-base mt-1 text-center">
             Sign up for a new account
           </p>
 
           {/* Form */}
-          <form onSubmit={handleSubmit} className="space-y-5 mt-6">
+          <form onSubmit={handleSubmit} className="space-y-5 mt-8">
             {/* First & Last name */}
-            <div className="flex gap-3">
-              <div className="w-1/2">
-                <label htmlFor="firstName" className="text-gray-700 font-medium">
+            <div className="flex gap-4">
+              <div className="w-1/2 space-y-2">
+                <label htmlFor="firstName" className="text-sm font-semibold text-gray-700 ml-1">
                   First Name
                 </label>
                 <input
@@ -211,17 +211,17 @@ const Signup = () => {
                   name="firstName"
                   value={formData.firstName}
                   onChange={handleChange}
-                  placeholder="Enter first name"
-                  className="w-full px-3 py-2 border rounded-md border-gray-300 placeholder:text-gray-400 focus:border-[#7464fa] focus:ring-2 focus:ring-[#7464fa] outline-none"
+                  placeholder="First name"
+                  className="w-full bg-gray-50 border-gray-200 focus:border-primary focus:ring-0 rounded-2xl p-4 transition-all outline-none"
                 />
                 {errors.firstName && (
-                  <p className="text-red-500 text-sm mt-1">
+                  <p className="text-red-500 text-sm mt-1 ml-1">
                     {errors.firstName}
                   </p>
                 )}
               </div>
-              <div className="w-1/2">
-                <label htmlFor="lastName" className="text-gray-700 font-medium">
+              <div className="w-1/2 space-y-2">
+                <label htmlFor="lastName" className="text-sm font-semibold text-gray-700 ml-1">
                   Last Name
                 </label>
                 <input
@@ -230,11 +230,11 @@ const Signup = () => {
                   name="lastName"
                   value={formData.lastName}
                   onChange={handleChange}
-                  placeholder="Enter last name"
-                  className="w-full px-3 py-2 border rounded-md border-gray-300 placeholder:text-gray-400 focus:border-[#7464fa] focus:ring-2 focus:ring-[#7464fa] outline-none"
+                  placeholder="Last name"
+                  className="w-full bg-gray-50 border-gray-200 focus:border-primary focus:ring-0 rounded-2xl p-4 transition-all outline-none"
                 />
                 {errors.lastName && (
-                  <p className="text-red-500 text-sm mt-1">
+                  <p className="text-red-500 text-sm mt-1 ml-1">
                     {errors.lastName}
                   </p>
                 )}
@@ -242,8 +242,8 @@ const Signup = () => {
             </div>
 
             {/* Username */}
-            <div>
-              <label htmlFor="username" className="text-gray-700 font-medium">
+            <div className="space-y-2">
+              <label htmlFor="username" className="text-sm font-semibold text-gray-700 ml-1">
                 Username
               </label>
               <input
@@ -253,16 +253,16 @@ const Signup = () => {
                 value={formData.username}
                 onChange={handleChange}
                 placeholder="Choose a username"
-                className="w-full px-3 py-2 border rounded-md border-gray-300 placeholder:text-gray-400 focus:border-[#7464fa] focus:ring-2 focus:ring-[#7464fa] outline-none"
+                className="w-full bg-gray-50 border-gray-200 focus:border-primary focus:ring-0 rounded-2xl p-4 transition-all outline-none"
               />
               {errors.username && (
-                <p className="text-red-500 text-sm mt-1">{errors.username}</p>
+                <p className="text-red-500 text-sm mt-1 ml-1">{errors.username}</p>
               )}
             </div>
 
             {/* Email */}
-            <div>
-              <label htmlFor="email" className="text-gray-700 font-medium">
+            <div className="space-y-2">
+              <label htmlFor="email" className="text-sm font-semibold text-gray-700 ml-1">
                 Email
               </label>
               <input
@@ -272,16 +272,16 @@ const Signup = () => {
                 value={formData.email}
                 onChange={handleChange}
                 placeholder="Enter your email"
-                className="w-full px-3 py-2 border rounded-md border-gray-300 placeholder:text-gray-400 focus:border-[#7464fa] focus:ring-2 focus:ring-[#7464fa] outline-none"
+                className="w-full bg-gray-50 border-gray-200 focus:border-primary focus:ring-0 rounded-2xl p-4 transition-all outline-none"
               />
               {errors.email && (
-                <p className="text-red-500 text-sm mt-1">{errors.email}</p>
+                <p className="text-red-500 text-sm mt-1 ml-1">{errors.email}</p>
               )}
             </div>
 
             {/* Password */}
-            <div>
-              <label htmlFor="password" className="text-gray-700 font-medium">
+            <div className="space-y-2">
+              <label htmlFor="password" className="text-sm font-semibold text-gray-700 ml-1">
                 Password
               </label>
               <div className="relative">
@@ -292,27 +292,27 @@ const Signup = () => {
                   value={formData.password}
                   onChange={handleChange}
                   placeholder="Create a password"
-                  className="w-full px-3 py-2 border rounded-md border-gray-300 placeholder:text-gray-400 focus:border-[#7464fa] focus:ring-2 focus:ring-[#7464fa] outline-none"
+                  className="w-full bg-gray-50 border-gray-200 focus:border-primary focus:ring-0 rounded-2xl p-4 transition-all outline-none"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword((v) => !v)}
-                  className="absolute top-1/2 right-3 transform -translate-y-1/2 text-gray-500"
+                  className="absolute top-1/2 right-4 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
                   tabIndex={-1}
                 >
-                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                  {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                 </button>
               </div>
               {errors.password && (
-                <p className="text-red-500 text-sm mt-1">{errors.password}</p>
+                <p className="text-red-500 text-sm mt-1 ml-1">{errors.password}</p>
               )}
             </div>
 
             {/* Confirm Password */}
-            <div>
+            <div className="space-y-2">
               <label
                 htmlFor="confirmPassword"
-                className="text-gray-700 font-medium"
+                className="text-sm font-semibold text-gray-700 ml-1"
               >
                 Confirm Password
               </label>
@@ -324,23 +324,23 @@ const Signup = () => {
                   value={formData.confirmPassword}
                   onChange={handleChange}
                   placeholder="Confirm your password"
-                  className="w-full px-3 py-2 border rounded-md border-gray-300 placeholder:text-gray-400 focus:border-[#7464fa] focus:ring-2 focus:ring-[#7464fa] outline-none"
+                  className="w-full bg-gray-50 border-gray-200 focus:border-primary focus:ring-0 rounded-2xl p-4 transition-all outline-none"
                 />
                 <button
                   type="button"
                   onClick={() => setShowConfirmPassword((v) => !v)}
-                  className="absolute top-1/2 right-3 transform -translate-y-1/2 text-gray-500"
+                  className="absolute top-1/2 right-4 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
                   tabIndex={-1}
                 >
                   {showConfirmPassword ? (
-                    <EyeOff size={18} />
+                    <EyeOff size={20} />
                   ) : (
-                    <Eye size={18} />
+                    <Eye size={20} />
                   )}
                 </button>
               </div>
               {errors.confirmPassword && (
-                <p className="text-red-500 text-sm mt-1">
+                <p className="text-red-500 text-sm mt-1 ml-1">
                   {errors.confirmPassword}
                 </p>
               )}
@@ -348,32 +348,35 @@ const Signup = () => {
 
             {/* Submit */}
             <button
-              className="bg-[#7464fa] w-full text-white py-2 mt-4 rounded-md font-medium hover:bg-[#5c4ed6] transition-colors"
+              className="bg-primary hover:bg-primary/90 text-black w-full py-4 mt-6 rounded-2xl font-bold transition-all shadow-lg shadow-primary/20 flex items-center justify-center gap-2"
               type="submit"
               disabled={loading}
             >
               {loading ? (
                 <span className="flex items-center justify-center gap-2">
-                  <span className="animate-spin rounded-full h-4 w-4 border-t-2 border-white"></span>
+                  <span className="animate-spin rounded-full h-5 w-5 border-t-2 border-black"></span>
                   {loadingMessage}
                 </span>
               ) : (
-                "Sign up"
+                <>
+                  Create Account
+                  <ArrowRight className="w-5 h-5" />
+                </>
               )}
             </button>
 
             {successMessage && (
-              <p className="text-green-600 text-center mt-3">{successMessage}</p>
+              <p className="text-green-600 text-center font-medium mt-3">{successMessage}</p>
             )}
             {errorMessage && (
-              <p className="text-red-600 text-center mt-3">{errorMessage}</p>
+              <p className="text-red-600 text-center font-medium mt-3">{errorMessage}</p>
             )}
 
             {/* Already have an account */}
-            <div className="text-center mt-4">
-              <p className="text-gray-600">
+            <div className="text-center mt-6 pt-2">
+              <p className="text-gray-500 text-sm">
                 Already have an account?{" "}
-                <Link href="/login" className="text-[#7464fa] font-medium">
+                <Link href="/login" className="text-primary font-bold hover:underline">
                   Sign in
                 </Link>
               </p>

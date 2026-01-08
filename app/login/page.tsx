@@ -1,10 +1,10 @@
 "use client";
 
-import React, { useState , useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, ArrowRight } from "lucide-react";
 
 interface FormData {
   usernameOrEmail: string;
@@ -28,13 +28,13 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const loadingMessages = [
-      "Signing up...",
-      "Please wait...",
-      "Checking...",
-      "Done!",
-    ];
-    const [loadingMessage, setLoadingMessage] = useState(loadingMessages[0]);
-  
+    "Signing up...",
+    "Please wait...",
+    "Checking...",
+    "Done!",
+  ];
+  const [loadingMessage, setLoadingMessage] = useState(loadingMessages[0]);
+
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -51,15 +51,15 @@ const Login = () => {
   };
 
   useEffect(() => {
-      if (loading) {
-        let index = 0;
-        const interval = setInterval(() => {
-          index = (index + 1) % loadingMessages.length;
-          setLoadingMessage(loadingMessages[index]);
-        }, 1500);
-        return () => clearInterval(interval);
-      }
-    }, [loading]);
+    if (loading) {
+      let index = 0;
+      const interval = setInterval(() => {
+        index = (index + 1) % loadingMessages.length;
+        setLoadingMessage(loadingMessages[index]);
+      }, 1500);
+      return () => clearInterval(interval);
+    }
+  }, [loading]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -119,26 +119,26 @@ const Login = () => {
         return;
       }
 
-      else{
+      else {
         let error = "Login failed."
-         if (loginData?.detail) {
-    error = loginData.detail;
+        if (loginData?.detail) {
+          error = loginData.detail;
 
-  }else if(loginData?.error){
-    error = loginData.error
-  }
-  else if(loginData?.msg){
-    error = loginData.msg
-  }else if (loginData?.errors && typeof loginData.errors === "object") {
-   
-    error = Object.values(loginData.errors).flat().join(" ");
-  } else if (Array.isArray(loginData)) {
-    
-    error = loginData.join(" ");
-  }
+        } else if (loginData?.error) {
+          error = loginData.error
+        }
+        else if (loginData?.msg) {
+          error = loginData.msg
+        } else if (loginData?.errors && typeof loginData.errors === "object") {
 
-  setErrorMessage(error)
-        
+          error = Object.values(loginData.errors).flat().join(" ");
+        } else if (Array.isArray(loginData)) {
+
+          error = loginData.join(" ");
+        }
+
+        setErrorMessage(error)
+
       }
 
       localStorage.setItem("authToken", loginData.access);
@@ -156,7 +156,7 @@ const Login = () => {
         }
       }
 
-      
+
 
       setSuccessMessage("Login successful!");
       router.push("/services");
@@ -168,7 +168,7 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#7464fa] flex items-center justify-center px-6 py-12 ">
+    <div className="min-h-screen bg-white flex items-center justify-center px-6 py-12 ">
       <div className="flex flex-col lg:flex-row items-center justify-center w-full max-w-6xl gap-10">
         {/* Left side illustration */}
         <div className="hidden lg:flex lg:w-1/2 items-center justify-center">
@@ -182,18 +182,18 @@ const Login = () => {
           />
         </div>
         {/* Right side form */}
-        <div className="w-full max-w-md bg-white rounded-2xl shadow-xl p-8">
+        <div className="w-full max-w-md bg-white rounded-2xl shadow-2xl border border-gray-100 p-8">
           {/* Header */}
           <div className="text-center mb-6">
-            <h1 className="text-3xl md:text-4xl font-bold text-[#7464fa]">
-              Welcome Back
+            <h1 className="text-3xl md:text-4xl font-extrabold text-black">
+              Welcome <span className="text-primary">Back</span>
             </h1>
-            <p className="text-gray-600 mt-2">
+            <p className="text-gray-500 mt-2 font-medium">
               Sign in to your account to continue
             </p>
           </div>
 
-         
+
           <div className="text-center mb-6">
             <Image
               src={"/espointtower.jpg"}
@@ -204,49 +204,49 @@ const Login = () => {
             />
           </div>
 
-          <h2 className="text-[#7464fa] text-2xl font-extrabold text-center">
+          <h2 className="text-black text-2xl font-extrabold text-center">
             Sign in
           </h2>
-          <p className="text-gray-600 font-medium text-base mt-2 text-center">
+          <p className="text-gray-500 font-medium text-base mt-1 text-center">
             Enter your credentials below
           </p>
 
           {/* Form */}
-          <form onSubmit={handleSubmit} className="space-y-5 mt-6">
+          <form onSubmit={handleSubmit} className="space-y-5 mt-8">
             {/* Username or Email */}
-            <div>
+            <div className="space-y-2">
               <label
                 htmlFor="usernameOrEmail"
-                className="text-gray-700 font-medium"
+                className="text-sm font-semibold text-gray-700 ml-1"
               >
                 Username or Email
               </label>
               <input
                 type="text"
                 placeholder="Enter your username or email"
-                className="w-full px-3 py-2 border rounded-md border-gray-300 placeholder:text-gray-400 focus:border-[#7464fa] focus:ring-2 focus:ring-[#7464fa] outline-none"
+                className="w-full bg-gray-50 border-gray-200 focus:border-primary focus:ring-0 rounded-2xl p-4 transition-all outline-none"
                 name="usernameOrEmail"
                 id="usernameOrEmail"
                 onChange={handleChange}
                 value={formData.usernameOrEmail}
               />
               {errors.usernameOrEmail && (
-                <p className="text-red-500 text-sm mt-1">
+                <p className="text-red-500 text-sm mt-1 ml-1">
                   {errors.usernameOrEmail}
                 </p>
               )}
             </div>
 
             {/* Password */}
-            <div>
-              <label htmlFor="password" className="text-gray-700 font-medium">
+            <div className="space-y-2">
+              <label htmlFor="password" className="text-sm font-semibold text-gray-700 ml-1">
                 Password
               </label>
               <div className="relative">
                 <input
                   type={showPassword ? "text" : "password"}
                   placeholder="Enter your password"
-                  className="w-full px-3 py-2 border rounded-md border-gray-300 placeholder:text-gray-400 focus:border-[#7464fa] focus:ring-2 focus:ring-[#7464fa] outline-none"
+                  className="w-full bg-gray-50 border-gray-200 focus:border-primary focus:ring-0 rounded-2xl p-4 transition-all outline-none"
                   id="password"
                   onChange={handleChange}
                   value={formData.password}
@@ -255,55 +255,59 @@ const Login = () => {
                 <button
                   type="button"
                   onClick={() => setShowPassword((v) => !v)}
-                  className="absolute top-1/2 right-3 transform -translate-y-1/2 text-gray-500"
+                  className="absolute top-1/2 right-4 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
                   tabIndex={-1}
                 >
-                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                  {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                 </button>
               </div>
               {errors.password && (
-                <p className="text-red-500 text-sm mt-1">{errors.password}</p>
+                <p className="text-red-500 text-sm mt-1 ml-1">{errors.password}</p>
               )}
             </div>
 
             {/* Submit */}
             <button
-              className="bg-[#7464fa] w-full text-white py-2 mt-4 rounded-md font-medium hover:bg-[#5c4ed6] transition-colors"
+              className="bg-primary hover:bg-primary/90 text-black w-full py-4 mt-6 rounded-2xl font-bold transition-all shadow-lg shadow-primary/20 flex items-center justify-center gap-2"
               type="submit"
               disabled={loading}
             >
               {loading ? (
                 <span className="flex items-center justify-center gap-2">
-                  <span className="animate-spin rounded-full h-4 w-4 border-t-2 border-white"></span>
+                  <span className="animate-spin rounded-full h-5 w-5 border-t-2 border-black"></span>
                   {loadingMessage}
                 </span>
               ) : (
-                "Sign in"
+                <>
+                  Sign in
+                  <ArrowRight className="w-5 h-5" />
+                </>
               )}
             </button>
 
             {successMessage && (
-              <p className="text-green-600 text-center mt-3">
+              <p className="text-green-600 text-center font-medium mt-3">
                 {successMessage}
               </p>
             )}
             {errorMessage && (
-              <p className="text-red-600 text-center mt-3">{errorMessage}</p>
+              <p className="text-red-600 text-center font-medium mt-3">{errorMessage}</p>
             )}
 
             {/* Links */}
-            <div className="text-center mt-4 space-y-3">
+            <div className="text-center mt-6 space-y-4">
               <Link
-                className="text-black font-medium cursor-pointer underline"
+                className="text-gray-600 text-sm font-medium hover:text-black hover:underline transition-all"
                 href={"/forget_password"}
               >
                 Forgot your password?
               </Link>
-              <p className="text-gray-600">
+              <div className="h-px bg-gray-100 w-full"></div>
+              <p className="text-gray-500 text-sm">
                 Don’t have an account?{" "}
                 <Link
                   href="/signup"
-                  className="text-[#7464fa] font-medium hover:underline"
+                  className="text-primary font-bold hover:underline"
                 >
                   Sign up
                 </Link>

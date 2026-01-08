@@ -1,6 +1,28 @@
+'use client'
 import Image from "next/image";
 import Link from "next/link";
 import Header from "./components/Header";
+import Foot from "./components/Foot";
+import {
+  ArrowRight,
+  Video,
+  ShoppingBag,
+  Package,
+  Globe,
+  Calendar,
+  TrendingUp,
+  Mail,
+  Phone,
+  MapPin,
+  Send,
+  Facebook,
+  Twitter,
+  Linkedin,
+  Instagram,
+  BarChart4Icon
+} from "lucide-react";
+import GlobeComponent from "./components/Globe";
+
 
 const testimonials = [
   {
@@ -22,290 +44,256 @@ const testimonials = [
 
 export default function Home() {
   return (
-    <div className="bg-white w-full min-h-screen flex flex-col ">
+    <div className="bg-background text-foreground w-full min-h-screen flex flex-col dark">
       <Header />
 
       {/* Hero Section */}
-      <section className="relative w-full py-20 sm:py-24 lg:py-32 overflow-hidden">
-        {/* Background Gradient */}
-        <div className="absolute inset-0 bg-gradient-to-br from-[#7464fa] via-[#a59df7] to-white  -z-10"></div>
+      <section className="relative w-full h-[100vh] py-20 lg:py-32 overflow-hidden bg-black">
+        {/* Globe Background */}
+        {/* Globe Background */}
+        <div className="absolute inset-0 pointer-events-none">
+          <img
+            src="/image copy 7.png"
+            className="absolute inset-0 w-full h-full object-cover opacity-10 mix-blend-screen animate-globe"
+            alt=""
+
+          />
+        </div>
+
+
+        {/* Globe Background */}
+        <div className="absolute inset-0 pointer-events-none ">
+          <div className="w-full h-full max-w-5xl aspect-square scale-110 lg:scale-100 opacity-20">
+            <GlobeComponent />
+          </div>
+        </div>
+
+
+        {/* Background Animation/Effect */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          {/* Top Left Glow (Closer to text) */}
+          <div className="absolute top-[20%] left-[20%] w-[60%] h-[60%] sm:w-[20%] sm:h-[20%] bg-primary rounded-full blur-[80px] animate-pulse "></div>
+
+          {/* Bottom Right Glow (Closer to text) */}
+          <div className="absolute bottom-[30%] right-[20%] w-[40%] h-[40%] sm:w-[25%] sm:h-[25%] bg-primary rounded-full blur-[100px] animate-bounce-slow"></div>
+
+          {/* Subtle Grid Pattern Overlay */}
+          <div className="absolute inset-0 opacity-[0.03] bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]"></div>
+
+          {/* Animated Light Streaks */}
+          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-primary/50 to-transparent animate-shimmer"></div>
+        </div>
+
 
         {/* Content Wrapper */}
-        <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-center justify-between px-6 sm:px-10 lg:px-20 gap-12 lg:gap-24">
-          {/* Left Content */}
-          <div className="flex-1 text-center lg:text-left order-1">
-            <h1 className="font-bold text-5xl sm:text-6xl lg:text-7xl text-gray-900 mb-8 leading-tight tracking-tight">
-              ESTrans<span className="text-[#7464fa]">Pro</span>
-            </h1>
-            <p className="text-gray-900 text-lg sm:text-xl lg:text-2xl mb-10 max-w-3xl mx-auto lg:mx-0">
-              Elevate your luxury experience with ESTransPro. Create your account today and unlock exclusive access to premium photography, stylish outfits, expert event planning, and much more.
-            </p>
-
-            {/* CTA Buttons */}
-            <div className="flex flex-col sm:flex-row gap-5 justify-center lg:justify-start max-w-sm mx-auto lg:mx-0">
-              <Link href="/login" passHref className="bg-[#7464fa] p-3 text-center text-white rounded-full w-full">
-                
-               
-                  Login
-             
-              </Link>
-              <Link href="/signup" passHref className="bg-white border-2 border-[#7464fa] text-center w-full p-3 text-[#7464fa] rounded-full">
-                
-                  Signup
-             
-              </Link>
-            </div>
-          </div>
-
-          {/* Right Image */}
-          <div className="flex-1 flex justify-center order-2">
-            <Image
-              src="/camera-431119_1280.jpg"
-              alt="Luxury Photography"
-              width={800}
-              height={500}
-              className="rounded-3xl shadow-2xl object-cover w-[90%] sm:w-full max-w-xl"
-              priority
-            />
-          </div>
-        </div>
-      </section>
-
-      {/* Why Choose Us Section */}
-      <section className="bg-[#f9f8ff] py-16 px-6 lg:px-20">
-        <h2 className="text-3xl sm:text-4xl font-bold text-center text-gray-900 mb-12">
-          Why <span className="text-[#7464fa]">Choose Us</span>
-        </h2>
-        <div className="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-3 gap-12 text-center">
-          {[
-            {
-              icon: (
-                <svg
-                  className="mx-auto mb-4 w-12 h-12 text-[#7464fa]"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  viewBox="0 0 24 24"
-                  xmlns="http://www.w3.org/2000/svg"
-                  aria-hidden="true"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M12 8c-1.657 0-3 1.343-3 3 0 1.657 1.343 3 3 3s3-1.343 3-3c0-1.657-1.343-3-3-3z"
-                  ></path>
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M12 2v2m0 16v2m10-10h-2M4 12H2m15.364-6.364l-1.414 1.414M7.05 16.95l-1.414 1.414m12.728 0l-1.414-1.414M7.05 7.05L5.636 5.636"
-                  ></path>
-                </svg>
-              ),
-              title: "Premium Quality",
-              description:
-                "We deliver top-notch services with attention to every detail, ensuring your experience is flawless.",
-            },
-            {
-              icon: (
-                <svg
-                  className="mx-auto mb-4 w-12 h-12 text-[#7464fa]"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  viewBox="0 0 24 24"
-                  xmlns="http://www.w3.org/2000/svg"
-                  aria-hidden="true"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M3 10h1l3 9h8l3-9h1"
-                  ></path>
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M16 10V6a4 4 0 00-8 0v4"
-                  ></path>
-                </svg>
-              ),
-              title: "Flexible Scheduling",
-              description:
-                "Choose dates and times that fit your lifestyle with our easy-to-use booking system.",
-            },
-            {
-              icon: (
-                <svg
-                  className="mx-auto mb-4 w-12 h-12 text-[#7464fa]"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  viewBox="0 0 24 24"
-                  xmlns="http://www.w3.org/2000/svg"
-                  aria-hidden="true"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M5 13l4 4L19 7"
-                  ></path>
-                </svg>
-              ),
-              title: "Trusted by Clients",
-              description:
-                "Our clients trust us for professionalism and excellence in every service we provide.",
-            },
-          ].map(({ icon, title, description }, i) => (
-            <div
-              key={i}
-              className="bg-white rounded-3xl p-8 shadow-lg hover:shadow-2xl transition-shadow cursor-default"
-            >
-              {icon}
-              <h3 className="text-xl font-semibold text-gray-900 mb-3">{title}</h3>
-              <p className="text-gray-600 text-base">{description}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* Features Section */}
-      <section className="bg-white py-20 px-6 lg:px-20">
-        <h2 className="text-3xl sm:text-4xl font-bold text-center text-gray-900 mb-16">
-          Explore Our <span className="text-[#7464fa]">Features</span>
-        </h2>
-
-        <div className="space-y-24 max-w-6xl mx-auto">
-          {/* Feature 1 */}
-          <div className="flex flex-col lg:flex-row items-center gap-16">
-            <div className="flex-1 text-center lg:text-left">
-              <h3 className="text-3xl font-semibold text-gray-800 mb-5">
-                Browse & Book Items
-              </h3>
-              <p className="text-gray-600 text-lg max-w-xl mx-auto lg:mx-0">
-                Quickly explore our wide selection of items and book what suits your taste and style. Easy, fast, and seamless.
-              </p>
-            </div>
-            <div className="flex-1 relative flex justify-center">
-              <Image
-                src="/undraw_booking_1ztt.svg"
-                alt="Browse and Book Items"
-                width={520}
-                height={370}
-                className="rounded-2xl shadow-xl object-contain w-[90%] sm:w-full max-w-md animate-bounce-slow"
-              />
-              <div className="absolute bottom-0 w-2/3 h-6 bg-black/25 rounded-full blur-xl animate-bounce-slow scale-95"></div>
-            </div>
-          </div>
-
-          {/* Feature 2 */}
-          <div className="flex flex-col-reverse lg:flex-row items-center gap-16">
-            <div className="flex-1 relative flex justify-center">
-              <Image
-                src="/undraw_date-picker_8qys.svg"
-                alt="Pick Suitable Dates"
-                width={520}
-                height={370}
-                className="rounded-2xl shadow-xl object-contain w-[90%] sm:w-full max-w-md animate-bounce-slow"
-              />
-              <div className="absolute bottom-0 w-2/3 h-6 bg-black/25 rounded-full blur-xl animate-bounce-slow scale-95"></div>
-            </div>
-            <div className="flex-1 text-center lg:text-left">
-              <h3 className="text-3xl font-semibold text-gray-800 mb-5">
-                Pick Suitable Dates
-              </h3>
-              <p className="text-gray-600 text-lg max-w-xl mx-auto lg:mx-0">
-                Select the dates that match your experience. We provide flexible scheduling to make your booking stress-free.
-              </p>
-            </div>
-          </div>
-
-          {/* Feature 3 */}
-          <div className="flex flex-col lg:flex-row items-center gap-16">
-            <div className="flex-1 text-center lg:text-left">
-              <h3 className="text-3xl font-semibold text-gray-800 mb-5">
-                View & Manage Bookings
-              </h3>
-              <p className="text-gray-600 text-lg max-w-xl mx-auto lg:mx-0">
-                Stay organized with a simple dashboard that lets you view, edit, or cancel bookings at your convenience.
-              </p>
-            </div>
-            <div className="flex-1 relative flex justify-center">
-              <Image
-                src="/undraw_booked_bb22.svg"
-                alt="View and Manage Bookings"
-                width={520}
-                height={370}
-                className="rounded-2xl shadow-xl object-contain w-[90%] sm:w-full max-w-md animate-bounce-slow"
-              />
-              <div className="absolute bottom-0 w-2/3 h-6 bg-black/25 rounded-full blur-xl animate-bounce-slow scale-95"></div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Testimonials Section */}
-      <section className="bg-gray-50 py-20 px-6 lg:px-20">
-        <h2 className="text-3xl sm:text-4xl font-bold text-center text-gray-900 mb-16">
-          What Our <span className="text-[#7464fa]">Clients Say</span>
-        </h2>
-        <div className="grid gap-12 sm:grid-cols-2 lg:grid-cols-3 max-w-6xl mx-auto">
-          {testimonials.map(({ name, text, avatar }, i) => (
-            <div
-              key={i}
-              className="bg-white rounded-3xl shadow-lg p-8 text-center hover:shadow-2xl transition cursor-default"
-            >
-              <div className="flex justify-center mb-6">
-                <Image
-                  src={avatar}
-                  alt={`${name} avatar`}
-                  width={72}
-                  height={72}
-                  className="rounded-full object-cover"
-                  priority={i === 0}
-                />
-              </div>
-              <p className="text-gray-700 italic mb-6 text-lg leading-relaxed">“{text}”</p>
-              <h4 className="text-xl font-semibold text-gray-900">{name}</h4>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* CTA */}
-      <section className="py-20 bg-[#7464fa] text-center text-white px-6">
-        <h2 className="text-4xl sm:text-5xl font-extrabold mb-6 leading-tight max-w-3xl mx-auto">
-          Ready to Experience Premium Services?
-        </h2>
-        <p className="mb-10 text-lg sm:text-xl max-w-xl mx-auto">
-          Join ESTransPro today and unlock access to tailored services and premium experiences designed just for you.
-        </p>
-        <Link href="/signup" passHref>
-          
-            Get Started
-        
-        </Link>
-      </section>
-
-      {/* Footer */}
-      <footer className="bg-gray-900 text-gray-300 py-10 mt-auto">
-        <div className="max-w-6xl mx-auto px-6 flex flex-col sm:flex-row justify-between items-center gap-6">
-          <p className="text-xs sm:text-sm text-center sm:text-left select-none">
-            © {new Date().getFullYear()} ESTransPro. All rights reserved.
+        <div className="max-w-7xl mx-auto flex flex-col items-center h-screen justify-center px-6 relative z-10 text-center">
+          <h1 className="font-bold text-4xl sm:text-5xl lg:text-7xl text-white mb-6 leading-tight tracking-tight max-w-5xl">
+            Empowering Businesses <br />
+            Through <span className="text-primary">Diverse Solutions</span>
+          </h1>
+          <p className="text-white text-lg sm:text-xl lg:text-2xl mb-12 max-w-2xl mx-auto">
+            From multimedia production to international sourcing, we deliver comprehensive services that drive growth and innovation across industries.
           </p>
-          <nav className="flex gap-6 text-sm justify-center sm:justify-end">
-            {[
-              { href: "/about", label: "About" },
-              { href: "/services", label: "Services" },
-              { href: "/contact", label: "Contact" },
-            ].map(({ href, label }) => (
-              <Link key={href} href={href} passHref>
-                
-                  {label}
-        
-              </Link>
-            ))}
-          </nav>
+
+          {/* CTA Buttons */}
+          <div className="flex flex-col sm:flex-row gap-6 justify-center w-full max-w-md">
+            <Link
+              href="/login"
+              className="bg-primary hover:bg-primary/90 text-black font-semibold py-4 px-8 rounded-full transition-all group flex items-center justify-center gap-2"
+            >
+              Login
+              <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+            </Link>
+            <Link
+              href="/signup"
+              className="border-2 border-primary text-primary hover:bg-primary hover:text-black font-semibold py-4 px-8 rounded-full transition-all text-center"
+            >
+              Signup
+            </Link>
+          </div>
+
+          {/* Scroll Down Indicator */}
+          <div className="mt-20 animate-bounce cursor-pointer">
+            <div className="w-6 h-10 border-2 border-primary rounded-full flex justify-center p-1">
+              <div className="w-1 h-2 bg-primary rounded-full"></div>
+            </div>
+          </div>
         </div>
-      </footer>
+      </section>
+
+      {/* Comprehensive Business Solutions Section */}
+      <section className="bg-white py-24 px-6 lg:px-20 text-black">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl lg:text-5xl font-bold mb-4">
+              Comprehensive <span className="text-primary">Business Solutions</span>
+            </h2>
+            <p className="text-gray-600 max-w-2xl mx-auto text-lg">
+              Leveraging expertise across multiple domains to deliver exceptional results.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {[
+              {
+                title: "Multimedia Services",
+                desc: "Professional video production, photography, and digital content creation for brands that demand excellence.",
+                icon: <Video className="w-6 h-6 text-black" />,
+                img: "/image copy 5.png"
+              },
+              {
+                title: "Local Product Promotion",
+                desc: "Amplify local artisans and businesses through strategic marketing and curated showcases.",
+                icon: <ShoppingBag className="w-6 h-6 text-black" />,
+                img: "/image copy 6.png"
+              },
+              {
+                title: "General Merchandise",
+                desc: "Diverse product offerings with quality assurance and reliable distribution networks.",
+                icon: <Package className="w-6 h-6 text-black" />,
+                img: "/image copy.png"
+              },
+              {
+                title: "International Sourcing",
+                desc: "Connect global markets with efficient procurement solutions and logistics management.",
+                icon: <Globe className="w-6 h-6 text-black" />,
+                img: "/image copy 4.png"
+              },
+              {
+                title: "Event Planning",
+                desc: "End-to-end event management from intimate gatherings to large-scale corporate functions.",
+                icon: <Calendar className="w-6 h-6 text-black" />,
+                img: "/image copy 2.png"
+              },
+              {
+                title: "Development Consulting",
+                desc: "Strategic advisory services to optimize operations and accelerate business growth.",
+                icon: <TrendingUp className="w-6 h-6 text-black" />,
+                img: "/image copy 3.png"
+              },
+            ].map((service, i) => (
+              <div key={i} className="group bg-[#fcfcfc] border border-gray-100 rounded-3xl overflow-hidden hover:shadow-2xl transition-all duration-300">
+                <div className="h-48 bg-gray-200 relative overflow-hidden">
+                  <div className="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors duration-300"></div>
+                  {/* Image placeholder */}
+                  <div className="w-full h-full bg-gray-300 flex items-center justify-center text-gray-500 font-medium">
+                    <Image
+                      src={service.img}
+                      alt={service.title}
+                      width={500}
+                      height={500}
+
+                      className="h-full w-full object-cover"
+                    />
+
+                  </div>
+                </div>
+                <div className="p-8 relative">
+                  <div className="absolute -top-6 left-8 bg-primary p-4 rounded-xl shadow-lg">
+                    {service.icon}
+                  </div>
+                  <h3 className="text-xl font-bold mt-4 mb-3">{service.title}</h3>
+                  <p className="text-gray-600 leading-relaxed">{service.desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Let's Start a Conversation Section */}
+      <section className="bg-gray-50 py-24 px-6 lg:px-20 text-black">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl lg:text-5xl font-bold mb-4">
+              Let&apos;s Start a <span className="text-primary">Conversation</span>
+            </h2>
+            <p className="text-gray-600 max-w-2xl mx-auto text-lg">
+              Ready to transform your business? Reach out and let&apos;s discuss how we can help.
+            </p>
+          </div>
+
+          <div className="grid lg:grid-cols-2 gap-16 items-start">
+            {/* Contact Info */}
+            <div className="space-y-8">
+              <div className="flex items-start gap-6 bg-white p-8 rounded-3xl shadow-sm hover:shadow-md transition-all">
+                <div className="bg-primary/10 p-4 rounded-2xl">
+                  <Mail className="w-6 h-6 text-primary" />
+                </div>
+                <div>
+                  <h4 className="text-lg font-bold mb-1">Email Us</h4>
+                  <p className="text-gray-600 text-lg">info@espointintl.com</p>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-6 bg-white p-8 rounded-3xl shadow-sm hover:shadow-md transition-all">
+                <div className="bg-primary/10 p-4 rounded-2xl">
+                  <Phone className="w-6 h-6 text-primary" />
+                </div>
+                <div>
+                  <h4 className="text-lg font-bold mb-1">Call Us</h4>
+                  <p className="text-gray-600 text-lg">+232 79 570723</p>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-6 bg-white p-8 rounded-3xl shadow-sm hover:shadow-md transition-all">
+                <div className="bg-primary/10 p-4 rounded-2xl">
+                  <MapPin className="w-6 h-6 text-primary" />
+                </div>
+                <div>
+                  <h4 className="text-lg font-bold mb-1">Visit Us</h4>
+                  <p className="text-gray-600 text-lg">
+                    1 Lano Avenue, Mambo <br />
+                    Freetown, Sierra Leone
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Contact Form */}
+            <div className="bg-white p-10 rounded-[40px] shadow-xl border border-gray-100">
+              <form className="space-y-6">
+                <div className="space-y-2">
+                  <label className="text-sm font-semibold text-gray-700 ml-1">Name</label>
+                  <input
+                    type="text"
+                    placeholder="Your name"
+                    className="w-full bg-gray-50 border-gray-200 focus:border-primary focus:ring-0 rounded-2xl p-4 transition-all"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-semibold text-gray-700 ml-1">Email</label>
+                  <input
+                    type="email"
+                    placeholder="you.email@example.com"
+                    className="w-full bg-gray-50 border-gray-200 focus:border-primary focus:ring-0 rounded-2xl p-4 transition-all"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-semibold text-gray-700 ml-1">Message</label>
+                  <textarea
+                    rows={4}
+                    placeholder="Tell us about your project..."
+                    className="w-full bg-gray-50 border-gray-200 focus:border-primary focus:ring-0 rounded-2xl p-4 transition-all resize-none"
+                  ></textarea>
+                </div>
+                <button
+                  type="submit"
+                  className="w-full bg-primary hover:bg-primary/90 text-black font-bold py-5 rounded-2xl transition-all shadow-lg shadow-primary/20 flex items-center justify-center gap-2"
+                >
+                  Send Message
+                  <Send className="w-5 h-5" />
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Footer (Dark) */}
+      <div>
+        <Foot />
+      </div>
     </div>
   );
 }
