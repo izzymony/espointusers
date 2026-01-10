@@ -17,7 +17,7 @@ const Nav = () => {
 
   return (
     <div>
-      <header className=" bg-white/90 backdrop-blur-sm fixed w-full top-0 z-50">
+      <header className="  bg-black fixed w-full top-0 z-50">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <Link href="/" className="flex items-center space-x-3">
@@ -31,14 +31,14 @@ const Nav = () => {
                   href={item.href}
                   className="flex items-center gap-2 text-gray-700 hover:text-orange-500 font-medium transition-colors"
                 >
-                  <p className='text-[#7464fa]'>{item.icon}</p>
-                  {item.label}
+                  <p className='text-primary'>{item.icon}</p>
+                  <p className='text-white'>{item.label}</p>
                 </Link>
               ))}
             </nav>
             {/* Mobile Menu Button */}
             <button
-              className="md:hidden p-2 rounded text-[#7464fa] hover:text-orange-500"
+              className="md:hidden  text-primary p-2 rounded text-[#7464fa] hover:text-orange-500"
               onClick={() => setMenuOpen(!menuOpen)}
               aria-label="Open menu"
             >
@@ -48,7 +48,7 @@ const Nav = () => {
         </div>
         {/* Mobile Menu Drawer */}
         {menuOpen && (
-          <div className="md:hidden absolute top-[72px] left-0 w-full bg-white shadow-lg z-50">
+          <div className="md:hidden absolute top-[72px] left-0 w-full bg-black shadow-lg z-50">
             <nav className="flex flex-col py-4 px-6 space-y-4">
               {menuItems.map((item) => (
                 <Link
@@ -57,8 +57,8 @@ const Nav = () => {
                   className="flex items-center gap-3 text-gray-700 hover:text-orange-500 font-medium transition-colors py-2"
                   onClick={() => setMenuOpen(false)}
                 >
-                  {item.icon}
-                  {item.label}
+                  <p className='text-primary'>{item.icon}</p>
+                  <p className='text-white'>{item.label}</p>
                 </Link>
               ))}
             </nav>

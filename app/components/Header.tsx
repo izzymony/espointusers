@@ -9,7 +9,7 @@ const menuItems = [
   { href: '/services', label: 'Browse', icon: <Search className="w-5 h-5" /> },
   { href: '/booked_contents', label: 'My Bookings', icon: <CalendarDays className="w-5 h-5" /> },
   { href: '/profile', label: 'Profile', icon: <User2 className="w-5 h-5" /> },
-  
+
 ]
 
 const Nav = () => {
@@ -17,7 +17,7 @@ const Nav = () => {
 
   return (
     <div>
-      <header className=" bg-white/90 shadow-md backdrop-blur-sm fixed w-full top-0 z-50">
+      <header className=" bg-black shadow-md backdrop-blur-sm fixed w-full top-0 z-50">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <Link href="/" className="flex items-center space-x-3">
@@ -25,7 +25,7 @@ const Nav = () => {
             </Link>
             {/* Desktop Menu */}
             <nav className="hidden md:flex items-center space-x-6">
-             {/*  {menuItems.map((item) => (
+              {/*  {menuItems.map((item) => (
                 <Link
                   key={item.href}
                   href={item.href}
@@ -45,7 +45,7 @@ const Nav = () => {
               {menuOpen ? <X className="w-7 h-7" /> : <Menu className="w-7 h-7"/>}
             </button> */}
 
-            
+
           </div>
         </div>
         {/* Mobile Menu Drawer */}

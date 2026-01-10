@@ -51,17 +51,18 @@ interface FormData {
 
 interface BookingApiResponse {
   msg:
-    | string
-    | {
-        message?: string;
-        booking_id?: string;
-      };
+  | string
+  | {
+    message?: string;
+    booking_id?: string;
+  };
 }
 
 const ContentDetails = () => {
   const [showModal, setShowModal] = useState(false);
   const params = useParams();
   const content_id = params?.contentid as string;
+  const sliderRef = React.useRef<HTMLDivElement>(null);
 
   const [content, setContent] = useState<ServiceContent | null>(null);
   const [loading, setLoading] = useState(false);
@@ -83,6 +84,81 @@ const ContentDetails = () => {
     status: "pending",
   });
 
+  const extractAllImages = (item: ServiceContent | null): string[] => {
+    const fallback = '/camera-431119_1280.jpg';
+    if (!item) return [fallback];
+
+    const getDeepValue = (obj: Record<string, unknown>, path: string): unknown => {
+      return path.split('.').reduce((acc, part) => {
+        if (acc && typeof acc === 'object') {
+          return (acc as Record<string, unknown>)[part];
+        }
+        return undefined;
+      }, obj as unknown);
+    };
+
+    const potentialPaths = [
+      'store.branding.logo_url',
+      'branding.logo_url',
+      'store.logo_url',
+      'logo_url',
+      'store.branding.images',
+      'branding.images',
+      'images',
+      'image'
+    ];
+
+    const images: string[] = [];
+
+    for (const path of potentialPaths) {
+      const val = getDeepValue(item as unknown as Record<string, unknown>, path);
+      if (!val) continue;
+
+      const items = Array.isArray(val) ? val : [val];
+      items.forEach((v: unknown) => {
+        if (typeof v === 'string') {
+          if (v && !v.startsWith('blob:')) images.push(v);
+        } else if (v && typeof v === 'object') {
+          const imgObj = v as Record<string, unknown>;
+          const src = (imgObj.url || imgObj.logo_url || imgObj.image_url || imgObj.src) as string | undefined;
+          if (src && typeof src === 'string' && !src.startsWith('blob:')) {
+            images.push(src);
+          }
+        }
+      });
+
+      if (images.length > 0) break;
+    }
+
+    if (images.length === 0) {
+      // Safe access using unknown to avoiding strict type checks against the interface
+      // while avoiding 'any' which triggers the lint rule.
+      const itemRecord = item as unknown as Record<string, unknown>;
+      const storeRecord = itemRecord.store as Record<string, unknown> | undefined;
+      const brandingRecord = itemRecord.branding as Record<string, unknown> | undefined;
+
+      const storeBrandingLogo = (storeRecord?.branding as Record<string, unknown> | undefined)?.logo_url;
+      const directBrandingLogo = brandingRecord?.logo_url;
+
+      const backup = (Array.isArray(storeBrandingLogo) ? storeBrandingLogo[0] : undefined) ||
+        (Array.isArray(directBrandingLogo) ? directBrandingLogo[0] : undefined);
+
+      return backup ? [backup as string] : [fallback];
+    }
+
+    return images;
+  };
+
+  const scrollSlider = (direction: 'left' | 'right') => {
+    if (sliderRef.current) {
+      const scrollAmount = sliderRef.current.clientWidth;
+      sliderRef.current.scrollBy({
+        left: direction === 'left' ? -scrollAmount : scrollAmount,
+        behavior: 'smooth',
+      });
+    }
+  };
+
   useEffect(() => {
     const storedUser = JSON.parse(localStorage.getItem("user") || "{}");
     if (storedUser?.username) {
@@ -95,7 +171,7 @@ const ContentDetails = () => {
     setLoading(true);
     setError("");
 
-    fetch(`https://espoint.onrender.com/espoint/get_content/${content_id}`)
+    fetch(`https://espoint-5shr.onrender.com/espoint/get_content/${content_id}`)
       .then((res) => {
         if (!res.ok) throw new Error("Failed to fetch content details");
         return res.json();
@@ -214,147 +290,190 @@ const ContentDetails = () => {
   if (!content) return <div className="mt-20">No content found.</div>;
 
   const { store } = content;
-  const itemQuantity = store.rental_items[1]?.quantity || 0;
+  const itemQuantity = store.rental_items?.[1]?.quantity || 0;
   const itemPrice = store.base_price || 0;
   const totalPrice = itemQuantity * itemPrice;
+  const images = extractAllImages(content);
+  const fallbackImage = '/camera-431119_1280.jpg';
 
   return (
     <div className="bg-white min-h-screen ">
       <Nav />
-      <div className="container mx-auto px-4 mt-24">
-        <main className="space-y-10">
-          {/* Hero image */}
-          <div className="relative w-full rounded-xl overflow-hidden shadow-md">
-            <Image
-              src={store.branding.logo_url[0] || "/camera-431119_1280.jpg"}
-              alt={store.name}
-              width={1200}
-              height={600}
-              className="w-full h-[40vh] sm:h-[50vh] md:h-[60vh] lg:h-[70vh] object-cover"
-              priority
-            />
-            <div className="absolute top-4 left-4 px-4 py-1 rounded-full bg-[#7464fa] text-white shadow-lg text-sm sm:text-base capitalize">
+      <div className="container mx-auto px-6 mt-32">
+        <main className="max-w-6xl mx-auto space-y-12 pb-20">
+          {/* Hero Image Slider */}
+          <div className="relative w-full rounded-[2.5rem] overflow-hidden shadow-2xl border border-gray-100 group/slider">
+            <div
+              ref={sliderRef}
+              className="flex w-full h-[40vh] sm:h-[50vh] md:h-[60vh] overflow-x-auto snap-x snap-mandatory no-scrollbar scroll-smooth"
+            >
+              {images.map((src, idx) => (
+                <div key={idx} className="min-w-full h-full snap-start relative">
+                  <Image
+                    src={src}
+                    alt={`${store.name} - ${idx + 1}`}
+                    width={1200}
+                    height={600}
+                    className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).src = fallbackImage;
+                    }}
+                  />
+                </div>
+              ))}
+            </div>
+
+            {/* Navigation Buttons - Always Visible */}
+            {images.length > 1 && (
+              <>
+                <button
+                  onClick={(e) => { e.preventDefault(); e.stopPropagation(); scrollSlider('left'); }}
+                  className="absolute left-6 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-black/40 hover:bg-black/70 backdrop-blur-md flex items-center justify-center text-white transition-all duration-300 z-20 border border-white/10 hover:scale-110 active:scale-95 shadow-2xl"
+                  aria-label="Previous image"
+                >
+                  <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M15 19l-7-7 7-7" />
+                  </svg>
+                </button>
+                <button
+                  onClick={(e) => { e.preventDefault(); e.stopPropagation(); scrollSlider('right'); }}
+                  className="absolute right-6 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-black/40 hover:bg-black/70 backdrop-blur-md flex items-center justify-center text-white transition-all duration-300 z-20 border border-white/10 hover:scale-110 active:scale-95 shadow-2xl"
+                  aria-label="Next image"
+                >
+                  <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M9 5l7 7-7 7" />
+                  </svg>
+                </button>
+              </>
+            )}
+
+            <div className="absolute top-8 left-8 px-6 py-2 rounded-full bg-primary text-black shadow-xl text-sm font-bold capitalize z-10">
               {store.category}
             </div>
           </div>
 
-          {/* Details */}
-          <div className="space-y-6">
-            <h1 className="font-bold text-3xl text-black">{store.name}</h1>
-            <section>
-              <h2 className="text-lg font-semibold text-gray-800 border-b pb-2 mb-2">
-                Description
-              </h2>
-              <p className="text-gray-600">{store.description}</p>
-            </section>
-
-            {/* Rental items */}
-            <section>
-              <h2 className="text-lg font-semibold text-gray-800 border-b pb-2 mb-2">
-                Rental Items
-              </h2>
-              <div className="grid gap-3 mt-3 text-gray-700">
-                <p>
-                  <span className="font-semibold text-[#7464fa]">Item:</span>{" "}
-                  {store.rental_items[1].item}
-                </p>
-                <p>
-                  <span className="font-semibold text-[#7464fa]">
-                    Quantity:
-                  </span>{" "}
-                  {store.rental_items[1].quantity}
-                </p>
-                <p>
-                  <span className="font-semibold text-[#7464fa]">
-                    Duration:
-                  </span>{" "}
-                  {store.rental_items[1].duration_hours} hrs
-                </p>
-              </div>
-            </section>
-
-            {/* Check-in details */}
-            <section>
-              <h2 className="text-lg font-semibold text-gray-800 border-b pb-2 mb-2">
-                Check-in Details
-              </h2>
-              <div className="grid sm:grid-cols-2 gap-6 mt-3">
-                <div>
-                  <p className="font-medium">Start</p>
-                  <div className="flex gap-2 items-center mt-1">
-                    <Clock2 className="text-[#7464fa]" />
-                    <span>{store.service_hours.start} AM</span>
-                  </div>
-                </div>
-                <div>
-                  <p className="font-medium">End</p>
-                  <div className="flex gap-2 items-center mt-1">
-                    <Clock2 className="text-[#7464fa]" />
-                    <span>{store.service_hours.end} PM</span>
-                  </div>
+          {/* Content Grid */}
+          <div className="grid lg:grid-cols-3 gap-12">
+            {/* Left Column: Details */}
+            <div className="lg:col-span-2 space-y-10">
+              <div className="space-y-4">
+                <h1 className="font-extrabold text-4xl md:text-5xl text-black leading-tight">
+                  {store.name}
+                </h1>
+                <div className="flex items-center gap-2">
+                  <span className="bg-primary/10 text-black text-xs font-bold px-3 py-1 rounded-full border border-primary/20">
+                    {store.status}
+                  </span>
                 </div>
               </div>
-            </section>
 
-            {/* Pricing + Booking */}
-            <div className="bg-[#f5f3ff] border rounded-xl shadow-md p-6 space-y-6">
-              <p className="font-bold text-2xl text-[#7464fa]">
-                ₦{store.base_price}{" "}
-                <span className="text-base text-gray-500 font-normal">
-                  (per item)
-                </span>
-              </p>
-              <div className="space-y-2">
-                <p className="text-lg">
-                  Total Items:{" "}
-                  <span className="text-[#7464fa] font-semibold">
-                    {itemQuantity}
-                  </span>
-                </p>
-                <p className="text-lg">
-                  Total Price:{" "}
-                  <span className="text-[#7464fa] font-semibold">
-                    ₦{totalPrice}
-                  </span>
-                </p>
-              </div>
+              <section className="space-y-4">
+                <h2 className="text-xl font-bold text-black flex items-center gap-2">
+                  <span className="w-1.5 h-6 bg-primary rounded-full"></span>
+                  Description
+                </h2>
+                <p className="text-gray-600 text-lg leading-relaxed">{store.description}</p>
+              </section>
 
-              {/* Table */}
-              <div className="overflow-x-auto">
-                <table className="w-full text-sm border border-gray-200 rounded-lg">
-                  <thead className="bg-gray-50 text-gray-600">
-                    <tr>
-                      <th className="py-2 px-3 text-left">Item</th>
-                      <th className="py-2 px-3 text-left">Unit Price</th>
-                      <th className="py-2 px-3 text-left">Quantity</th>
-                      <th className="py-2 px-3 text-left">Total</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td className="py-2 px-3">
-                        {store.rental_items[1].item}
-                      </td>
-                      <td className="py-2 px-3">₦{store.base_price}</td>
-                      <td className="py-2 px-3">
-                        {store.rental_items[1].quantity}
-                      </td>
-                      <td className="py-2 px-3 font-bold text-[#7464fa]">
-                        ₦
-                        {store.base_price * store.rental_items[1].quantity}
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
+              {/* Rental items */}
+              <section className="space-y-4">
+                <h2 className="text-xl font-bold text-black flex items-center gap-2">
+                  <span className="w-1.5 h-6 bg-primary rounded-full"></span>
+                  Rental Items
+                </h2>
+                <div className="grid sm:grid-cols-3 gap-6">
+                  <div className="bg-gray-50 p-6 rounded-3xl border border-gray-100">
+                    <p className="text-sm text-gray-400 font-medium uppercase mb-1">Item Name</p>
+                    <p className="font-bold text-black">{store.rental_items?.[1]?.item || 'Not Specified'}</p>
+                  </div>
+                  <div className="bg-gray-50 p-6 rounded-3xl border border-gray-100">
+                    <p className="text-sm text-gray-400 font-medium uppercase mb-1">Quantity</p>
+                    <p className="font-bold text-black">{store.rental_items?.[1]?.quantity || 0}</p>
+                  </div>
+                  <div className="bg-gray-50 p-6 rounded-3xl border border-gray-100">
+                    <p className="text-sm text-gray-400 font-medium uppercase mb-1">Duration</p>
+                    <p className="font-bold text-black">{store.rental_items?.[1]?.duration_hours || 0} hrs</p>
+                  </div>
+                </div>
+              </section>
 
-              <div className="flex justify-center">
-                <button
-                  className="bg-[#7464fa] text-white font-semibold rounded-lg px-6 py-3 w-full sm:w-auto disabled:opacity-60 hover:bg-[#5c4ddf] transition-colors"
-                  onClick={() => setShowModal(true)}
-                >
-                  Book Now
-                </button>
+              {/* Check-in details */}
+              <section className="space-y-4">
+                <h2 className="text-xl font-bold text-black flex items-center gap-2">
+                  <span className="w-1.5 h-6 bg-primary rounded-full"></span>
+                  Service Hours
+                </h2>
+                <div className="grid sm:grid-cols-2 gap-6">
+                  <div className="flex items-center gap-4 bg-gray-50 p-6 rounded-3xl border border-gray-100">
+                    <div className="bg-primary/20 p-3 rounded-2xl">
+                      <Clock2 className="text-black w-6 h-6" />
+                    </div>
+                    <div>
+                      <p className="text-sm text-gray-400 font-medium uppercase">Starts at</p>
+                      <p className="font-bold text-black">{store.service_hours.start} AM</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-4 bg-gray-50 p-6 rounded-3xl border border-gray-100">
+                    <div className="bg-primary/20 p-3 rounded-2xl">
+                      <Clock2 className="text-black w-6 h-6" />
+                    </div>
+                    <div>
+                      <p className="text-sm text-gray-400 font-medium uppercase">Ends at</p>
+                      <p className="font-bold text-black">{store.service_hours.end} PM</p>
+                    </div>
+                  </div>
+                </div>
+              </section>
+            </div>
+
+            {/* Right Column: Pricing Card */}
+            <div className="lg:col-span-1">
+              <div className="sticky top-32 space-y-6">
+                <div className="bg-white border border-gray-100 rounded-[2.5rem] shadow-2xl p-8 space-y-8">
+                  <div className="space-y-2">
+                    <p className="text-sm text-gray-400 font-medium uppercase tracking-widest">Base Price</p>
+                    <p className="font-extrabold text-4xl text-black">
+                      ₦{store.base_price.toLocaleString()}
+                      <span className="text-base text-gray-400 font-medium ml-2 uppercase">/ item</span>
+                    </p>
+                  </div>
+
+                  <div className="space-y-4 pt-6 border-t border-gray-50">
+                    <div className="flex justify-between items-center text-lg">
+                      <span className="text-gray-500">Total Items</span>
+                      <span className="font-bold text-black">{itemQuantity}</span>
+                    </div>
+                    <div className="flex justify-between items-center text-2xl font-extrabold text-black pt-4">
+                      <span>Total Price</span>
+                      <span className="text-primary">₦{totalPrice.toLocaleString()}</span>
+                    </div>
+                  </div>
+
+                  {/* Summary Table Table */}
+                  <div className="overflow-hidden rounded-2xl border border-gray-50">
+                    <table className="w-full text-sm">
+                      <thead className="bg-gray-50 text-gray-400 font-bold uppercase tracking-tighter">
+                        <tr>
+                          <th className="py-3 px-4 text-left">Item</th>
+                          <th className="py-3 px-4 text-right">Total</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr className="text-black border-t border-gray-50">
+                          <td className="py-4 px-4 font-medium">{store.rental_items?.[1]?.item || 'Base Service'}</td>
+                          <td className="py-4 px-4 text-right font-bold">₦{totalPrice.toLocaleString()}</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+
+                  <button
+                    className="bg-primary text-black font-extrabold rounded-2xl px-6 py-5 w-full shadow-lg shadow-primary/20 hover:bg-black hover:text-white transition-all duration-300 transform active:scale-[0.98]"
+                    onClick={() => setShowModal(true)}
+                  >
+                    Confirm Booking
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -363,105 +482,129 @@ const ContentDetails = () => {
 
       {/* Modal */}
       {showModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center pt-20 pb-20 bg-black/50 overflow-auto">
-          <div className="bg-white rounded-xl shadow-xl p-6 sm:p-8 w-[95%] max-w-lg max-h-[90vh] overflow-y-auto relative">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm px-4">
+          <div className="bg-white rounded-[2.5rem] shadow-2xl p-8 sm:p-10 w-full max-w-lg max-h-[90vh] overflow-y-auto relative border border-gray-100">
             <button
-              className="absolute top-3 right-3 text-gray-500 hover:text-red-500 text-2xl font-bold"
+              className="absolute top-6 right-8 text-gray-400 hover:text-red-500 transition-colors text-3xl font-light"
               onClick={() => setShowModal(false)}
             >
               &times;
             </button>
-            <h2 className="text-2xl font-bold mb-6 text-center">
-              Complete Your Booking
-            </h2>
+            <div className="text-center mb-10">
+              <h2 className="text-3xl font-extrabold text-black">
+                Confirm <span className="text-primary">Booking</span>
+              </h2>
+              <p className="text-gray-500 mt-2 font-medium">Please provide your details to proceed</p>
+            </div>
+
             <form
               onSubmit={handleSubmitBooking}
-              className="flex flex-col gap-4 text-gray-700"
+              className="space-y-5"
             >
-              <input
-                name="client_name"
-                value={formData.client_name}
-                onChange={handleFormChange}
-                className="border rounded px-3 py-2 w-full"
-                placeholder="Full Name"
-                required
-              />
-              <input
-                type="email"
-                name="client_email"
-                value={formData.client_email}
-                onChange={handleFormChange}
-                className="border rounded px-3 py-2 w-full"
-                placeholder="Email"
-                required
-              />
-              <input
-                name="client_phone"
-                value={formData.client_phone}
-                onChange={handleFormChange}
-                className="border rounded px-3 py-2 w-full"
-                placeholder="Phone"
-                required
-              />
-              <input
-                type="date"
-                name="service_date"
-                value={formData.service_date}
-                onChange={handleFormChange}
-                className="border rounded px-3 py-2 w-full"
-                required
-              />
-              <input
-                type="time"
-                name="service_time"
-                value={formData.service_time}
-                onChange={handleFormChange}
-                className="border rounded px-3 py-2 w-full"
-                required
-              />
-              <input
-                type="text"
-                name="booking_code"
-                value={formData.booking_code}
-                onChange={handleFormChange}
-                className="border rounded px-3 py-2 w-full"
-                placeholder="Booking code (optional)"
-              />
-              <input
-                name="username"
-                value={formData.username}
-                onChange={handleFormChange}
-                className="border rounded px-3 py-2 w-full"
-                placeholder="Username"
-                required
-              />
+              <div className="space-y-2">
+                <label className="text-sm font-semibold text-gray-700 ml-1">Full Name</label>
+                <input
+                  name="client_name"
+                  value={formData.client_name}
+                  onChange={handleFormChange}
+                  className="w-full bg-gray-50 border-gray-100 focus:border-primary focus:ring-4 focus:ring-primary/10 rounded-2xl p-4 transition-all outline-none font-medium"
+                  placeholder="Your Full Name"
+                  required
+                />
+              </div>
 
-              <select
-                name="status"
-                value={formData.status}
-                onChange={handleFormChange}
-                className="border rounded px-3 py-2 w-full"
-              >
-                <option value="pending">Pending</option>
-              </select>
+              <div className="grid sm:grid-cols-2 gap-5">
+                <div className="space-y-2">
+                  <label className="text-sm font-semibold text-gray-700 ml-1">Email</label>
+                  <input
+                    type="email"
+                    name="client_email"
+                    value={formData.client_email}
+                    onChange={handleFormChange}
+                    className="w-full bg-gray-50 border-gray-100 focus:border-primary focus:ring-4 focus:ring-primary/10 rounded-2xl p-4 transition-all outline-none font-medium"
+                    placeholder="Email Address"
+                    required
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-semibold text-gray-700 ml-1">Phone</label>
+                  <input
+                    name="client_phone"
+                    value={formData.client_phone}
+                    onChange={handleFormChange}
+                    className="w-full bg-gray-50 border-gray-100 focus:border-primary focus:ring-4 focus:ring-primary/10 rounded-2xl p-4 transition-all outline-none font-medium"
+                    placeholder="Phone Number"
+                    required
+                  />
+                </div>
+              </div>
 
-              <button
-                type="submit"
-                className="bg-[#7464fa] text-white font-bold rounded-lg py-2 mt-2 w-full disabled:opacity-60 hover:bg-[#5c4ddf] transition-colors"
-                disabled={bookingLoading}
-              >
-                {bookingLoading ? "Booking..." : "Submit Booking"}
-              </button>
+              <div className="grid sm:grid-cols-2 gap-5">
+                <div className="space-y-2">
+                  <label className="text-sm font-semibold text-gray-700 ml-1">Service Date</label>
+                  <input
+                    type="date"
+                    name="service_date"
+                    value={formData.service_date}
+                    onChange={handleFormChange}
+                    className="w-full bg-gray-50 border-gray-100 focus:border-primary focus:ring-4 focus:ring-primary/10 rounded-2xl p-4 transition-all outline-none font-medium"
+                    required
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-semibold text-gray-700 ml-1">Service Time</label>
+                  <input
+                    type="time"
+                    name="service_time"
+                    value={formData.service_time}
+                    onChange={handleFormChange}
+                    className="w-full bg-gray-50 border-gray-100 focus:border-primary focus:ring-4 focus:ring-primary/10 rounded-2xl p-4 transition-all outline-none font-medium"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-sm font-semibold text-gray-700 ml-1">Username</label>
+                <input
+                  name="username"
+                  value={formData.username}
+                  onChange={handleFormChange}
+                  className="w-full bg-gray-50 border-gray-100 focus:border-primary focus:ring-4 focus:ring-primary/10 rounded-2xl p-4 transition-all outline-none font-medium"
+                  placeholder="Username"
+                  required
+                />
+              </div>
+
+              <div className="pt-6">
+                <button
+                  type="submit"
+                  className="bg-primary text-black font-extrabold rounded-2xl py-5 w-full shadow-lg shadow-primary/20 hover:bg-black hover:text-white transition-all duration-300 transform active:scale-[0.98] disabled:opacity-50"
+                  disabled={bookingLoading}
+                >
+                  {bookingLoading ? (
+                    <span className="flex items-center justify-center gap-2">
+                      <span className="animate-spin h-5 w-5 border-t-2 border-black rounded-full" />
+                      Processing...
+                    </span>
+                  ) : "Complete Secure Booking"}
+                </button>
+              </div>
             </form>
+
             {bookingSuccess && (
-              <p className="text-green-600 font-semibold mt-4 text-center">
-                {bookingSuccess}
-              </p>
+              <div className="mt-6 p-4 bg-green-50 border border-green-100 rounded-2xl">
+                <p className="text-green-700 font-bold text-center text-sm">
+                  ✓ {bookingSuccess}
+                </p>
+              </div>
             )}
             {bookingError && (
-              <p className="text-red-600 font-semibold mt-4 text-center">
-                {bookingError}
-              </p>
+              <div className="mt-6 p-4 bg-red-50 border border-red-100 rounded-2xl">
+                <p className="text-red-700 font-bold text-center text-sm">
+                  ✕ {bookingError}
+                </p>
+              </div>
             )}
           </div>
         </div>
