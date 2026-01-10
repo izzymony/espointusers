@@ -209,7 +209,7 @@ const ProfilePage = () => {
 
                 <div className="pt-10">
                   <div className="p-8 rounded-[32px] bg-gray-50 border border-gray-100 italic text-gray-400 text-sm leading-relaxed">
-                    "This profile record is synchronized with our global ESPOINT blockchain ledger, ensuring secure and verifiable access to premium services."
+                    &quot;This profile record is synchronized with our global ESPOINT blockchain ledger, ensuring secure and verifiable access to premium services.&quot;
                   </div>
                 </div>
               </div>
