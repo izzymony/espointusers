@@ -193,7 +193,12 @@ const ContentService = () => {
     if (!item) return [fallback];
 
     const getDeepValue = (obj: Record<string, unknown>, path: string): unknown => {
-      return path.split('.').reduce((acc, part) => (acc && typeof acc === 'object' ? (acc as Record<string, unknown>)[part] : undefined), obj as unknown);
+      return path.split('.').reduce((acc, part) => {
+        if (acc && typeof acc === 'object') {
+          return (acc as Record<string, unknown>)[part];
+        }
+        return undefined;
+      }, obj as unknown);
     };
 
     const potentialPaths = [
@@ -214,10 +219,15 @@ const ContentService = () => {
       if (!val) continue;
 
       const items = Array.isArray(val) ? val : [val];
-      items.forEach(v => {
-        const src = typeof v === 'string' ? v : (v && typeof v === 'object' ? (v as any).url || (v as any).logo_url || (v as any).image_url || (v as any).src : undefined);
-        if (src && typeof src === 'string' && !src.startsWith('blob:')) {
-          images.push(src);
+      items.forEach((v: unknown) => {
+        if (typeof v === 'string') {
+          if (v && !v.startsWith('blob:')) images.push(v);
+        } else if (v && typeof v === 'object') {
+          const imgObj = v as Record<string, unknown>;
+          const src = (imgObj.url || imgObj.logo_url || imgObj.image_url || imgObj.src) as string | undefined;
+          if (src && typeof src === 'string' && !src.startsWith('blob:')) {
+            images.push(src);
+          }
         }
       });
 
@@ -225,8 +235,19 @@ const ContentService = () => {
     }
 
     if (images.length === 0) {
-      const backup = (item as any)?.store?.branding?.logo_url?.[0] || (item as any)?.branding?.logo_url?.[0];
-      return backup ? [backup] : [fallback];
+      // Safe access using unknown to avoiding strict type checks against the interface
+      // while avoiding 'any' which triggers the lint rule.
+      const itemRecord = item as unknown as Record<string, unknown>;
+      const storeRecord = itemRecord.store as Record<string, unknown> | undefined;
+      const brandingRecord = itemRecord.branding as Record<string, unknown> | undefined;
+
+      const storeBrandingLogo = (storeRecord?.branding as Record<string, unknown> | undefined)?.logo_url;
+      const directBrandingLogo = brandingRecord?.logo_url;
+
+      const backup = (Array.isArray(storeBrandingLogo) ? storeBrandingLogo[0] : undefined) ||
+        (Array.isArray(directBrandingLogo) ? directBrandingLogo[0] : undefined);
+
+      return backup ? [backup as string] : [fallback];
     }
 
     return images;
