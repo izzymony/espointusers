@@ -25,7 +25,7 @@ interface ServiceContent {
 
 
 
-const ContentCard = ({ content, service_id, extractAllImages }: { content: ServiceContent, service_id: string, extractAllImages: (item: any) => string[] }) => {
+const ContentCard = ({ content, service_id, extractAllImages }: { content: ServiceContent, service_id: string, extractAllImages: (item: ServiceContent) => string[] }) => {
   const router = useRouter();
   const sliderRef = React.useRef<HTMLDivElement>(null);
   const { store } = content;
@@ -54,9 +54,11 @@ const ContentCard = ({ content, service_id, extractAllImages }: { content: Servi
         >
           {images.map((src, idx) => (
             <div key={idx} className="min-w-full h-full snap-start relative">
-              <img
+              <Image
                 src={src}
                 alt={`${store?.name || 'Service'} - ${idx + 1}`}
+                width={400}
+                height={240}
                 className="w-full h-full object-cover grayscale-[0.2] group-hover:grayscale-0 transition-all duration-700"
                 onError={(e) => {
                   (e.target as HTMLImageElement).src = fallbackImage;
@@ -186,12 +188,12 @@ const ContentService = () => {
       .finally(() => setLoading(false));
   }, [service_id]);
 
-  const extractAllImages = (item: any): string[] => {
+  const extractAllImages = (item: ServiceContent | null): string[] => {
     const fallback = '/camera-431119_1280.jpg';
     if (!item) return [fallback];
 
-    const getDeepValue = (obj: any, path: string) => {
-      return path.split('.').reduce((acc, part) => acc && acc[part], obj);
+    const getDeepValue = (obj: Record<string, unknown>, path: string): unknown => {
+      return path.split('.').reduce((acc, part) => (acc && typeof acc === 'object' ? (acc as Record<string, unknown>)[part] : undefined), obj as unknown);
     };
 
     const potentialPaths = [
@@ -205,15 +207,15 @@ const ContentService = () => {
       'image'
     ];
 
-    let images: string[] = [];
+    const images: string[] = [];
 
     for (const path of potentialPaths) {
-      const val = getDeepValue(item, path);
+      const val = getDeepValue(item as unknown as Record<string, unknown>, path);
       if (!val) continue;
 
       const items = Array.isArray(val) ? val : [val];
       items.forEach(v => {
-        let src = typeof v === 'string' ? v : (v?.url || v?.logo_url || v?.image_url || v?.src);
+        const src = typeof v === 'string' ? v : (v && typeof v === 'object' ? (v as any).url || (v as any).logo_url || (v as any).image_url || (v as any).src : undefined);
         if (src && typeof src === 'string' && !src.startsWith('blob:')) {
           images.push(src);
         }
@@ -223,7 +225,7 @@ const ContentService = () => {
     }
 
     if (images.length === 0) {
-      const backup = item?.store?.branding?.logo_url?.[0] || item?.branding?.logo_url?.[0];
+      const backup = (item as any)?.store?.branding?.logo_url?.[0] || (item as any)?.branding?.logo_url?.[0];
       return backup ? [backup] : [fallback];
     }
 

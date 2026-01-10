@@ -23,6 +23,13 @@ interface FormErrors {
   confirmPassword?: string;
 }
 
+const loadingMessages = [
+  "Signing up...",
+  "Please wait...",
+  "Checking...",
+  "Done!",
+];
+
 const Signup = () => {
   const [formData, setFormData] = useState<FormData>({
     firstName: "",
@@ -40,12 +47,6 @@ const Signup = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const router = useRouter();
 
-  const loadingMessages = [
-    "Signing up...",
-    "Please wait...",
-    "Checking...",
-    "Done!",
-  ];
   const [loadingMessage, setLoadingMessage] = useState(loadingMessages[0]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -145,7 +146,7 @@ const Signup = () => {
         }
         setErrorMessage(error);
       }
-    } catch (error) {
+    } catch {
       setErrorMessage("An error occurred while registering.");
     } finally {
       setLoading(false);

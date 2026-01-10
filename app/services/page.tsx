@@ -6,11 +6,8 @@ import Loader from "../components/Loading";
 import Nav from "../components/Nav";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import RequireAuth from "../components/RequireAuth";
 import { Video, ShoppingBag, Package, Globe } from "lucide-react";
-
 import Foot from "../components/Foot";
-import Link from "next/link"
 
 interface Service {
   service_id: string;
@@ -47,9 +44,11 @@ const ServicePage = () => {
   }, []);
 
   // Filter featured services for carousel
+  /* 
   const featuredServices = services.filter((s) =>
     featuredServiceIds.includes(s.service_id)
   );
+  */
 
   return (
     // <RequireAuth>
@@ -91,7 +90,7 @@ const ServicePage = () => {
             </div>
 
             <p className="text-xl sm:text-2xl text-white/60 max-w-xl leading-relaxed font-light">
-              Experience the excellence of <span className="text-white font-medium italic">ESPOINT's</span> premium product suite. From bespoke multimedia to global sourcing, we deliver <span className="text-white font-medium italic">industrial-grade solutions</span>.
+              Experience the excellence of <span className="text-white font-medium italic">ESPOINT&apos;s</span> premium product suite. From bespoke multimedia to global sourcing, we deliver <span className="text-white font-medium italic">industrial-grade solutions</span>.
             </p>
 
             <div className="flex flex-wrap gap-6 pt-4">

@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Loader from "@/app/components/Loading";
 import Nav from "@/app/components/Nav";
+import Image from "next/image";
 import { Clock2 } from "lucide-react";
 
 interface RentalItem {
@@ -83,12 +84,12 @@ const ContentDetails = () => {
     status: "pending",
   });
 
-  const extractAllImages = (item: any): string[] => {
+  const extractAllImages = (item: ServiceContent | null): string[] => {
     const fallback = '/camera-431119_1280.jpg';
     if (!item) return [fallback];
 
-    const getDeepValue = (obj: any, path: string) => {
-      return path.split('.').reduce((acc, part) => acc && acc[part], obj);
+    const getDeepValue = (obj: Record<string, unknown>, path: string): unknown => {
+      return path.split('.').reduce((acc, part) => (acc && typeof acc === 'object' ? (acc as Record<string, unknown>)[part] : undefined), obj as unknown);
     };
 
     const potentialPaths = [
@@ -102,15 +103,15 @@ const ContentDetails = () => {
       'image'
     ];
 
-    let images: string[] = [];
+    const images: string[] = [];
 
     for (const path of potentialPaths) {
-      const val = getDeepValue(item, path);
+      const val = getDeepValue(item as unknown as Record<string, unknown>, path);
       if (!val) continue;
 
       const items = Array.isArray(val) ? val : [val];
       items.forEach(v => {
-        let src = typeof v === 'string' ? v : (v?.url || v?.logo_url || v?.image_url || v?.src);
+        const src = typeof v === 'string' ? v : (v && typeof v === 'object' ? (v as any).url || (v as any).logo_url || (v as any).image_url || (v as any).src : undefined);
         if (src && typeof src === 'string' && !src.startsWith('blob:')) {
           images.push(src);
         }
@@ -120,7 +121,7 @@ const ContentDetails = () => {
     }
 
     if (images.length === 0) {
-      const backup = item?.store?.branding?.logo_url?.[0] || item?.branding?.logo_url?.[0];
+      const backup = (item as any)?.store?.branding?.logo_url?.[0] || (item as any)?.branding?.logo_url?.[0];
       return backup ? [backup] : [fallback];
     }
 
@@ -287,9 +288,11 @@ const ContentDetails = () => {
             >
               {images.map((src, idx) => (
                 <div key={idx} className="min-w-full h-full snap-start relative">
-                  <img
+                  <Image
                     src={src}
                     alt={`${store.name} - ${idx + 1}`}
+                    width={1200}
+                    height={600}
                     className="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
                     onError={(e) => {
                       (e.target as HTMLImageElement).src = fallbackImage;
