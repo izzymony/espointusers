@@ -30,7 +30,7 @@ const ServicePage = () => {
   useEffect(() => {
     setLoading(true);
     setError("");
-    fetch("https://espoint.onrender.com/espoint/get_all_pub_service?limit=5")
+    fetch("https://espoint-5shr.onrender.com/espoint/get_all_pub_service")
       .then((res) => {
         if (!res.ok) throw new Error("Network response was not ok");
         return res.json();
@@ -252,59 +252,42 @@ const ServicePage = () => {
               {error}
             </div>
           ) : (
-            <div className="grid gap-16 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+            <div className="grid gap-3 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
               {services.length > 0 ? (
                 services.map((service) => (
                   <article
                     key={service.service_id}
-                    className="group relative bg-white rounded-[56px] overflow-hidden border border-gray-100 hover:border-primary/40 transition-all duration-700 cursor-pointer shadow-sm hover:shadow-2xl hover:shadow-primary/10"
+                    className="group relative bg-white w-full rounded-[48px] overflow-hidden border border-gray-100 hover:border-primary/40 transition-all duration-700 cursor-pointer shadow-sm hover:shadow-2xl hover:shadow-primary/10 flex flex-col"
                     onClick={() => router.push(`/services/${service.service_id}/content`)}
                   >
-                    {/* Image Holder with dynamic zoom */}
-                    <div className="h-[400px] relative overflow-hidden">
-                      <Image
-                        src={
-                          Array.isArray(service.images) &&
-                            service.images.length > 0
-                            ? service.images[0]
-                            : "/camera-5113699_1280.jpg"
-                        }
-                        alt={service.service_name}
-                        fill
-                        className="object-cover group-hover:scale-110 transition-transform duration-[2000ms] grayscale-[0.2] group-hover:grayscale-0 opacity-90 group-hover:opacity-100"
-                      />
-
-                      {/* Gradient Overlay */}
-                      <div className="absolute inset-0 bg-gradient-to-t from-white via-transparent to-transparent opacity-60"></div>
-
-                      <div className="absolute top-10 right-10">
-                        <span className={`px-6 py-2.5 rounded-full text-[10px] font-black uppercase tracking-[0.2em] backdrop-blur-md border ${service.status === "active"
-                          ? "bg-primary/90 text-black border-primary/30"
-                          : "bg-gray-100/80 text-gray-500 border-gray-200"
-                          }`}>
-                          {service.status}
-                        </span>
-                      </div>
+                    {/* Status Badge */}
+                    <div className="absolute top-8 right-8 z-20">
+                      <span className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-[0.2em] border ${service.status === "active"
+                        ? "bg-primary text-black border-primary/30"
+                        : "bg-gray-100 text-gray-500 border-gray-200"
+                        }`}>
+                        {service.status}
+                      </span>
                     </div>
 
                     {/* Content */}
-                    <div className="p-12 relative -mt-20 bg-white/80 backdrop-blur-md border-t border-gray-50">
-                      <h3 className="font-black text-4xl tracking-tighter group-hover:text-primary transition-colors leading-none mb-6 text-gray-900">
+                    <div className="p-10 pt-16 flex-1 flex flex-col">
+                      <h3 className="font-black text-3xl tracking-tighter group-hover:text-primary transition-colors leading-tight mb-4 text-gray-900">
                         {service.service_name}
                       </h3>
 
-                      <p className="text-gray-500 mb-12 line-clamp-2 font-light leading-relaxed text-lg">
-                        Industry-grade <span className="text-gray-700 italic font-medium">{service.service_name.toLowerCase()}</span> solutions engineered for maximum performance.
+                      <p className="text-gray-500 mb-8 line-clamp-2 font-light leading-relaxed">
+                        Professional <span className="text-gray-700 italic font-medium">{service.service_name.toLowerCase()}</span> solutions engineered for maximum performance and business growth.
                       </p>
 
-                      <div className="flex items-center justify-between pt-10 border-t border-gray-100">
+                      <div className="mt-auto flex items-center justify-between pt-8 border-t border-gray-50">
                         <div className="flex flex-col">
-                          <span className="text-[10px] font-black text-gray-300 uppercase tracking-[0.3em] mb-1">Standard</span>
-                          <span className="text-sm font-black text-primary uppercase">ESPOINT PRO</span>
+                          <span className="text-[10px] font-black text-gray-300 uppercase tracking-[0.3em] mb-1">Domain</span>
+                          <span className="text-xs font-black text-primary uppercase">Elite Suite</span>
                         </div>
 
-                        <div className="bg-gray-900 text-white p-5 rounded-[24px] group-hover:bg-primary group-hover:text-black transition-all duration-700 transform group-hover:rotate-12 group-hover:scale-110 shadow-xl shadow-black/10">
-                          <ArrowRight className="w-6 h-6" />
+                        <div className="bg-gray-900 text-white p-4 rounded-2xl group-hover:bg-primary group-hover:text-black transition-all duration-500 transform group-hover:rotate-12 group-hover:scale-110 shadow-lg shadow-black/5">
+                          <ArrowRight className="w-5 h-5" />
                         </div>
                       </div>
                     </div>

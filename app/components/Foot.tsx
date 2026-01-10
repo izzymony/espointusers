@@ -2,6 +2,8 @@ import React from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { Facebook, Twitter, Linkedin, Instagram } from 'lucide-react'
+import Image from 'next/image'
+
 const Foot = () => {
               const router = useRouter() 
   return (
@@ -10,18 +12,17 @@ const Foot = () => {
         <div className="max-w-7xl mx-auto px-6">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
             <div className="space-y-6">
-              <div className="text-white font-bold text-2xl flex items-center gap-2">
-                <div className="bg-primary w-10 h-10 rounded-lg"></div>
-                ESPOINT
-              </div>
+              <Link href="/" className="flex items-center space-x-3">
+              <Image src={'/espointtower.jpg'} alt='' width={150} height={150} />
+            </Link>
               <p className="text-gray-400 max-w-xs">
                 Empowering businesses through comprehensive solutions across multiple industries.
               </p>
             </div>
 
             <div>
-              <h4 className="text-white font-bold mb-6">Services</h4>
-              <ul className="space-y-4">
+              <h4 className="text-primary font-bold mb-6">Services</h4>
+              <ul className="space-y-4 text-gray-400">
                 <li><Link href="#" className="hover:text-primary transition-colors">Multimedia Services</Link></li>
                 <li><Link href="#" className="hover:text-primary transition-colors">Local Product Promotion</Link></li>
                 <li><Link href="#" className="hover:text-primary transition-colors">General Merchandise</Link></li>
@@ -32,7 +33,7 @@ const Foot = () => {
             </div>
 
             <div>
-              <h4 className="text-white font-bold mb-6">Contact</h4>
+              <h4 className="text-primary font-bold mb-6">Contact</h4>
               <ul className="space-y-4">
                 <li className="flex flex-col">
                   <span className="text-primary text-xs uppercase tracking-wider font-bold mb-1">Email</span>
@@ -50,19 +51,19 @@ const Foot = () => {
             </div>
 
             <div>
-              <h4 className="text-white font-bold mb-6">Follow Us</h4>
+              <h4 className="text-primary font-bold mb-6">Follow Us</h4>
               <div className="flex gap-4">
-                <div className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-primary hover:text-black transition-all cursor-pointer">
-                  <Facebook className="w-5 h-5" />
+                <div className="w-10 h-10 bg-black border-primary/50 border-1 rounded-full flex items-center justify-center hover:bg-primary hover:text-black transition-all cursor-pointer">
+                  <Facebook className="w-5 h-5 text-primary hover:text-black" />
                 </div>
-                <div className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-primary hover:text-black transition-all cursor-pointer">
-                  <Twitter className="w-5 h-5" />
+                <div className="w-10 h-10 bg-black border-primary/50 border-1 rounded-full flex items-center justify-center hover:bg-primary hover:text-black transition-all cursor-pointer">
+                  <Twitter className="w-5 h-5 text-primary hover:text-black" />
                 </div>
-                <div className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-primary hover:text-black transition-all cursor-pointer">
-                  <Linkedin className="w-5 h-5" />
+                <div className="w-10 h-10 bg-black border-primary/50 border-1 rounded-full flex items-center justify-center hover:bg-primary hover:text-black transition-all cursor-pointer">
+                  <Linkedin className="w-5 h-5 text-primary hover:text-black" />
                 </div>
-                <div className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-primary hover:text-black transition-all cursor-pointer">
-                  <Instagram className="w-5 h-5" />
+                <div className="w-10 h-10 bg-black border-primary/50 border-1 rounded-full flex items-center justify-center hover:bg-primary hover:text-black transition-all cursor-pointer">
+                  <Instagram className="w-5 h-5 text-primary hover:text-black" />
                 </div>
               </div>
             </div>

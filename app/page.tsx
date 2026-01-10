@@ -216,8 +216,8 @@ export default function Home() {
           <div className="grid lg:grid-cols-2 gap-16 items-start">
             {/* Contact Info */}
             <div className="space-y-8">
-              <div className="flex items-start gap-6 bg-white p-8 rounded-3xl shadow-sm hover:shadow-md transition-all">
-                <div className="bg-primary/10 p-4 rounded-2xl">
+              <div className="flex items-start gap-6 bg-white border-primary/70 border-1 p-8 rounded-3xl shadow-sm hover:shadow-md transition-all">
+                <div className="bg-black border-primary/50 border-1 p-4 rounded-2xl">
                   <Mail className="w-6 h-6 text-primary" />
                 </div>
                 <div>
@@ -226,8 +226,8 @@ export default function Home() {
                 </div>
               </div>
 
-              <div className="flex items-start gap-6 bg-white p-8 rounded-3xl shadow-sm hover:shadow-md transition-all">
-                <div className="bg-primary/10 p-4 rounded-2xl">
+              <div className="flex items-start gap-6 bg-white border-primary/70 border-1 p-8 rounded-3xl shadow-sm hover:shadow-md transition-all">
+                <div className="bg-black border-primary/50 border-1 p-4 rounded-2xl">
                   <Phone className="w-6 h-6 text-primary" />
                 </div>
                 <div>
@@ -236,8 +236,8 @@ export default function Home() {
                 </div>
               </div>
 
-              <div className="flex items-start gap-6 bg-white p-8 rounded-3xl shadow-sm hover:shadow-md transition-all">
-                <div className="bg-primary/10 p-4 rounded-2xl">
+              <div className="flex items-start gap-6 bg-white border-primary/70 border-1 p-8 rounded-3xl shadow-sm hover:shadow-md transition-all">
+                <div className="bg-black border-primary/50 border-1 p-4 rounded-2xl">
                   <MapPin className="w-6 h-6 text-primary" />
                 </div>
                 <div>
@@ -251,7 +251,7 @@ export default function Home() {
             </div>
 
             {/* Contact Form */}
-            <div className="bg-white p-10 rounded-[40px] shadow-xl border border-gray-100">
+            <div className="bg-white border-primary/70 border-1 p-10 rounded-[40px] shadow-xl border border-gray-100">
               <form className="space-y-6">
                 <div className="space-y-2">
                   <label className="text-sm font-semibold text-gray-700 ml-1">Name</label>
