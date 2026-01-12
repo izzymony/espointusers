@@ -3,12 +3,14 @@ import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 
+
+
 const ForgotPassword = () => {
   const [email, setEmail] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
-
+  const API = process.env.BASE_URL;
   const validateEmail = (value: string) =>
     /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(value);
 
@@ -29,9 +31,9 @@ const ForgotPassword = () => {
     setLoading(true);
 
     try {
-      const response = await fetch("https://espoint-auth.onrender.com/api/v1.0/forgot_password", {
+      const response = await fetch('https://espoint-auth-8r6v.onrender.com/api/v1.0/forgot_password', {
         method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded", },
+        headers: { "Content-Type": "application/json", },
         body: JSON.stringify({ email })
       });
 
@@ -104,7 +106,7 @@ const ForgotPassword = () => {
               }}
               placeholder="Enter your email address"
               disabled={loading}
-              className="w-full px-4 py-3 border border-gray-300 rounded-xl placeholder:text-gray-400 text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#7464fa] focus:border-transparent transition-all duration-200"
+              className="w-full bg-gray-50 border-gray-200 focus:border-primary focus:ring-0 rounded-2xl p-4 transition-all outline-none"
             />
             {error && (
               <p className="text-red-500 text-sm mt-2 flex items-center">
@@ -121,7 +123,7 @@ const ForgotPassword = () => {
           <button
             type="submit"
             disabled={loading || !email}
-            className="w-full bg-[#7464fa] hover:bg-[#5a4fd0] disabled:bg-gray-400 disabled:cursor-not-allowed text-white font-semibold py-3 px-4 rounded-xl transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] shadow-lg"
+            className="bg-primary hover:bg-primary/90 text-black w-full py-4 mt-6 rounded-2xl font-bold transition-all shadow-lg shadow-primary/20 flex items-center justify-center gap-2"
           >
             {loading ? (
               <span className="flex items-center justify-center">
@@ -139,7 +141,7 @@ const ForgotPassword = () => {
           <div className="text-center">
             <Link 
               href="/login" 
-              className="text-[#7464fa] hover:text-[#5a4fd0] underline font-medium transition-colors duration-200"
+              className="text-black hover:text-[#5a4fd0] underline font-medium transition-colors duration-200"
             >
               ← Back to Sign In
             </Link>

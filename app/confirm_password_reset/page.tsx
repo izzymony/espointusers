@@ -18,6 +18,7 @@ const SetNewPassword = () => {
   const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const API = process.env.BASE_URL;
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -67,7 +68,7 @@ const SetNewPassword = () => {
     setLoading(true);
 
     try {
-      const response = await fetch("https://espoint-auth.onrender.com/api/v1.0/change_password", {
+      const response = await fetch(`https://espoint-auth-8r6v.onrender.com/api/v1.0/change_password`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -153,7 +154,7 @@ const SetNewPassword = () => {
                 onChange={handleChange}
                 placeholder="Enter new password (min 8 characters)"
                 disabled={loading}
-                className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-xl placeholder:text-gray-400 text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#7464fa] focus:border-transparent transition-all duration-200"
+                className="w-full bg-gray-50 border-gray-200 focus:border-primary focus:ring-0 rounded-2xl p-4 transition-all outline-none"
               />
               <button
                 type="button"
@@ -184,7 +185,7 @@ const SetNewPassword = () => {
                 onChange={handleChange}
                 placeholder="Re-enter new password"
                 disabled={loading}
-                className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-xl placeholder:text-gray-400 text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#7464fa] focus:border-transparent transition-all duration-200"
+                className="w-full bg-gray-50 border-gray-200 focus:border-primary focus:ring-0 rounded-2xl p-4 transition-all outline-none"
               />
               <button
                 type="button"

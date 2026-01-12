@@ -5,6 +5,9 @@ import Image from "next/image";
 import Link from "next/link";
 import { useSearchParams, useRouter } from "next/navigation";
 import { CheckCircle, RefreshCw } from "lucide-react";
+import { getBaseUrl } from "../utils/api";
+
+const BASE_URL = getBaseUrl();
 
 const AccountActivationClient = () => {
   const [loading, setLoading] = useState(false);
@@ -13,6 +16,7 @@ const AccountActivationClient = () => {
   const [success, setSuccess] = useState("");
   const searchParams = useSearchParams();
   const router = useRouter();
+
 
   const uidb64 = searchParams.get("uidb64");
   const token = searchParams.get("token");
@@ -30,7 +34,7 @@ const AccountActivationClient = () => {
 
     try {
       const response = await fetch(
-        `https://espoint-auth.onrender.com/api/v1.0/auth/activate_account/${uidb64}/${token}/`,
+        `https://espoint-auth-8r6v.onrender.com/api/v1.0/auth/activate_account/${uidb64}/${token}`,
         {
           method: "GET",
           headers: { "Content-Type": "application/json" },
@@ -73,7 +77,7 @@ const AccountActivationClient = () => {
 
     try {
       const response = await fetch(
-        "https://espoint-auth.onrender.com/api/v1.0/auth/resend_activation_link",
+        "https://espoint-auth-8r6v.onrender.com/api/v1.0/auth/resend_activation_link",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -176,7 +180,7 @@ const AccountActivationClient = () => {
           <p className="text-sm text-gray-600">Didn&apos;t receive the link?</p>
           <button
             onClick={handleResend}
-            className="border border-[#7464fa] text-[#7464fa] px-3 py-1 flex items-center justify-center mx-auto hover:bg-[#f2f0fd] rounded disabled:opacity-60"
+            className="bg-primary hover:bg-primary/90 text-black w-full py-4 mt-6 rounded-2xl font-bold transition-all shadow-lg shadow-primary/20 flex items-center justify-center gap-2"
             disabled={resending}
           >
             {resending ? (

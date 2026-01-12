@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Eye, EyeOff, ArrowRight } from "lucide-react";
 import { useRouter } from "next/navigation";
 
+
 interface FormData {
   firstName: string;
   lastName: string;
@@ -46,6 +47,7 @@ const Signup = () => {
   const [errorMessage, setErrorMessage] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
   const router = useRouter();
+
 
   const [loadingMessage, setLoadingMessage] = useState(loadingMessages[0]);
 
@@ -100,7 +102,7 @@ const Signup = () => {
 
     try {
       const response = await fetch(
-        "https://espoint-auth.onrender.com/api/v1.0/auth/register",
+        'https://espoint-auth-8r6v.onrender.com/api/v1.0/auth/register',
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -115,6 +117,8 @@ const Signup = () => {
         }
       );
 
+
+
       const data = await response.json();
 
       if (response.ok) {
@@ -128,6 +132,8 @@ const Signup = () => {
           password: "",
           confirmPassword: "",
         });
+
+
       } else {
 
         let error = "Registration failed.";

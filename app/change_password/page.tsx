@@ -21,6 +21,7 @@ const ChangePassword = () => {
   const [success, setSuccess] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const API = process.env.BASE_URL;
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -64,7 +65,7 @@ const ChangePassword = () => {
     if (!validate()) return;
     setLoading(true);
     try {
-      const response = await fetch("https://espoint-auth.onrender.com/api/v1.0/change_password", {
+      const response = await fetch(`https://espoint-auth-8r6v.onrender.com/api/v1.0/change_password`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -92,7 +93,7 @@ const ChangePassword = () => {
   return (
     <div className="bg-white h-[100vh]">
       <div className="flex min-h-screen justify-center items-center p-4">
-        <div className="bg-[#f5f5f5] w-full max-w-md p-5 border border-gray-300 shadow-lg rounded-md">
+        <div className="bg-white shadow-md  w-full max-w-md p-5 border border-gray-300 shadow-lg rounded-md">
           <div className="mx-auto mb-4">
             <Image
               src={"/espointtower.jpg"}
@@ -118,7 +119,7 @@ const ChangePassword = () => {
                   value={formData.oldPassword}
                   onChange={handleChange}
                   placeholder="Enter old password"
-                  className="w-full px-3 border-b-1 rounded-md border-gray-300 placeholder:text-gray-400 p-1 focus:border-[#ffd700] focus:ring-2 focus:ring-[#ffd700] outline-none"
+                  className="w-full bg-gray-50 border-gray-200 focus:border-primary focus:ring-0 rounded-2xl p-4 transition-all outline-none"
                 />
                 <button
                   type="button"
@@ -145,7 +146,7 @@ const ChangePassword = () => {
                   value={formData.newPassword}
                   onChange={handleChange}
                   placeholder="Enter new password"
-                  className="w-full px-3 border-b-1 rounded-md border-gray-300 placeholder:text-gray-400 p-1 focus:border-[#ffd700] focus:ring-2 focus:ring-[#ffd700] outline-none"
+                  className="w-full bg-gray-50 border-gray-200 focus:border-primary focus:ring-0 rounded-2xl p-4 transition-all outline-none"
                 />
                 <button
                   type="button"
@@ -172,7 +173,7 @@ const ChangePassword = () => {
                   value={formData.confirmPassword}
                   onChange={handleChange}
                   placeholder="Re-enter new password"
-                  className="w-full px-3 border-b-1 rounded-md border-gray-300 placeholder:text-gray-400 p-1 focus:border-[#ffd700] focus:ring-2 focus:ring-[#ffd700] outline-none"
+                  className="w-full bg-gray-50 border-gray-200 focus:border-primary focus:ring-0 rounded-2xl p-4 transition-all outline-none"
                 />
                 <button
                   type="button"
@@ -190,7 +191,7 @@ const ChangePassword = () => {
             <button
               type="submit"
               disabled={loading}
-              className="bg-[#FFD700] w-full text-black p-2 mt-2 rounded-md font-bold"
+              className="bg-primary w-full text-white p-2 mt-2 rounded-md font-bold"
             >
               {loading ? "Changing..." : "Change Password"}
             </button>

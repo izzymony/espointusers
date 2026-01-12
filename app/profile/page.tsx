@@ -6,6 +6,9 @@ import Nav from "../components/Nav";
 import RequireAuth from "../components/RequireAuth";
 import { useRouter } from "next/navigation";
 import Foot from "../components/Foot";
+import { Baskervville_SC } from "next/font/google";
+
+
 
 interface UserInfo {
   username: string;
@@ -13,12 +16,15 @@ interface UserInfo {
   last_name: string;
 }
 
+
+
+
 async function refreshAccessToken(): Promise<string> {
   const refreshToken = localStorage.getItem("refreshToken");
   if (!refreshToken) throw new Error("No refresh token found");
 
   const res = await fetch(
-    "https://espoint-auth.onrender.com/api/v1.0/auth/token/refresh",
+    `https://espoint-auth-8r6v.onrender.com/api/v1.0/auth/token/refresh`,
     {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -53,14 +59,14 @@ const ProfilePage = () => {
       setLoading(true);
       try {
         let res = await fetch(
-          `https://espoint-auth.onrender.com/api/v1.0/get_user_info/${username}_no`,
+          `https://espoint-auth-8r6v.onrender.com/api/v1.0/get_user_info/${username}`,
           { headers: { Authorization: token ? `Bearer ${token}` : "" } }
         );
 
         if (res.status === 401) {
           token = await refreshAccessToken();
           res = await fetch(
-            `https://espoint-auth.onrender.com/api/v1.0/get_user_info/${username}_no`,
+            `https://espoint-auth-8r6v.onrender.com/api/v1.0/get_user_info/${username}`,
             { headers: { Authorization: `Bearer ${token}` } }
           );
         }
