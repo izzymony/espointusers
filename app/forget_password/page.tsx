@@ -10,7 +10,7 @@ const ForgotPassword = () => {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
-  const API = process.env.BASE_URL;
+  
   const validateEmail = (value: string) =>
     /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(value);
 

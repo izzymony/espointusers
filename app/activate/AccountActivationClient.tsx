@@ -5,9 +5,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { useSearchParams, useRouter } from "next/navigation";
 import { CheckCircle, RefreshCw } from "lucide-react";
-import { getBaseUrl } from "../utils/api";
-
-const BASE_URL = getBaseUrl();
 
 const AccountActivationClient = () => {
   const [loading, setLoading] = useState(false);

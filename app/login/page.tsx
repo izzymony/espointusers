@@ -5,9 +5,7 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { Eye, EyeOff, ArrowRight } from "lucide-react";
-import { getBaseUrl } from "../utils/api";
 
-const BASE_URL = getBaseUrl();
 
 interface FormData {
   usernameOrEmail: string;
@@ -104,7 +102,7 @@ const Login = () => {
 
     try {
       const loginRes = await fetch(
-        `${BASE_URL}/api/v1.0/auth/token`,
+        `https://espoint-auth-8r6v.onrender.com/api/v1.0/auth/token`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -150,7 +148,7 @@ const Login = () => {
       localStorage.setItem("refreshToken", loginData.refresh);
 
       const userRes = await fetch(
-        `${BASE_URL}/api/v1.0/get_user_info/${usernameToUse}`,
+        `https://espoint-auth-8r6v.onrender.com/api/v1.0/get_user_info/${usernameToUse}`,
         { headers: { Authorization: `Bearer ${loginData.access}` } }
       );
 

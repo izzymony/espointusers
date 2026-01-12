@@ -18,7 +18,7 @@ const SetNewPassword = () => {
   const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const API = process.env.BASE_URL;
+  
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
