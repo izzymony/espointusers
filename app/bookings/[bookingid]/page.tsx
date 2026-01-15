@@ -61,7 +61,7 @@ const Page = () => {
     if (!bookingId) return;
     setLoading(true);
 
-    fetch(`https://espoint.onrender.com/espoint/get_booking/${bookingId}`)
+    fetch(`https://espoint-5shr.onrender.com/espoint/get_booking/${bookingId}`)
       .then(res => {
         if (!res.ok) throw new Error("Failed to fetch booking");
         return res.json();
@@ -73,7 +73,7 @@ const Page = () => {
           const unit = data.msg.service_unit;
           if (unit) {
             fetch(
-              `https://espoint.onrender.com/espoint/get_all_content_based_service_and_status/${unit}/approved`
+              `https://espoint-5shr.onrender.com/espoint/get_all_content_based_service_and_status/${unit}/approved`
             )
               .then(res => {
                 if (!res.ok) throw new Error("Failed to fetch service content");

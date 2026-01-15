@@ -149,6 +149,20 @@ const ContentDetails = () => {
     return images;
   };
 
+  const formatTo12Hour = (timeStr: string) => {
+    if (!timeStr) return "";
+    try {
+      const [hourStr, minuteStr] = timeStr.split(":");
+      let hour = parseInt(hourStr, 10);
+      const ampm = hour >= 12 ? "PM" : "AM";
+      hour = hour % 12;
+      hour = hour ? hour : 12; // the hour '0' should be '12'
+      return `${hour}:${minuteStr} ${ampm}`;
+    } catch (e) {
+      return timeStr;
+    }
+  };
+
   const scrollSlider = (direction: 'left' | 'right') => {
     if (sliderRef.current) {
       const scrollAmount = sliderRef.current.clientWidth;
@@ -162,7 +176,10 @@ const ContentDetails = () => {
   useEffect(() => {
     const storedUser = JSON.parse(localStorage.getItem("user") || "{}");
     if (storedUser?.username) {
-      setFormData((prev) => ({ ...prev, username: storedUser.username }));
+      setFormData((prev) => ({
+        ...prev,
+        username: storedUser.username,
+      }));
     }
   }, []);
 
@@ -207,7 +224,7 @@ const ContentDetails = () => {
       }
 
       // ✅ calculate price here before sending
-      const itemQuantity = content?.store?.rental_items[1]?.quantity || 0;
+      const itemQuantity = content?.store?.rental_items[1]?.quantity || 1; // Default to 1 if 0/missing
       const itemPrice = content?.store?.base_price || 0;
       const totalPrice = itemQuantity * itemPrice;
 
@@ -218,7 +235,7 @@ const ContentDetails = () => {
         from: "internal",
         data: {
           client_email: formData.client_email,
-          preferred_staff_id: formData.preferred_staff_id,
+          preferred_staff_id: formData.preferred_staff_id || "default",
           notes: formData.notes,
           service_time: formData.service_time,
           amount: String(totalPrice),
@@ -228,12 +245,14 @@ const ContentDetails = () => {
           client_name: formData.client_name,
           status: "pending",
           completed_date: "",
-          booking_code: formData.booking_code,
+          booking_code: "", // Backend will provide this
         },
       };
 
+      console.log("Submitting Booking Payload:", JSON.stringify(payload, null, 2));
+
       const res = await fetch(
-        "https://espoint.onrender.com/espoint/create_booking_no",
+        "https://espoint-5shr.onrender.com/espoint/create_booking",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -241,32 +260,51 @@ const ContentDetails = () => {
         }
       );
 
-      const data: BookingApiResponse = await res.json();
-      console.log("Create Booking API Response:", data);
+      console.log("Booking Response Status:", res.status);
+
+      const contentType = res.headers.get("content-type");
+      let data: any = {};
+
+      if (contentType && contentType.includes("application/json")) {
+        data = await res.json();
+      } else {
+        const text = await res.text();
+        console.log("Booking Raw Text Response:", text);
+        data = { msg: text || (res.ok ? "Success" : "No content") };
+      }
+
+      console.log("Booking Response Data:", JSON.stringify(data, null, 2));
 
       let message = "";
       let bookingId = "";
 
-      if (typeof data.msg === "string") {
-        message = data.msg;
-        if (message.includes("Booking ID")) {
-          bookingId = message.replace("Booking ID ", "");
-        }
-      } else if (data.msg && typeof data.msg === "object") {
-        message = data.msg.message || "";
-        bookingId = data.msg.booking_id || "";
+      // 1. Check for booking_id in various locations
+      if (data.booking_id) bookingId = String(data.booking_id);
+      else if (data.msg?.booking_id) bookingId = String(data.msg.booking_id);
+      else if (data.data?.booking_id) bookingId = String(data.data.booking_id);
+      else if (typeof data.msg === "string" && data.msg.includes("Booking ID")) {
+        bookingId = data.msg.replace("Booking ID ", "").trim();
       }
 
-      // ✅ Success check
-      if (message.toLowerCase().includes("success") || bookingId) {
-        setBookingSuccess(message || "Booking successful!");
+      // 2. Extract message from various common keys
+      const potentialMessage = data.msg || data.message || data.detail || data.error || (res.ok ? "Success" : "Failed");
+
+      if (typeof potentialMessage === "string") {
+        message = potentialMessage;
+      } else if (typeof potentialMessage === "object") {
+        message = JSON.stringify(potentialMessage);
+      }
+
+      // 3. Robust Success Check
+      if (res.ok || message.toLowerCase().includes("success") || bookingId) {
+        setBookingSuccess(bookingId ? `Booking Successful! ID: ${bookingId}` : message || "Booking Successful!");
         setShowModal(false);
 
         setTimeout(() => {
           router.push("/booked_contents");
-        }, 1200);
+        }, 1500);
       } else {
-        setBookingError(message || "Booking failed.");
+        setBookingError(message || "Booking failed - no error message received from server.");
       }
     } catch (err) {
       console.error("Booking Error:", err);
@@ -290,7 +328,7 @@ const ContentDetails = () => {
   if (!content) return <div className="mt-20">No content found.</div>;
 
   const { store } = content;
-  const itemQuantity = store.rental_items?.[1]?.quantity || 0;
+  const itemQuantity = store.rental_items?.[1]?.quantity || 1; // Default to 1 if 0/missing
   const itemPrice = store.base_price || 0;
   const totalPrice = itemQuantity * itemPrice;
   const images = extractAllImages(content);
@@ -410,7 +448,7 @@ const ContentDetails = () => {
                     </div>
                     <div>
                       <p className="text-sm text-gray-400 font-medium uppercase">Starts at</p>
-                      <p className="font-bold text-black">{store.service_hours.start} AM</p>
+                      <p className="font-bold text-black">{formatTo12Hour(store.service_hours.start)}</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-4 bg-gray-50 p-6 rounded-3xl border border-gray-100">
@@ -419,7 +457,7 @@ const ContentDetails = () => {
                     </div>
                     <div>
                       <p className="text-sm text-gray-400 font-medium uppercase">Ends at</p>
-                      <p className="font-bold text-black">{store.service_hours.end} PM</p>
+                      <p className="font-bold text-black">{formatTo12Hour(store.service_hours.end)}</p>
                     </div>
                   </div>
                 </div>

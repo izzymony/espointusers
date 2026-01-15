@@ -304,13 +304,7 @@ const ServicePage = () => {
           )}
 
           <div className="mt-40 text-center">
-            <button
-              onClick={() => router.push('/all_services')}
-              className="group relative px-14 py-7 bg-gray-900 text-white rounded-full font-black text-lg hover:scale-110 transition-all duration-700 shadow-2xl overflow-hidden"
-            >
-              <span className="relative z-10">Explore Full Ecosystem</span>
-              <div className="absolute inset-0 bg-primary translate-y-full group-hover:translate-y-0 transition-transform duration-500"></div>
-            </button>
+            
           </div>
         </div>
       </section>

@@ -47,8 +47,8 @@ const AccountActivationClient = () => {
         const data = await response.json().catch(() => ({}));
         setError(
           data?.message ||
-            data?.detail ||
-            "Activation link is invalid or expired. Please request a new one."
+          data?.detail ||
+          "Activation link is invalid or expired. Please request a new one."
         );
       }
     } catch {
@@ -91,8 +91,8 @@ const AccountActivationClient = () => {
         const data = await response.json().catch(() => ({}));
         setError(
           data?.message ||
-            data?.detail ||
-            "Failed to resend activation link. Please try again later."
+          data?.detail ||
+          "Failed to resend activation link. Please try again later."
         );
       }
     } catch {
@@ -110,95 +110,119 @@ const AccountActivationClient = () => {
   }, [uidb64, token]);
 
   return (
-    <div className="bg-white mt-20 px-4">
-      {/* Logo */}
-      <Image
-        src={"/espointtower.jpg"}
-        alt="EsPoint Tower"
-        width={110}
-        height={110}
-        className="mx-auto rounded-md"
-      />
-
-      {/* Mail Icon */}
-      <div className="bg-[#f2f0fd] p-4 rounded-full w-fit flex mx-auto mb-4 mt-4">
-        <Image
-          src={"/icons8-mail-50.png"}
-          alt="Mail Icon"
-          height={34}
-          width={34}
-        />
-      </div>
-
-      {/* Page Title */}
-      <h1 className="text-black text-center font-bold text-3xl">
-        Activate Your Account
-      </h1>
-      <p className="text-gray-700 mt-3 text-lg text-center md:text-2xl">
-        We’re verifying your account. If nothing happens, click below.
-      </p>
-
-      {/* Activation Box */}
-      <div className="bg-[#f9f8ff] py-3 w-full max-w-md p-5 border border-gray-300 shadow-lg rounded-md mt-5 mx-auto">
-        <h2 className="text-black text-2xl font-bold text-center mb-4">
-          Account Activation
-        </h2>
-
-        {/* Status Messages */}
-        <StatusMessage type="success" message={success} />
-        <StatusMessage type="error" message={error} />
-        {loading && (
-          <p className="text-[#7464fa] text-center mb-2">
-            Processing your activation...
-          </p>
-        )}
-
-        {/* Activate Button */}
-        <button
-          className="w-full bg-[#7464fa] hover:bg-[#5e4fd1] text-white font-medium py-2.5 rounded flex items-center justify-center mb-4 transition disabled:opacity-60 disabled:cursor-not-allowed"
-          onClick={handleActivate}
-          disabled={loading}
-        >
-          {loading ? (
-            <>
-              <Spinner />
-              Processing...
-            </>
-          ) : (
-            <>
-              <CheckCircle className="w-4 h-4 mr-2" />
-              Activate Account
-            </>
-          )}
-        </button>
-
-        {/* Resend Link */}
-        <div className="text-center space-y-3">
-          <p className="text-sm text-gray-600">Didn&apos;t receive the link?</p>
-          <button
-            onClick={handleResend}
-            className="bg-primary hover:bg-primary/90 text-black w-full py-4 mt-6 rounded-2xl font-bold transition-all shadow-lg shadow-primary/20 flex items-center justify-center gap-2"
-            disabled={resending}
-          >
-            {resending ? (
-              <>
-                <Spinner />
-                Sending...
-              </>
-            ) : (
-              <>
-                <RefreshCw className="w-4 h-4 mr-2" />
-                Resend Link
-              </>
-            )}
-          </button>
+    <div className="min-h-screen bg-white flex items-center justify-center px-6 py-12 ">
+      <div className="flex flex-col lg:flex-row items-center justify-center w-full max-w-6xl gap-10">
+        {/* Left side illustration */}
+        <div className="hidden lg:flex lg:w-1/2 items-center justify-center">
+          <Image
+            src="/undraw_select_u1sa.svg"
+            alt="Activation Illustration"
+            width={600}
+            height={600}
+            className="object-contain drop-shadow-2xl"
+            priority
+          />
         </div>
 
-        {/* Back to Login */}
-        <div className="text-center mt-4">
-          <Link href="/login" className="text-[#7464fa] underline">
-            Back to Sign In
-          </Link>
+        {/* Right side form */}
+        <div className="w-full max-w-md bg-white rounded-2xl shadow-2xl border border-gray-100 p-8">
+          {/* Header */}
+          <div className="text-center mb-6">
+            <h1 className="text-3xl md:text-4xl font-extrabold text-black">
+              Account <span className="text-primary">Activation</span>
+            </h1>
+            <p className="text-gray-500 mt-2 font-medium">
+              We&apos;re verifying your account to get you started.
+            </p>
+          </div>
+
+          {/* Logo */}
+          <div className="text-center mb-6">
+            <Image
+              src="/espointtower.jpg"
+              alt="ESPOINT"
+              width={100}
+              height={120}
+              className="mx-auto rounded-md shadow-md"
+            />
+          </div>
+
+          <h2 className="text-black text-2xl font-extrabold text-center">
+            Verify Email
+          </h2>
+          <p className="text-gray-500 font-medium text-base mt-1 text-center">
+            Activate your account to continue
+          </p>
+
+          <div className="mt-8 space-y-6">
+            {/* Status Messages */}
+            <div className="space-y-4">
+              <StatusMessage type="success" message={success} />
+              <StatusMessage type="error" message={error} />
+
+              {loading && !success && !error && (
+                <div className="flex flex-col items-center justify-center p-4 bg-gray-50 rounded-2xl border border-gray-100 animate-pulse">
+                  <Spinner color="text-[#7464fa]" />
+                  <p className="text-[#7464fa] font-semibold mt-3">
+                    Processing your activation...
+                  </p>
+                </div>
+              )}
+            </div>
+
+            {/* Activate Button - Only show if not auto-activating or if it failed */}
+            {(!uidb64 || !token || error) && (
+              <button
+                className="bg-[#7464fa] hover:bg-[#5e4fd1] text-white w-full py-4 rounded-2xl font-bold transition-all shadow-lg shadow-[#7464fa]/20 flex items-center justify-center gap-2 disabled:opacity-60"
+                onClick={handleActivate}
+                disabled={loading}
+              >
+                {loading ? (
+                  <>
+                    <Spinner />
+                    Processing...
+                  </>
+                ) : (
+                  <>
+                    <CheckCircle className="w-5 h-5 mr-1" />
+                    Activate Account
+                  </>
+                )}
+              </button>
+            )}
+
+            {/* Resend Link Section */}
+            <div className="text-center space-y-4 pt-4 border-t border-gray-100">
+              <p className="text-sm text-gray-500 font-medium">Didn&apos;t receive the link?</p>
+              <button
+                onClick={handleResend}
+                className="bg-primary hover:bg-primary/90 text-black w-full py-4 rounded-2xl font-bold transition-all shadow-lg shadow-primary/20 flex items-center justify-center gap-2"
+                disabled={resending}
+              >
+                {resending ? (
+                  <>
+                    <Spinner color="text-black" />
+                    Sending...
+                  </>
+                ) : (
+                  <>
+                    <RefreshCw className="w-5 h-5 mr-1" />
+                    Resend Link
+                  </>
+                )}
+              </button>
+            </div>
+
+            {/* Back to Login */}
+            <div className="text-center mt-6">
+              <Link
+                href="/login"
+                className="text-primary font-bold hover:underline text-sm"
+              >
+                Back to Sign In
+              </Link>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -214,14 +238,21 @@ function StatusMessage({
   message: string;
 }) {
   if (!message) return null;
-  const color = type === "success" ? "text-green-600" : "text-red-600";
-  return <p className={`${color} text-center mb-2`}>{message}</p>;
+  const bgColor = type === "success" ? "bg-green-50 border-green-100" : "bg-red-50 border-red-100";
+  const textColor = type === "success" ? "text-green-700" : "text-red-700";
+  const icon = type === "success" ? "✅" : "⚠️";
+
+  return (
+    <div className={`p-4 rounded-2xl border ${bgColor} ${textColor} text-center flex items-center justify-center gap-2 font-medium`}>
+      <span>{icon}</span> {message}
+    </div>
+  );
 }
 
-function Spinner() {
+function Spinner({ color = "text-white" }: { color?: string }) {
   return (
     <svg
-      className="animate-spin h-5 w-5 mr-2 text-white"
+      className={`animate-spin h-5 w-5 ${color}`}
       xmlns="http://www.w3.org/2000/svg"
       fill="none"
       viewBox="0 0 24 24"
