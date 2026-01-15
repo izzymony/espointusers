@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, ArrowRight } from "lucide-react";
 
 const ChangePassword = () => {
   const [formData, setFormData] = useState({
@@ -21,6 +21,7 @@ const ChangePassword = () => {
   const [success, setSuccess] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -64,7 +65,7 @@ const ChangePassword = () => {
     if (!validate()) return;
     setLoading(true);
     try {
-      const response = await fetch("https://espoint-auth.onrender.com/api/v1.0/change_password", {
+      const response = await fetch(`https://espoint-auth-8r6v.onrender.com/api/v1.0/change_password`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -90,25 +91,66 @@ const ChangePassword = () => {
   };
 
   return (
-    <div className="bg-white h-[100vh]">
-      <div className="flex min-h-screen justify-center items-center p-4">
-        <div className="bg-[#f5f5f5] w-full max-w-md p-5 border border-gray-300 shadow-lg rounded-md">
-          <div className="mx-auto mb-4">
-            <Image
-              src={"/espointtower.jpg"}
-              alt=""
-              width={110}
-              height={110}
-              className="mx-auto rounded-md "/>
+    <div className="min-h-screen bg-white flex items-center justify-center px-6 py-12 ">
+      <div className="flex flex-col lg:flex-row items-center justify-center w-full max-w-6xl gap-10">
+        {/* Left side illustration */}
+        <div className="hidden lg:flex lg:w-1/2 items-center justify-center">
+          <Image
+            src="/undraw_sign-in_uva0.svg"
+            alt="Change Password Illustration"
+            width={600}
+            height={600}
+            className="object-contain drop-shadow-2xl"
+            priority
+          />
+        </div>
+
+        {/* Right side form */}
+        <div className="w-full max-w-md bg-white rounded-2xl shadow-2xl border border-gray-100 p-8">
+          {/* Header */}
+          <div className="text-center mb-6">
+            <h1 className="text-3xl md:text-4xl font-extrabold text-black">
+              Change <span className="text-primary">Password</span>
+            </h1>
+            <p className="text-gray-500 mt-2 font-medium">
+              Update your security credentials below.
+            </p>
           </div>
-          <h1 className="text-[#475569] text-2xl font-bold text-center">Change Password</h1>
-          <p className="text-[#475569] text-[16px] mt-2 text-center mb-4">
-            Enter your new password below.
+
+          {/* Logo */}
+          <div className="text-center mb-6">
+            <Image
+              src="/espointtower.jpg"
+              alt="ESPOINT"
+              width={100}
+              height={120}
+              className="mx-auto rounded-md shadow-md"
+            />
+          </div>
+
+          <h2 className="text-black text-2xl font-extrabold text-center">
+            Security Update
+          </h2>
+          <p className="text-gray-500 font-medium text-base mt-1 text-center">
+            Enter your current and new password
           </p>
-          <form onSubmit={handleSubmit} className="py-2">
-            <div className="mb-4">
-              <label htmlFor="oldPassword" className="text-black font-medium">
-                Old Password
+
+          <form onSubmit={handleSubmit} className="space-y-5 mt-8">
+            {error && (
+              <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-4 rounded-2xl flex items-center gap-2">
+                <span>⚠️</span> <p className="text-sm font-medium">{error}</p>
+              </div>
+            )}
+
+            {success && (
+              <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-4 rounded-2xl flex items-center gap-2">
+                <span>✅</span> <p className="text-sm font-medium">{success}</p>
+              </div>
+            )}
+
+            <div className="space-y-2">
+              <label htmlFor="oldPassword" className="text-sm font-semibold text-gray-700 ml-1">
+                Current Password
               </label>
               <div className="relative">
                 <input
@@ -117,24 +159,28 @@ const ChangePassword = () => {
                   name="oldPassword"
                   value={formData.oldPassword}
                   onChange={handleChange}
-                  placeholder="Enter old password"
-                  className="w-full px-3 border-b-1 rounded-md border-gray-300 placeholder:text-gray-400 p-1 focus:border-[#ffd700] focus:ring-2 focus:ring-[#ffd700] outline-none"
+                  placeholder="Enter current password"
+                  disabled={loading}
+                  className="w-full bg-gray-50 border-gray-200 focus:border-primary focus:ring-0 rounded-2xl p-4 transition-all outline-none"
                 />
                 <button
                   type="button"
                   onClick={() => setShowOldPassword((v) => !v)}
-                  className="absolute top-1/2 right-3 transform -translate-y-1/2 text-gray-400"
+                  className="absolute top-1/2 right-4 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
                   tabIndex={-1}
                 >
-                  {showOldPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                  {showOldPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                 </button>
               </div>
               {errors.oldPassword && (
-                <p className="text-red-500 text-sm mt-1">{errors.oldPassword}</p>
+                <p className="text-red-500 text-sm mt-1 ml-1 flex items-center">
+                  <span className="mr-1">⚠️</span> {errors.oldPassword}
+                </p>
               )}
             </div>
-            <div className="mb-4">
-              <label htmlFor="newPassword" className="text-black font-medium">
+
+            <div className="space-y-2">
+              <label htmlFor="newPassword" className="text-sm font-semibold text-gray-700 ml-1">
                 New Password
               </label>
               <div className="relative">
@@ -145,23 +191,27 @@ const ChangePassword = () => {
                   value={formData.newPassword}
                   onChange={handleChange}
                   placeholder="Enter new password"
-                  className="w-full px-3 border-b-1 rounded-md border-gray-300 placeholder:text-gray-400 p-1 focus:border-[#ffd700] focus:ring-2 focus:ring-[#ffd700] outline-none"
+                  disabled={loading}
+                  className="w-full bg-gray-50 border-gray-200 focus:border-primary focus:ring-0 rounded-2xl p-4 transition-all outline-none"
                 />
                 <button
                   type="button"
                   onClick={() => setShowNewPassword((v) => !v)}
-                  className="absolute top-1/2 right-3 transform -translate-y-1/2 text-gray-400"
+                  className="absolute top-1/2 right-4 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
                   tabIndex={-1}
                 >
-                  {showNewPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                  {showNewPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                 </button>
               </div>
               {errors.newPassword && (
-                <p className="text-red-500 text-sm mt-1">{errors.newPassword}</p>
+                <p className="text-red-500 text-sm mt-1 ml-1 flex items-center">
+                  <span className="mr-1">⚠️</span> {errors.newPassword}
+                </p>
               )}
             </div>
-            <div className="mb-4">
-              <label htmlFor="confirmPassword" className="text-black font-medium">
+
+            <div className="space-y-2">
+              <label htmlFor="confirmPassword" className="text-sm font-semibold text-gray-700 ml-1">
                 Confirm New Password
               </label>
               <div className="relative">
@@ -171,37 +221,51 @@ const ChangePassword = () => {
                   name="confirmPassword"
                   value={formData.confirmPassword}
                   onChange={handleChange}
-                  placeholder="Re-enter new password"
-                  className="w-full px-3 border-b-1 rounded-md border-gray-300 placeholder:text-gray-400 p-1 focus:border-[#ffd700] focus:ring-2 focus:ring-[#ffd700] outline-none"
+                  placeholder="Confirm new password"
+                  disabled={loading}
+                  className="w-full bg-gray-50 border-gray-200 focus:border-primary focus:ring-0 rounded-2xl p-4 transition-all outline-none"
                 />
                 <button
                   type="button"
                   onClick={() => setShowConfirmPassword((v) => !v)}
-                  className="absolute top-1/2 right-3 transform -translate-y-1/2 text-gray-400"
+                  className="absolute top-1/2 right-4 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
                   tabIndex={-1}
                 >
-                  {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                  {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                 </button>
               </div>
               {errors.confirmPassword && (
-                <p className="text-red-500 text-sm mt-1">{errors.confirmPassword}</p>
+                <p className="text-red-500 text-sm mt-1 ml-1 flex items-center">
+                  <span className="mr-1">⚠️</span> {errors.confirmPassword}
+                </p>
               )}
             </div>
+
             <button
               type="submit"
               disabled={loading}
-              className="bg-[#FFD700] w-full text-black p-2 mt-2 rounded-md font-bold"
+              className="bg-primary hover:bg-primary/90 text-black w-full py-4 mt-6 rounded-2xl font-bold transition-all shadow-lg shadow-primary/20 flex items-center justify-center gap-2"
             >
-              {loading ? "Changing..." : "Change Password"}
+              {loading ? (
+                <span className="flex items-center justify-center gap-2">
+                  <span className="animate-spin rounded-full h-5 w-5 border-t-2 border-black"></span>
+                  Changing...
+                </span>
+              ) : (
+                <>
+                  Change Password
+                  <ArrowRight className="w-5 h-5" />
+                </>
+              )}
             </button>
-            {success && (
-              <p className="text-green-600 text-center mt-4">{success}</p>
-            )}
-            {error && (
-              <p className="text-red-600 text-center mt-2">{error}</p>
-            )}
-            <div className="text-center mt-5">
-              <Link href="/login" className="text-[#ffd700] underline">Back to Sign In</Link>
+
+            <div className="text-center mt-6 pt-2">
+              <Link
+                href="/login"
+                className="text-primary font-bold hover:underline text-sm"
+              >
+                Back to Sign In
+              </Link>
             </div>
           </form>
         </div>
