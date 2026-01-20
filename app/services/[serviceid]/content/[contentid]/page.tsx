@@ -45,7 +45,6 @@ interface FormData {
   notes: string;
   preferred_staff_id: string;
   status: string;
-  booking_code: string;
   username?: string;
 }
 
@@ -79,7 +78,7 @@ const ContentDetails = () => {
     service_date: "",
     service_time: "",
     notes: "",
-    booking_code: "",
+
     preferred_staff_id: "",
     status: "pending",
   });
@@ -232,10 +231,10 @@ const ContentDetails = () => {
         service: content?.service || "",
         service_unit: content?.service_unit || "",
         username: formData.username,
-        from: "internal",
+        from: "external",
         data: {
           client_email: formData.client_email,
-          preferred_staff_id: formData.preferred_staff_id || "default",
+          preferred_staff_id: formData.preferred_staff_id,
           notes: formData.notes,
           service_time: formData.service_time,
           amount: String(totalPrice),
@@ -244,8 +243,7 @@ const ContentDetails = () => {
           client_phone: formData.client_phone,
           client_name: formData.client_name,
           status: "pending",
-          completed_date: "",
-          booking_code: "", // Backend will provide this
+          
         },
       };
 

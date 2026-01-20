@@ -122,16 +122,12 @@ const Signup = () => {
       const data = await response.json();
 
       if (response.ok) {
-        setSuccessMessage("Sign up successful! You may now sign in.");
-        router.push('/message')
-        setFormData({
-          firstName: "",
-          lastName: "",
-          username: "",
-          email: "",
-          password: "",
-          confirmPassword: "",
-        });
+        setSuccessMessage("Sign up successful! Redirecting to verification...");
+        sessionStorage.setItem("email", formData.email);
+        setTimeout(() => {
+          router.push('/activate');
+        }, 1500);
+
 
 
       } else {
