@@ -147,12 +147,36 @@ const AccountActivationClient = () => {
             />
           </div>
 
-          <h2 className="text-black text-2xl font-extrabold text-center">
-            Verify Email
-          </h2>
-          <p className="text-gray-500 font-medium text-base mt-1 text-center">
-            Activate your account to continue
-          </p>
+          <div className="text-center mb-6">
+            {!uidb64 && !token ? (
+              <>
+                <div className="bg-[#f2f0fd] p-6 rounded-full w-fit flex mx-auto mb-6 shadow-inner">
+                  <Image
+                    src="/icons8-mail-50.png"
+                    alt="Mail Icon"
+                    height={50}
+                    width={50}
+                    className="animate-bounce"
+                  />
+                </div>
+                <h2 className="text-black text-2xl font-extrabold text-center">
+                  Check your <span className="text-primary">Email</span>
+                </h2>
+                <p className="text-gray-500 font-medium text-base mt-2 text-center px-4">
+                  We&apos;ve sent an activation link to your email address. Please click the link to activate your account.
+                </p>
+              </>
+            ) : (
+              <>
+                <h2 className="text-black text-2xl font-extrabold text-center">
+                  Verify Email
+                </h2>
+                <p className="text-gray-500 font-medium text-base mt-1 text-center">
+                  Activate your account to continue
+                </p>
+              </>
+            )}
+          </div>
 
           <div className="mt-8 space-y-6">
             {/* Status Messages */}
@@ -171,25 +195,7 @@ const AccountActivationClient = () => {
             </div>
 
             {/* Activate Button - Only show if not auto-activating or if it failed */}
-            {(!uidb64 || !token || error) && (
-              <button
-                className="bg-[#7464fa] hover:bg-[#5e4fd1] text-white w-full py-4 rounded-2xl font-bold transition-all shadow-lg shadow-[#7464fa]/20 flex items-center justify-center gap-2 disabled:opacity-60"
-                onClick={handleActivate}
-                disabled={loading}
-              >
-                {loading ? (
-                  <>
-                    <Spinner />
-                    Processing...
-                  </>
-                ) : (
-                  <>
-                    <CheckCircle className="w-5 h-5 mr-1" />
-                    Activate Account
-                  </>
-                )}
-              </button>
-            )}
+
 
             {/* Resend Link Section */}
             <div className="text-center space-y-4 pt-4 border-t border-gray-100">

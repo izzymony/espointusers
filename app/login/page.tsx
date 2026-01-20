@@ -87,16 +87,15 @@ const Login = () => {
             usernameToUse
           )}`
         );
-        if (!emailRes.ok) throw new Error("Failed to verify email");
 
-        const data = await emailRes.json();
-        usernameToUse = data.username || "";
-        if (!usernameToUse)
-          throw new Error("No username associated with this email");
+        if (emailRes.ok) {
+          const data = await emailRes.json();
+          if (data.username) {
+            usernameToUse = data.username;
+          }
+        }
       } catch (err) {
-        setErrors({ usernameOrEmail: "Could not resolve username from email" });
-        setLoading(false);
-        return;
+        console.warn("Could not resolve username from email, attempting login with email directly.");
       }
     }
 
