@@ -234,16 +234,13 @@ const ContentDetails = () => {
         from: "external",
         data: {
           client_email: formData.client_email,
-          preferred_staff_id: formData.preferred_staff_id,
-          notes: formData.notes,
           service_time: formData.service_time,
           amount: String(totalPrice),
-          currency: "NGN",
+          currency: "SL",
           service_date: formData.service_date,
           client_phone: formData.client_phone,
           client_name: formData.client_name,
           status: "pending",
-          
         },
       };
 

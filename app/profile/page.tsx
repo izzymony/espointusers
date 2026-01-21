@@ -182,20 +182,7 @@ const ProfilePage = () => {
                 </div>
               </div>
 
-              <div className="bg-white border border-gray-100 rounded-[40px] p-8 shadow-sm space-y-4">
-                <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-400 mb-6">Security Node</h3>
-                <button
-                  onClick={() => router.push('/change_password')}
-                  className="w-full flex items-center justify-between p-4 rounded-3xl bg-gray-50 hover:bg-primary/10 transition-all duration-300 group"
-                >
-                  <span className="font-bold text-gray-900 group-hover:text-primary transition-colors">Security Credentials</span>
-                  <div className="w-10 h-10 rounded-2xl bg-white border border-gray-100 flex items-center justify-center group-hover:bg-primary group-hover:text-black transition-all">
-                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M9 5l7 7-7 7" />
-                    </svg>
-                  </div>
-                </button>
-              </div>
+              
             </div>
 
             {/* Right Column: Detailed Records */}
@@ -212,14 +199,23 @@ const ProfilePage = () => {
                   <RecordField label="Central Alias" value={userInfo.username} />
                   <RecordField label="Registry Role" value="Standard Ecosystem Member" />
                 </div>
-
-                <div className="pt-10">
-                  <div className="p-8 rounded-[32px] bg-gray-50 border border-gray-100 italic text-gray-400 text-sm leading-relaxed">
-                    &quot;This profile record is synchronized with our global ESPOINT blockchain ledger, ensuring secure and verifiable access to premium services.&quot;
-                  </div>
-                </div>
               </div>
             </div>
+
+            <div className="bg-white border border-gray-100 rounded-[40px] p-8 shadow-sm space-y-4">
+                <h3 className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-400 mb-6">Security Node</h3>
+                <button
+                  onClick={() => router.push('/change_password')}
+                  className="w-full flex items-center justify-between p-4 rounded-3xl bg-gray-50 hover:bg-primary/10 transition-all duration-300 group"
+                >
+                  <span className="font-bold text-gray-900 group-hover:text-primary transition-colors">Logout</span>
+                  <div className="w-10 h-10 rounded-2xl bg-white border border-gray-100 flex items-center justify-center group-hover:bg-primary group-hover:text-black transition-all">
+                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </div>
+                </button>
+              </div>
           </div>
         </main>
 
