@@ -1,10 +1,12 @@
 "use client";
 import React, { useState } from "react";
 import Image from "next/image";
+import { Suspense } from "react";
 import Link from "next/link";
+import { useSearchParams, useRouter } from "next/navigation";
 import { Eye, EyeOff, ArrowRight } from "lucide-react";
 
-const SetNewPassword = () => {
+const SetNewPasswordClient = () => {
   const [formData, setFormData] = useState({
     newPassword: "",
     confirmPassword: "",
@@ -19,6 +21,10 @@ const SetNewPassword = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const uidb64 = searchParams.get("uidb64");
+  const token = searchParams.get("token");
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -63,30 +69,39 @@ const SetNewPassword = () => {
     setSuccess("");
     setError("");
 
+    if (!uidb64 || !token) {
+      setError("Invalid or missing reset link.");
+      return;
+    }
+
     if (!validate()) return;
 
     setLoading(true);
 
     try {
-      const response = await fetch(`https://espoint-auth-8r6v.onrender.com/api/v1.0/change_password`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          new_password: formData.newPassword,
-          confirm_password: formData.confirmPassword,
-        })
-      });
+      const response = await fetch(
+        `https://espoint-auth-8r6v.onrender.com/api/v1.0/auth/password_reset_confirm/${uidb64}/${token}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            password: formData.newPassword,
+            confirm_password: formData.confirmPassword,
+          })
+        }
+      );
 
       const data = await response.json();
 
       if (response.ok) {
-        setSuccess("Your password has been changed successfully!");
+        setSuccess("Your password has been changed successfully! Redirecting...");
         setFormData({ newPassword: "", confirmPassword: "" });
         setErrors({ newPassword: "", confirmPassword: "" });
+        setTimeout(() => router.push("/login"), 2000);
       } else {
-        setError(data?.message || data?.error || "Failed to change password. Please try again.");
+        setError(data?.message || data?.detail || "Failed to change password. Please try again.");
       }
     } catch (err) {
       setError("Network error. Please check your connection and try again.");
@@ -249,4 +264,10 @@ const SetNewPassword = () => {
   );
 };
 
-export default SetNewPassword;
+export default function SetNewPassword() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <SetNewPasswordClient />
+    </Suspense>
+  );
+}

@@ -32,7 +32,7 @@ const Page = () => {
     setLoading(true);
 
     const username = storedUser.username;
-    const url = `https://espoint.onrender.com/espoint/get_user_booking/${username}/${status}`;
+    const url = `https://espoint-5shr.onrender.com/espoint/get_user_booking/${username}/${status}`;
 
     fetch(url)
       .then((res) => {
@@ -261,20 +261,6 @@ const Page = () => {
         </div>
       </main>
 
-      <div className="bg-white py-24 px-6 border-t border-gray-100">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-12 text-center md:text-left">
-          <div className="space-y-4">
-            <h3 className="text-3xl font-black tracking-tight">Need Assistant?</h3>
-            <p className="text-gray-400 font-light max-w-sm">Contact our premium executive desk for dedicated booking support and inquiries.</p>
-          </div>
-          <button
-            onClick={() => router.push('/contact')}
-            className="px-12 py-6 bg-gray-900 text-white rounded-full font-black text-sm uppercase tracking-widest hover:bg-primary hover:text-black hover:scale-110 transition-all duration-500 shadow-2xl"
-          >
-            Contact Executive Support
-          </button>
-        </div>
-      </div>
 
       <Foot />
     </div>
