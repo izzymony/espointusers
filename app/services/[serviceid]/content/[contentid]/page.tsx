@@ -466,7 +466,7 @@ const ContentDetails = () => {
                   <div className="space-y-2">
                     <p className="text-sm text-gray-400 font-medium uppercase tracking-widest">Base Price</p>
                     <p className="font-extrabold text-4xl text-black">
-                      ₦{store.base_price.toLocaleString()}
+                      SL {store.base_price.toLocaleString()}
                       <span className="text-base text-gray-400 font-medium ml-2 uppercase">/ item</span>
                     </p>
                   </div>
@@ -478,7 +478,7 @@ const ContentDetails = () => {
                     </div>
                     <div className="flex justify-between items-center text-2xl font-extrabold text-black pt-4">
                       <span>Total Price</span>
-                      <span className="text-primary">₦{totalPrice.toLocaleString()}</span>
+                      <span className="text-primary">SL {totalPrice.toLocaleString()}</span>
                     </div>
                   </div>
 
@@ -494,7 +494,7 @@ const ContentDetails = () => {
                       <tbody>
                         <tr className="text-black border-t border-gray-50">
                           <td className="py-4 px-4 font-medium">{store.rental_items?.[1]?.item || 'Base Service'}</td>
-                          <td className="py-4 px-4 text-right font-bold">₦{totalPrice.toLocaleString()}</td>
+                          <td className="py-4 px-4 text-right font-bold">SL {totalPrice.toLocaleString()}</td>
                         </tr>
                       </tbody>
                     </table>

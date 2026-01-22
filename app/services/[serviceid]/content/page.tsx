@@ -130,7 +130,7 @@ const ContentCard = ({ content, service_id, extractAllImages }: { content: Servi
           <div className="flex flex-col">
             <span className="text-[8px] text-gray-400 font-black uppercase tracking-[0.3em] mb-0.5">Acquisition Tier</span>
             <span className="font-black text-black text-xl tracking-tighter">
-              &#8358; {Number(store.base_price).toLocaleString()}
+              SL {Number(store.base_price).toLocaleString()}
             </span>
           </div>
           <button
