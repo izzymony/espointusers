@@ -17,7 +17,8 @@ import {
   Phone,
   Mail,
   User,
-  Hash
+  Hash,
+  Download
 } from 'lucide-react';
 
 interface Booking {
@@ -138,6 +139,13 @@ const Page = () => {
     };
   };
 
+  const handlePrint = () => {
+    const originalTitle = document.title;
+    document.title = "Invoice_" + (booking?.booking_id?.slice(-6) || "Doc");
+    window.print();
+    document.title = originalTitle;
+  };
+
   if (loading)
     return (
       <div className="flex justify-center items-center h-screen bg-[#050505]">
@@ -156,12 +164,33 @@ const Page = () => {
     </div>
   );
 
-  if (!booking) return <div className="mt-20 text-center">No booking found.</div>;
+  if (!booking) return <div className="mt-20 text-center text-white">No booking found.</div>;
 
   const statusStyle = getStatusStyles(booking.status);
+  const showInvoiceBtn = booking.status === 'confirmed' || booking.status === 'paid';
 
   return (
     <div className="bg-gray-50 min-h-screen flex flex-col font-sans selection:bg-primary selection:text-black">
+      {/* Global Print Styles */}
+      <style jsx global>{`
+        @media print {
+          nav, header, main, footer, .print-hide { 
+            display: none !important; 
+          }
+          .print-show { 
+            display: block !important; 
+          }
+          body {
+            background: white !important;
+            color: black !important;
+          }
+          .invoice-container {
+            padding: 40px !important;
+          }
+        }
+        .print-show { display: none; }
+      `}</style>
+
       <Nav />
 
       {/* Premium Hero Header */}
@@ -195,9 +224,21 @@ const Page = () => {
                 Booking <span className="text-primary italic font-serif">#{booking.booking_id.slice(-6)}</span>
               </h1>
 
-              <div className={statusStyle.className}>
-                {statusStyle.icon}
-                {booking.status}
+              <div className="flex flex-wrap items-center gap-6 pt-4">
+                <div className={`${statusStyle.className} text-sm py-3 px-8 border-2 shadow-[0_0_15px_rgba(var(--primary-rgb),0.2)]`}>
+                  {statusStyle.icon}
+                  {booking.status}
+                </div>
+
+                {showInvoiceBtn && (
+                  <button
+                    onClick={handlePrint}
+                    className="flex items-center gap-3 px-8 py-3 bg-primary text-black rounded-full text-xs font-black uppercase tracking-[0.2em] hover:bg-white hover:scale-105 transition-all shadow-[0_10px_30px_rgba(var(--primary-rgb),0.3)] group"
+                  >
+                    <Download className="w-5 h-5 group-hover:animate-bounce" />
+                    Download Invoice
+                  </button>
+                )}
               </div>
             </div>
 
@@ -215,13 +256,13 @@ const Page = () => {
         <div className="max-w-7xl mx-auto space-y-8">
 
           {/* Service & Client Grid */}
-          <div className="grid lg:grid-cols-3 gap-8">
+          <div className="mt-7 grid lg:grid-cols-3 gap-8">
 
             {/* Left Column: Service Details (2/3 width) */}
             <div className="lg:col-span-2 space-y-8">
 
               {/* Service Card */}
-              <div className="bg-white rounded-[40px] p-8 sm:p-10 shadow-[0_20px_50px_rgba(0,0,0,0.05)] border border-gray-100 relative overflow-hidden group">
+              <div className="bg-white  rounded-[40px] p-8 sm:p-10 shadow-[0_20px_50px_rgba(0,0,0,0.05)] border border-gray-100 relative overflow-hidden group">
                 <div className="absolute top-0 right-0 w-64 h-64 bg-gradian-to-br from-primary/5 to-transparent rounded-full -mr-20 -mt-20 pointer-events-none"></div>
 
                 <div className="flex items-center gap-4 mb-8">
@@ -252,7 +293,7 @@ const Page = () => {
 
                       <div className="flex flex-wrap gap-3 pt-2">
                         <Tag label={`Category: ${serviceContent.store.category}`} />
-                        <Tag label={`Base Rate: ₦${serviceContent.store.base_price}`} />
+                        <Tag label={`Base Rate: SL ${serviceContent.store.base_price}`} />
                         {/* <Tag label={`Duration: ${serviceContent.store.duration_minutes} mins`} /> */}
                       </div>
                     </div>
@@ -271,7 +312,7 @@ const Page = () => {
                     <Calendar className="w-6 h-6" />
                   </div>
                   <div>
-                    <h2 className="text-2xl font-black text-gray-900 tracking-tight">Logistics</h2>
+                    <h2 className="text-2xl font-black text-gray-900 tracking-tight">Service Information</h2>
                     <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">Time & Location</p>
                   </div>
                 </div>
@@ -346,7 +387,7 @@ const Page = () => {
                     <div className="flex justify-between items-end">
                       <span className="text-sm font-medium text-white/50">Total Amount</span>
                       <span className="text-3xl font-black text-white tracking-tight">
-                        <span className="text-lg align-top opacity-50 mr-1">₦</span>
+                        <span className="text-lg align-top opacity-50 mr-1">SL</span>
                         {Number(booking.store.amount).toLocaleString()}
                       </span>
                     </div>
@@ -375,6 +416,75 @@ const Page = () => {
 
         </div>
       </main>
+
+      {/* Printable Invoice Template */}
+      <div className="print-show invoice-container bg-white text-black min-h-screen font-sans">
+        <div className="flex flex-col items-center border-b-2 border-gray-100 pb-12 mb-12">
+          <img src="/espointtower.jpg" alt="Logo" className="w-24 h-24 object-contain mb-8" />
+          <h1 className="text-5xl font-black tracking-[0.2em] uppercase text-gray-900">Invoice</h1>
+        </div>
+
+        <div className="grid grid-cols-2 gap-20 mb-16 text-sm">
+          <div className="space-y-6">
+            <h2 className="text-[10px] font-black uppercase tracking-[0.4em] text-primary border-b border-primary/20 pb-2">Client Details</h2>
+            <div className="space-y-1">
+              <p className="text-2xl font-black tracking-tight text-gray-900">{booking.store.client_name}</p>
+              <p className="text-gray-600 font-medium">{booking.store.client_email}</p>
+              <p className="text-gray-600 font-medium">{booking.store.client_phone}</p>
+            </div>
+          </div>
+          <div className="space-y-6">
+            <h2 className="text-[10px] font-black uppercase tracking-[0.4em] text-primary border-b border-primary/20 pb-2">Transaction ID</h2>
+            <div className="space-y-1">
+              <p className="text-2xl font-black tracking-tight text-gray-900">#{booking.booking_id.slice(-12)}</p>
+              <p className="text-gray-600 font-medium italic">Service: {serviceContent?.store.name || booking.service}</p>
+              <p className="text-gray-500 text-[10px] font-black uppercase tracking-widest mt-2 px-3 py-1 bg-gray-50 rounded-full w-fit">Status: {booking.status}</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="mb-20">
+          <table className="w-full">
+            <thead>
+              <tr className="border-b-2 border-gray-900 text-[10px] font-black uppercase tracking-[0.4em] text-gray-900">
+                <th className="py-6 text-left">Product / Service</th>
+                <th className="py-6 text-left">Schedule</th>
+                <th className="py-6 text-right">Amount</th>
+              </tr>
+            </thead>
+            <tbody className="text-sm">
+              <tr className="border-b border-gray-100">
+                <td className="py-10">
+                  <div className="space-y-1">
+                    <p className="text-xl font-black tracking-tight text-gray-900">{booking.service}</p>
+                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">CID: {booking.service_unit}</p>
+                  </div>
+                </td>
+                <td className="py-10">
+                  <p className="text-base font-bold text-gray-900">{booking.store.service_date}</p>
+                  <p className="text-sm text-gray-400 font-medium">{booking.store.service_time}</p>
+                </td>
+                <td className="py-10 text-right text-2xl font-black tracking-tighter text-gray-900">
+                  SL {Number(booking.store.amount).toLocaleString()}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div className="flex justify-end pt-10 border-t-2 border-gray-900">
+          <div className="w-full max-w-md">
+            <div className="flex justify-between items-center bg-gray-50 p-10 rounded-[32px]">
+              <span className="text-lg font-black uppercase tracking-[0.4em] text-gray-900">Total Due</span>
+              <span className="text-5xl font-black tracking-tighter text-gray-900">SL {Number(booking.store.amount).toLocaleString()}</span>
+            </div>
+          </div>
+        </div>
+
+        <div className="fixed bottom-12 left-0 w-full text-center">
+          <p className="text-[10px] font-black uppercase tracking-[0.6em] text-gray-300">Official ESPOINT Ecosystem Document • Code: {booking.store.booking_code}</p>
+        </div>
+      </div>
 
       <Foot />
     </div>

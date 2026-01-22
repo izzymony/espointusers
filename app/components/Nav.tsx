@@ -5,11 +5,10 @@ import Image from 'next/image'
 import { Menu, X, Home, Search, Info, Phone, CalendarDays, User2 } from 'lucide-react'
 
 const menuItems = [
-  { href: '/services', label: 'Home', icon: <Home className="w-5 h-5" /> },
-   { href: '/all_services', label: 'Browse', icon: <Search className="w-5 h-5" /> },
+  { href: '/', label: 'Home', icon: <Home className="w-5 h-5" /> },
+  { href: '/services', label: 'Browse', icon: <Search className="w-5 h-5" /> },
   { href: '/booked_contents', label: 'My Bookings', icon: <CalendarDays className="w-5 h-5" /> },
   { href: '/profile', label: 'Profile', icon: <User2 className="w-5 h-5" /> },
-  
 ]
 
 const Nav = () => {
@@ -42,7 +41,7 @@ const Nav = () => {
               onClick={() => setMenuOpen(!menuOpen)}
               aria-label="Open menu"
             >
-              {menuOpen ? <X className="w-7 h-7" /> : <Menu className="w-7 h-7"/>}
+              {menuOpen ? <X className="w-7 h-7" /> : <Menu className="w-7 h-7" />}
             </button>
           </div>
         </div>
