@@ -172,17 +172,6 @@ const Login = () => {
   return (
     <div className="min-h-screen bg-white flex items-center justify-center px-6 py-12 ">
       <div className="flex flex-col lg:flex-row items-center justify-center w-full max-w-6xl gap-10">
-        {/* Left side illustration */}
-        <div className="hidden lg:flex lg:w-1/2 items-center justify-center">
-          <Image
-            src="/undraw_sign-in_uva0.svg"
-            alt="Login Illustration"
-            width={600}
-            height={600}
-            className="object-contain drop-shadow-2xl"
-            priority
-          />
-        </div>
         {/* Right side form */}
         <div className="w-full max-w-md bg-white rounded-2xl shadow-2xl border border-gray-100 p-8">
           {/* Header */}
@@ -195,16 +184,6 @@ const Login = () => {
             </p>
           </div>
 
-
-          <div className="text-center mb-6">
-            <Image
-              src={"/espointtower.jpg"}
-              alt="ESPOINT"
-              width={100}
-              height={120}
-              className="mx-auto rounded-md shadow-md"
-            />
-          </div>
 
           <h2 className="text-black text-2xl font-extrabold text-center">
             Sign in
